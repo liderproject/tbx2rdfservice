@@ -48,4 +48,11 @@ public class RDFPrefixes {
         }
         return modelo;
     }
+    
+    public static String getSampleTTL()
+    {
+        String ttl ="<http://purl.org/NET/vroddon> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .";
+        return ttl;
+    }
+    
 }
