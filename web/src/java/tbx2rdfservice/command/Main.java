@@ -26,6 +26,9 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.FileUtils;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.jena.atlas.lib.FileOps;
 import org.apache.jena.fuseki.EmbeddedFusekiServer;
 import org.apache.jena.fuseki.server.FusekiConfig;
@@ -47,12 +50,16 @@ public class Main {
     public static void test()
     {
         RDFStoreFuseki f = new RDFStoreFuseki();
-        String ttl=RDFPrefixes.getSampleTTL();
-        RDFStoreFuseki.test();
-        RDFStoreFuseki.deleteGraph("");
-      //  RDFStoreFuseki.postEntity("", ttl);
+//        String ttl=RDFPrefixes.getSampleTTL();
+        RDFStoreFuseki.init();
+        /*RDFStoreFuseki.deleteGraph("");
+        RDFStoreFuseki.postEntity("", ttl);
         int g=RDFStoreFuseki.countEntities("");
-        System.out.println(g);
+        System.out.println(g);*/
+        
+        
+        
+        
     }
     
 

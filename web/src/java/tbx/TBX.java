@@ -1,9 +1,16 @@
 package tbx;
 
+import java.io.DataOutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import javax.net.ssl.HttpsURLConnection;
+import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
 import lemon.LexicalEntry;
 import lemon.LexicalSense;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.jena.riot.Lang;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -21,10 +28,36 @@ public class TBX {
         BasicConfigurator.configure();
         Logger.getRootLogger().removeAllAppenders();
         Logger.getRootLogger().addAppender(new NullAppender());
+        RDFStoreFuseki.init();
+        //String res=RDFStoreFuseki.getEntity("http://tbx2rdf.lider-project.eu/converter/resource/iate/IATE-84");
+        //System.out.println(res);
         
-        String res=RDFStoreFuseki.getEntity("http://tbx2rdf.lider-project.eu/converter/resource/iate/IATE-84");
-        System.out.println(res);
+        List<LexicalSense> senses=getSampleSenses();
+        
+        try{
+            String url=senses.get(0).getURI();
+            String nt = senses.get(0).getNT();
+            //String url = "http://tbx2rdf.lider-project.eu/converter/resource/iate/IATE-84";
+		URL obj = new URL(url);
+		HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+ 
+		//add reuqest header
+		con.setRequestMethod("POST");
+		con.setRequestProperty("User-Agent", USER_AGENT);
+		//String urlParameters = "sn=C02G8416DRJM&cn=&locale=&caller=&num=12345";
+		// Send post request
+		con.setDoOutput(true);
+		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+		wr.writeBytes(nt);
+		wr.flush();
+		wr.close();  
+        }catch(Exception e)
+        {
+            
+        }
     }
+    
+    
     
     public static void uploadSenses()
     {
