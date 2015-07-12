@@ -7,6 +7,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import tbx2rdfservice.TBX2RDFServiceConfig;
+import tbx2rdfservice.store.RDFStoreFuseki;
 
 /**
  *
@@ -34,8 +36,12 @@ public class LinkedDataServlet extends HttpServlet {
         PrintWriter archivo = new PrintWriter("/tmp/tbx2.txt");
         archivo.println("requestURI: " + peticion);  
         archivo.close();
-        // http://tbx2rdf.lider-project.eu/converter/resource/iate/lexicalsense/IATE-84
-        // peticion: -->  /tbx2rdf/resource/iate/lexicalsense/IATE-84
+        // input: http://tbx2rdf.lider-project.eu/converter/resource/iate/IATE-84
+        // peticion: -->  /tbx2rdf/resource/iate/IATE-84
+        String base=TBX2RDFServiceConfig.get("datauri","http://tbx2rdf.lider-project.eu/converter/resource/iate/");
+        String xid = peticion.replace("/tbx2rdf/resource/iate/", "");
+        String recurso = base+xid;
+        String nt=RDFStoreFuseki.getEntity(recurso);
         
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
@@ -43,7 +49,8 @@ public class LinkedDataServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LinkedDataServlet</title>");            
+            out.println("<title>Servlet LinkedDataServlet</title>");      
+            out.println(nt);
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet LinkedDataServlet at " + request.getContextPath() + "</h1>");
