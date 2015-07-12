@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
 import tbx2rdf.Mappings;
@@ -34,13 +36,19 @@ import tbx2rdf.TBX2RDF_Converter;
 public class Tbx2rdfServlet extends HttpServlet {
 
     
-    @Override
-    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action"); 
         String tbx = req.getParameter("tbx");
         String namespace = req.getParameter("namespace");
         String lenient = req.getParameter("lenient");
         tbx = java.net.URLDecoder.decode(tbx, "UTF-8");
+        
+        String uri = req.getRequestURI();
+        PrintWriter archivo = new PrintWriter("/home/vrodriguez/tbx.txt");
+        archivo.println(uri+req.getParameter("current"));
+        archivo.close();
+        
+        
         String rdf="Ooops";
         if (action.contains("enrich"))
             rdf = "Feature coming soon!";
@@ -61,4 +69,33 @@ public class Tbx2rdfServlet extends HttpServlet {
         resp.getWriter().println(rdf);
         resp.setContentType("text/plain");
     }    
+    
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+    
 }
