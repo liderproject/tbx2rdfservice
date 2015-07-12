@@ -29,7 +29,12 @@ public class LinkedDataServlet extends HttpServlet {
         String peticion = request.getRequestURI();
         String id = request.getRequestURI().replace("/tbx2rdf/resource/", "");
         System.out.println(peticion+" "+id);
-      
+
+        
+        PrintWriter archivo = new PrintWriter("/tmp/tbx2.txt");
+        archivo.println("requestURI: " + peticion);
+        archivo.close();
+        // http://tbx2rdf.lider-project.eu/converter/resource/iate/lexicalsense/IATE-84
         
         
         response.setContentType("text/html;charset=UTF-8");

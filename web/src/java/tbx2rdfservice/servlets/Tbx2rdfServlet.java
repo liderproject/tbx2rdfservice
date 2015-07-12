@@ -43,7 +43,7 @@ public class Tbx2rdfServlet extends HttpServlet {
         String tbx = req.getParameter("tbx");
         String namespace = req.getParameter("namespace");
         String lenient = req.getParameter("lenient");
-        if (tbx.isEmpty())
+        if (tbx==null || tbx.isEmpty())
         {
             serveError(req, resp);
             return;
@@ -52,8 +52,13 @@ public class Tbx2rdfServlet extends HttpServlet {
         
         tbx = java.net.URLDecoder.decode(tbx, "UTF-8");
         String uri = req.getRequestURI();
+        
         PrintWriter archivo = new PrintWriter("/tmp/tbx.txt");
-        archivo.println(uri+req.getParameter("current"));
+        archivo.println(uri);
+        archivo.println("current: "+req.getParameter("current")+"\n");
+        archivo.println("action: "+req.getParameter("action")+"\n");
+        archivo.println("tbx: "+req.getParameter("tbx")+"\n");
+        archivo.println("lenient: "+req.getParameter("lenient")+"\n");
         archivo.close();
         
         
