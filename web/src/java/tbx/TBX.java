@@ -12,12 +12,16 @@ import lemon.LexicalSense;
  */
 public class TBX {
     static List<LexicalSense> senses = new ArrayList();
-
+    
+    //http://tbx2rdf.lider-project.eu/converter/resource/iate/lexicalsense/IATE-84
     public static void main(String[] args)  {
 
-        LexicalSense ls = new LexicalSense("Work");
-        LexicalEntry le1 = new LexicalEntry("Obra", "es");
-        LexicalEntry le2 = new LexicalEntry("Work", "en");
+        LexicalSense ls = new LexicalSense("IATE-84");
+        ls.subjectField = "1011";
+        LexicalEntry le1 = new LexicalEntry("Zuständigkeit der Mitgliedstaaten", "de");
+        LexicalEntry le2 = new LexicalEntry("competence of the Member States", "en");
+        le2.source="Eurovoc V4.2";
+        
         ls.addEntry(le1);
         ls.addEntry(le2);
 
@@ -26,7 +30,15 @@ public class TBX {
         String xml = getXML(senses);
         System.out.println(xml);
         
+        String nt = getNT(senses);
         
+        
+    }
+    public static String getNT(List<LexicalSense> senses)
+    {
+        String nt="";
+        
+        return nt;
     }
     
     public static String getXML(List<LexicalSense> senses)
@@ -65,4 +77,13 @@ public class TBX {
         return tail;
     }
 
+    //http://bpmlod.github.io/report/multilingual-terminologies/index.html
+    public static String getNTHeader(){
+        String tail = "</body>\n"
+                + "</text>\n"
+                + "</martif>";
+       return tail;
+    }
+            
+    
 }

@@ -16,7 +16,7 @@ public class LexicalSense {
 
     String id = "";
     String name = "";
-    String subjectField = "";
+    public String subjectField = "";
     List<LexicalEntry> entries = new ArrayList();
     
     public LexicalSense()
@@ -52,14 +52,14 @@ public class LexicalSense {
             String xml = "<termEntry id=\"" + codificado + ">\n";
             if (!subjectField.isEmpty()) {
                 xml += " <descripGrp>\n";
-                xml += " <descrip type=\"subjectField\">" + subjectField + "</descrip >\n";
+                xml += " <descrip type=\"subjectField\">" + subjectField + "</descrip>\n";
                 xml += " </descripGrp>\n";
             }
             for(LexicalEntry entry : entries)
             {
                 xml+=entry.getXML();
             }
-            xml += " </termEntry >   ";
+            xml += " </termEntry>\n";
             return xml;
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(LexicalSense.class.getName()).log(Level.SEVERE, null, ex);

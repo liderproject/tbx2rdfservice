@@ -32,10 +32,10 @@ public class LinkedDataServlet extends HttpServlet {
 
         
         PrintWriter archivo = new PrintWriter("/tmp/tbx2.txt");
-        archivo.println("requestURI: " + peticion);
+        archivo.println("requestURI: " + peticion);  
         archivo.close();
         // http://tbx2rdf.lider-project.eu/converter/resource/iate/lexicalsense/IATE-84
-        
+        // peticion: -->  /tbx2rdf/resource/iate/lexicalsense/IATE-84
         
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {

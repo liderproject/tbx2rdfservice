@@ -16,6 +16,8 @@ public class LexicalEntry {
     String uricanonicalform ="";
     String reliabilitycode="3";
     String lan="en";
+    public String source ="";
+    //
     
     public LexicalEntry()
     {
@@ -33,7 +35,7 @@ public class LexicalEntry {
         xml+="  <tig>\n" +
                    "    <term>"+ name +"</term>\n" +
                    "    <termNote type=\"termType\">fullForm</termNote>\n" +
-                   "    <descrip type=\"reliabilityCode\">"+reliabilitycode+"</descrip>\n" +
+                   "    <descrip type=\"reliabilityCode\">"+reliabilitycode+"</descrip>\n"+
                    "  </tig>";
         xml+="</langSet>\n";
         return xml;
@@ -55,6 +57,8 @@ public class LexicalEntry {
                 nt += "<"+sres+"> <http://www.w3.org/ns/lemon/ontolex#canonicalForm> <"+ uricanonicalform +"> .\n"; 
             if (!reliabilitycode.isEmpty())
                 nt += "<"+sres+"> <http://tbx2rdf.lider-project.eu/tbx#reliabilityCode> <"+ reliabilitycode +"> .\n"; 
+            if (!source.isEmpty())
+                nt += "<"+sres+"> <http://purl.org/dc/terms/source> \""+ source +"\" .\n"; 
             return nt;
         }catch(Exception e)
         {
