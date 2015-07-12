@@ -98,12 +98,14 @@ public class LinkedDataServlet extends HttpServlet {
         archivo.println("content: " + tot);  
         archivo.close();
         
+        String id = request.getRequestURI().replace("/tbx2rdf/resource/", "");
+        id=peticion+" "+id;
+        boolean ok = RDFStoreFuseki.postEntity(id, tot);
+        
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            out.println(tot);
+            out.println(ok);
         }
-        
-       // AHORA ESTOY INTENTANDO DAR SOPORTE AL METODO POST
         
     }
 
