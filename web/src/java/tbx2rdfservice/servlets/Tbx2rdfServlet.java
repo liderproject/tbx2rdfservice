@@ -44,7 +44,7 @@ public class Tbx2rdfServlet extends HttpServlet {
         tbx = java.net.URLDecoder.decode(tbx, "UTF-8");
         
         String uri = req.getRequestURI();
-        PrintWriter archivo = new PrintWriter("/home/vrodriguez/tbx.txt");
+        PrintWriter archivo = new PrintWriter("/tmp/tbx.txt");
         archivo.println(uri+req.getParameter("current"));
         archivo.close();
         
