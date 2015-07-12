@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
@@ -41,8 +43,14 @@ public class Tbx2rdfServlet extends HttpServlet {
         String tbx = req.getParameter("tbx");
         String namespace = req.getParameter("namespace");
         String lenient = req.getParameter("lenient");
-        tbx = java.net.URLDecoder.decode(tbx, "UTF-8");
+        if (tbx.isEmpty())
+        {
+            serveError(req, resp);
+            return;
+        }
         
+        
+        tbx = java.net.URLDecoder.decode(tbx, "UTF-8");
         String uri = req.getRequestURI();
         PrintWriter archivo = new PrintWriter("/tmp/tbx.txt");
         archivo.println(uri+req.getParameter("current"));
@@ -96,6 +104,16 @@ public class Tbx2rdfServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
+    }
+    
+    protected void serveError(HttpServletRequest req, HttpServletResponse resp)
+    {
+        try {
+            resp.getWriter().println("Not found or parameters missing");
+        } catch (IOException ex) {
+            Logger.getLogger(Tbx2rdfServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
     }
     
 }
