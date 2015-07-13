@@ -98,6 +98,8 @@ public class LinkedDataServlet extends HttpServlet {
             }
 
         }
+        response.setStatus(HttpServletResponse.SC_OK);
+        
 
     }
 
@@ -127,21 +129,19 @@ public class LinkedDataServlet extends HttpServlet {
             PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/post.txt");
             archivo.println("requestURI: " + peticion);
             archivo.println("content: " + tot);
+            boolean ok = RDFStoreFuseki.postEntity(peticion, tot, Lang.NT);
+            archivo.println("postedentity: " + ok);
             archivo.close();
         } catch (Exception e) {
-            System.err.println("No access to logs");
+            System.err.println("Mal al postear en fuseki");
         }
-
-        System.out.println("AFTERLOGS: ");
-
-        String id = request.getRequestURI().replace("/tbx2rdf/resource/", "");
-        id = peticion;
-        boolean ok = RDFStoreFuseki.postEntity(id, tot, Lang.NT);
-
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             out.println(tot);
+        }catch(Exception e){
+            System.err.println("Mal al dar respuesta.");
         }
+        response.setStatus(HttpServletResponse.SC_OK);
 
     }
 
