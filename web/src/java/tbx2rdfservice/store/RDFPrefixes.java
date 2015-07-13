@@ -24,8 +24,27 @@ public class RDFPrefixes {
         map.put("http://purl.org/dc/terms/", "dct");
         map.put("http://www.w3.org/2004/02/skos/core#", "skos");
         map.put("http://www.geonames.org/ontology#", "gn");
-
+        map.put("http://xmlns.com/foaf/0.1/", "foaf");
+        map.put("http://tbx2rdf.lider-project.eu/tbx#", "tbx");
+        map.put("http://www.w3.org/ns/lemon/ontolex#", "ontolex");
     }
+    public static String reverse(String prefix)
+    {
+        if (map.isEmpty()) {
+            init();
+        }        
+        Iterator it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry e = (Map.Entry)it.next();
+            String prefijo = (String)e.getValue();
+            if (!prefijo.equals(prefix))
+                continue;
+            String nombre = (String)e.getKey();
+            return nombre;
+        }
+        return "";
+    }
+    
 
     /**
      * Adds only the prefix that are required in a model
@@ -53,6 +72,17 @@ public class RDFPrefixes {
     {
         String ttl ="<http://purl.org/NET/vroddon> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .";
         return ttl;
+    }
+
+    public static String extend(String param) {
+        if (!param.contains(":"))
+            return param;
+        String left=param.substring(0,param.indexOf(":"));
+        String right=param.substring(param.indexOf(":")+1, param.length());
+        String prefex = RDFPrefixes.reverse(left);
+        if (prefex.isEmpty())
+            return param;
+        return prefex+right;
     }
     
 }

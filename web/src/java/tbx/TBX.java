@@ -5,15 +5,18 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
+
 import lemon.LexicalEntry;
 import lemon.LexicalSense;
+import org.apache.jena.riot.Lang;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.varia.NullAppender;
+import tbx2rdfservice.store.RDFStoreClient;
 import tbx2rdfservice.store.RDFStoreFuseki;
 
 /**
@@ -28,50 +31,18 @@ public class TBX {
         BasicConfigurator.configure();
         Logger.getRootLogger().removeAllAppenders();
         Logger.getRootLogger().addAppender(new NullAppender());
-        RDFStoreFuseki.init();
+//        RDFStoreFuseki.init();
         //String res=RDFStoreFuseki.getEntity("http://tbx2rdf.lider-project.eu/converter/resource/iate/IATE-84");
         //System.out.println(res);
+        
+        
 
         List<LexicalSense> senses = getSampleSenses();
-
-        try {
-            String url = senses.get(0).getURI();
-            String nt = senses.get(0).getNT();
-            System.out.println(url);
-            System.out.println(nt);
-            nt=URLEncoder.encode(nt,"UTF-8");
-            
-            //String url = "http://tbx2rdf.lider-project.eu/converter/resource/iate/IATE-84";
-            URL obj = new URL(url);
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-            //add reuqest header
-            con.setRequestMethod("POST");
-            con.setRequestProperty("User-Agent", USER_AGENT);
-		//String urlParameters = "sn=C02G8416DRJM&cn=&locale=&caller=&num=12345";
-            // Send post request
-            con.setDoOutput(true);
-            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-            wr.writeBytes(nt);
-            wr.flush();
-            wr.close();
-            int responseCode = con.getResponseCode();
-            System.out.println("\nSending 'POST' request to URL : " + url);
-            System.out.println("Response Code : " + responseCode);
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-
-            //print result
-            System.out.println(response.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String url = senses.get(1).getURI();
+        String nt = senses.get(1).getNT();
+        System.out.println(url);
+        System.out.println(nt);
+        boolean ok=RDFStoreClient.post(url, nt);
     }
 
     public static void uploadSenses() {

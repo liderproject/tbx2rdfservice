@@ -33,7 +33,7 @@ public class LexicalEntry {
     public String getURI() {
         try {
             String codificado = URLEncoder.encode(name, "UTF-8");
-            String base = TBX2RDFServiceConfig.get("datauri", "http://localhost:8080/");
+            String base = TBX2RDFServiceConfig.get("datauri", "http://localhost:8080/tbx/");
             String sres = base + codificado;
             return sres;
         } catch (Exception e) {
@@ -56,7 +56,7 @@ public class LexicalEntry {
         try {
             String nt = "";
             String codificado = URLEncoder.encode(name, "UTF-8");
-            String base = TBX2RDFServiceConfig.get("datauri", "http://localhost:8080/");
+            String base = TBX2RDFServiceConfig.get("datauri", "http://localhost:8080/tbx/");
             String sres = base + codificado;
             nt += "<" + sres + "> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/lemon/ontolex#LexicalEntry> .\n";
             if (!uritype.isEmpty()) {

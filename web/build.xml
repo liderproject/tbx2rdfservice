@@ -68,4 +68,48 @@
     nbproject/build-impl.xml file. 
 
     -->
+
+<property name="src" location="src"/>
+<property name="build" location="build"/>
+<property name="dist" location="dist"/>
+<property name="lib.dir" value="lib"/>
+<path id="classpath">
+	<fileset dir="${lib.dir}" includes="**/*.jar"/>
+</path>
+
+<target name="-post-dist" depends="verificar, copiar">
+    <echo message="Victor edition: generating also a jar file with"/>
+	<echo>Apache Ant version is ${ant.version}</echo>
+	<mkdir dir="build2"/> 
+	<javac srcdir="${src}" destdir="build2" classpathref="classpath" includeantruntime="false"/>  
+	<jar destfile = "dist/tbx2rdfservice-nolibs.jar"
+		basedir = "build2"
+		includes = "**"
+		excludes="META-INF/*,**/*.RSA,**/*.SF,**/*.DSA" />		
+	<jar jarfile="dist/tbx2rdfservice.jar">
+		<zipfileset src="dist/tbx2rdfservice-nolibs.jar" excludes="META-INF/*,**/*.RSA,**/*.SF,**/*.DSA" > 
+			<exclude name="**/*.RSA, **/*.SF, **/*.DSA"/>
+		</zipfileset>
+		<zipgroupfileset dir="${lib.dir}" includes="**/*.jar" excludes="META-INF/*,**/*.RSA,**/*.SF,**/*.DSA" />	
+		<manifest>
+            <attribute name="Created-By" value="Victor"/>
+			<attribute name="Main-Class" value="tbx2rdfservice.command.Main"/>
+		</manifest>
+	</jar>
+<!--	<copy file="dist/TBX2RDFService.war" tofile="dist/tbx2rdf.war">
+	    <delete file="dist/TBX2RDFService.war"/> 
+	-->
+	<delete dir="build2"/>
+	
+	<delete file="dist/tbx2rdfservice-nolibs.jar"/>
+</target>	
+
+<target name="verificar">
+	<available file="tbx2rdfservice.config" property="existeconfig"/>
+</target>
+<target name="copiar" unless="existeconfig">
+	<copy file="src/java/tbx2rdfservice/tbx2rdfservice.config" tofile="tbx2rdfservice.config"/>
+</target>
+	
+	
 </project>

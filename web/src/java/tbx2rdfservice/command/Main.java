@@ -46,30 +46,11 @@ import tbx2rdfservice.store.RDFStoreFuseki;
  * @author admin
  */
 public class Main {
-
-    public static void test()
-    {
-        RDFStoreFuseki f = new RDFStoreFuseki();
-//        String ttl=RDFPrefixes.getSampleTTL();
-        RDFStoreFuseki.init();
-        /*RDFStoreFuseki.deleteGraph("");
-        RDFStoreFuseki.postEntity("", ttl);
-        int g=RDFStoreFuseki.countEntities("");
-        System.out.println(g);*/
-        
-        
-        
-        
-    }
     
+    public static void main(String[] argx) throws IOException {
 
-    
-    public static void main(String[] argX) throws IOException {
-        
-        test();
-        if(true)
-        return;
-        String[] args = {"-help"};
+//        String[] args = {"-count","foaf:Agent"};
+        String[] args = {"-dump"};
         
         BasicConfigurator.configure();
         Logger.getRootLogger().removeAllAppenders();
@@ -79,23 +60,39 @@ public class Main {
         CommandLine cl = null;
         try {
             Options options = new Options();
-            options.addOption("count", false, "Counts the number of terms");
+            options.addOption("countall", false, "Counts the number of class individuals");
+            options.addOption("count", true, "Counts the number of class individuals of a given class");
+            options.addOption("dump", false, "Dumps all the RDF in the server");
+            options.addOption("clear", false, "Deletes everything");
             options.addOption("help", false, "shows this help (Help)");
             
             
             clparser = new BasicParser();
             cl = clparser.parse(options, args);
             if (cl.hasOption("help")) {
-                System.out.println("RDFChess command line tool");
+                System.out.println("tbx2rdfservice command line tool");
                 new HelpFormatter().printHelp(Main.class.getCanonicalName(), options);
             }
+            if (cl.hasOption("clear")) {
+                RDFStoreFuseki.deleteAll();
+                System.out.println("ok");
+            }
+            if (cl.hasOption("dump")) {
+                String ttl = RDFStoreFuseki.dump();
+                System.out.println(ttl);
+                System.out.println("ok");
+            }
             if (cl.hasOption("count")) {
+                String param = cl.getOptionValue("count");
+                param=RDFPrefixes.extend(param);
+                int total =RDFStoreFuseki.countEntities(param);
+                System.out.println(total);
+            }
+            if (cl.hasOption("countall")) {
                 int total =RDFStoreFuseki.countEntities("");
                 System.out.println(total);
             }
-            if (cl.hasOption("add")) {
-                String sfile = cl.getOptionValue("add");
-            }
+
         } catch (Exception e) {
             System.err.println("error " + e.getMessage());
         }
