@@ -57,14 +57,20 @@ public class LinkedDataServlet extends HttpServlet {
         String peticion = request.getRequestURI();
         String id = request.getRequestURI().replace("/tbx2rdf/resource/", "");
         System.out.println(peticion + " " + id);
+        
         PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/get.txt");
         archivo.println("requestURI: " + peticion);
-        archivo.close();
+        
         String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
         String xid = peticion.replace("/tbx2rdf/resource/iate/", "");
         String recurso = base + xid;
         System.out.println("I have been getted for this resource: " + recurso);
+        archivo.println("\nrecurso: " + recurso);
+        
         String nt = RDFStoreFuseki.getEntity(recurso);
+
+        archivo.println("\ntriples: " + nt);
+        archivo.close();
 
         if (isRDFTTL(request)) {
             System.out.println("Serving TTL for " + recurso);
