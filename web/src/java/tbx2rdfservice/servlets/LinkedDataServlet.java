@@ -2,6 +2,9 @@ package tbx2rdfservice.servlets;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.vocabulary.RDF;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -9,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 
@@ -20,6 +24,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import tbx2rdfservice.TBX2RDFServiceConfig;
+import tbx2rdfservice.store.RDFPrefixes;
 import tbx2rdfservice.store.RDFStoreFuseki;
 
 /**
@@ -84,6 +89,7 @@ public class LinkedDataServlet extends HttpServlet {
             response.setContentType("text/turtle;charset=UTF-8");
         } else {
             response.setContentType("text/html;charset=UTF-8");
+            
             InputStream is1 = LinkedDataServlet.class.getResourceAsStream("../../../../ld.html");
             BufferedReader reader = new BufferedReader(new InputStreamReader(is1, "UTF-8"));
             StringBuilder outx = new StringBuilder();
@@ -96,6 +102,22 @@ public class LinkedDataServlet extends HttpServlet {
             Model model = ModelFactory.createDefaultModel();
             InputStream is = new ByteArrayInputStream(nt.getBytes(StandardCharsets.UTF_8));
             RDFDataMgr.read(model, is, Lang.NT);
+            model = RDFPrefixes.addPrefixesIfNeeded(model);
+            
+            Resource entidad = ModelFactory.createDefaultModel().createResource(recurso);
+            String titulo = entidad.getLocalName();
+            titulo = URLDecoder.decode(titulo, "UTF-8");
+/*          NodeIterator nit = model.listObjectsOfProperty(entidad, RDF.type);
+            String titulo = "Unknown type";
+            if (nit.hasNext()) {
+                Resource clase = nit.next().asResource();
+                titulo = clase.getLocalName();
+            }
+*/
+            
+            
+            
+            
             StringWriter sw = new StringWriter();
             RDFDataMgr.write(sw, model, Lang.TTL);
             response.setCharacterEncoding("UTF-8");
@@ -103,8 +125,9 @@ public class LinkedDataServlet extends HttpServlet {
             String ttl2 = StringEscapeUtils.escapeHtml4(sw.toString());
             
             try (PrintWriter out = response.getWriter()) {
+                body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + titulo);
                 body = body.replace("<!--TEMPLATE_TTL-->", "<br>" + ttl2);
-                response.getWriter().println(body);                
+//                response.getWriter().println(body);                
                 out.println(body);
             } catch (Exception e) {
 
