@@ -51,19 +51,6 @@ public class RDFStoreFuseki {
 
     public static void init() {
         if (fuseki == null) {
-            boolean existe = true;
-            try {
-                URL obj = new URL("http://localhost:3030");
-                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-                con.setRequestMethod("GET");
-                con.setRequestProperty("User-Agent", USER_AGENT);
-                int responseCode = con.getResponseCode();
-                System.out.println("Responsecode al mirar en el 3030: " + responseCode);
-            } catch (Exception e) {
-                existe = false;
-            }
-            if (existe)
-                return;
             try {
                 System.out.println("Launching fuseki server");
                 DatasetGraph dsg = TDBFactory.createDatasetGraph("data");

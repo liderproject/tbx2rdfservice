@@ -122,7 +122,6 @@ public class LinkedDataServlet extends HttpServlet {
         }
         tot = java.net.URLDecoder.decode(tot, "UTF-8");
         try {
-            System.out.println("Tratando de escribir en: " + TBX2RDFServiceConfig.get("logsfolder", ".") + "/post.txt");
             PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/post.txt");
             archivo.println("requestURI: " + peticion);archivo.flush();
             archivo.println("content: " + tot);archivo.flush();
