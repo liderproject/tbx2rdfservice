@@ -14,23 +14,18 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.sparql.core.DatasetGraph;
-import com.hp.hpl.jena.tdb.TDBFactory;
 import com.hp.hpl.jena.update.UpdateExecutionFactory;
 import com.hp.hpl.jena.update.UpdateFactory;
 import com.hp.hpl.jena.update.UpdateProcessor;
 import com.hp.hpl.jena.update.UpdateRequest;
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import static org.apache.http.HttpHeaders.USER_AGENT;
 import org.apache.jena.atlas.lib.FileOps;
 import org.apache.jena.fuseki.EmbeddedFusekiServer;
 import org.apache.jena.fuseki.server.FusekiConfig;
@@ -38,7 +33,6 @@ import org.apache.jena.fuseki.server.ServerConfig;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import tbx2rdfservice.TBX2RDFServiceConfig;
-import tbx2rdfservice.command.Main;
 
 /**
  * Interface for different RDFStores
@@ -258,5 +252,29 @@ public class RDFStoreFuseki {
         }
         return uris;                
     }
+
+    public static List<String> listGraphs() {
+        List<String> uris = new ArrayList();
+        String sparql = "SELECT DISTINCT ?g\n"
+                + "WHERE {\n"
+                + "  GRAPH ?g {\n"
+                + "    ?s ?p ?o\n"
+                + "  }\n"
+                + "} ";
+        try{
+        PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/query.txt");
+        archivo.println(sparql);
+        archivo.close();
+        }catch(Exception ex){}
+        Query query = QueryFactory.create(sparql);
+        String endpoint = "http://localhost:3031/tbx/query";
+        QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, query);
+        ResultSet results = qexec.execSelect();
+        for (; results.hasNext();) {
+            QuerySolution soln = results.nextSolution();
+            Resource p = soln.getResource("g");       // Get a result variable by name.
+            uris.add(p.toString());
+        }
+        return uris;                 }
 
 }
