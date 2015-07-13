@@ -251,7 +251,7 @@ public class RDFStoreFuseki {
         
         
         Query query = QueryFactory.create(sparql);
-        String endpoint = "http://localhost:3030/RDFChess/query";
+        String endpoint = "http://localhost:3030/tbx/query";
         QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, query);
         ResultSet results = qexec.execSelect();
         int conta=0;
