@@ -247,22 +247,16 @@ public class RDFStoreFuseki {
         archivo.println(sparql);
         archivo.close();
         }catch(Exception ex){}
-        
-        
-        
         Query query = QueryFactory.create(sparql);
-        String endpoint = "http://localhost:3030/tbx/query";
+        String endpoint = "http://localhost:3031/tbx/query";
         QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, query);
         ResultSet results = qexec.execSelect();
-        int conta=0;
         for (; results.hasNext();) {
             QuerySolution soln = results.nextSolution();
             Resource p = soln.getResource("s");       // Get a result variable by name.
             uris.add(p.toString());
-//            System.out.println(p.toString());
-            conta++;
         }
-   //     System.out.println(conta);        
-        return uris;                }
+        return uris;                
+    }
 
 }
