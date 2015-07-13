@@ -121,16 +121,13 @@ public class LinkedDataServlet extends HttpServlet {
             tot = tot + s + "";
         }
         tot = java.net.URLDecoder.decode(tot, "UTF-8");
-
-        System.out.println("SERVIDOR AQUI: " + tot);
-
         try {
             System.out.println("Tratando de escribir en: " + TBX2RDFServiceConfig.get("logsfolder", ".") + "/post.txt");
             PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/post.txt");
-            archivo.println("requestURI: " + peticion);
-            archivo.println("content: " + tot);
+            archivo.println("requestURI: " + peticion);archivo.flush();
+            archivo.println("content: " + tot);archivo.flush();
             boolean ok = RDFStoreFuseki.postEntity(peticion, tot, Lang.NT);
-            archivo.println("postedentity: " + ok);
+            archivo.println("postedentity: " + ok);archivo.flush();
             archivo.close();
         } catch (Exception e) {
             System.err.println("Mal al postear en fuseki");

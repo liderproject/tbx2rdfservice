@@ -20,7 +20,9 @@ import com.hp.hpl.jena.update.UpdateFactory;
 import com.hp.hpl.jena.update.UpdateProcessor;
 import com.hp.hpl.jena.update.UpdateRequest;
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -35,6 +37,7 @@ import org.apache.jena.fuseki.server.FusekiConfig;
 import org.apache.jena.fuseki.server.ServerConfig;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
+import tbx2rdfservice.TBX2RDFServiceConfig;
 import tbx2rdfservice.command.Main;
 
 /**
@@ -136,6 +139,11 @@ public class RDFStoreFuseki {
             dataAccessor.putModel(id, model); //gameid
             return true;
         } catch (Exception e) {
+            try{
+            PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/error.txt");
+            archivo.println(e.getMessage());
+            archivo.close();
+            }catch(Exception ex){}
             e.printStackTrace();
             return false;
         }
