@@ -190,7 +190,12 @@ public class LinkedDataServlet extends HttpServlet {
             PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/post.txt");
             archivo.println("requestURI: " + peticion);archivo.flush();
             archivo.println("content: " + tot);archivo.flush();
-            boolean ok = RDFStoreFuseki.postEntity(peticion, tot, Lang.NT);
+            
+        String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
+        String xid = peticion.replace("/tbx2rdf/resource/iate/", "");
+        String recurso = base + xid;
+        
+            boolean ok = RDFStoreFuseki.postEntity(recurso, tot, Lang.NT);
             archivo.println("postedentity: " + ok);archivo.flush();
             archivo.close();
         } catch (Exception e) {

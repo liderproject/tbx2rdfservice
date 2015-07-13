@@ -82,6 +82,9 @@ public class ServicesServlet extends HttpServlet {
 
             }
             
+        }if (uri.endsWith("/service/clear")) {
+            RDFStoreFuseki.deleteAll();
+            response.setStatus(HttpServletResponse.SC_OK);
         }else
         {
             Tbx2rdfServlet.serveError(request, response);
