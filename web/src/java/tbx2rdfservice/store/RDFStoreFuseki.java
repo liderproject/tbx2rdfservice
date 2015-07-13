@@ -242,6 +242,14 @@ public class RDFStoreFuseki {
         sparql += " OFFSET " + offset +"\n";
         sparql += " LIMIT " + limit +"\n";
         
+        try{
+        PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/query.txt");
+        archivo.println(sparql);
+        archivo.close();
+        }catch(Exception ex){}
+        
+        
+        
         Query query = QueryFactory.create(sparql);
         String endpoint = "http://localhost:3030/RDFChess/query";
         QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, query);
