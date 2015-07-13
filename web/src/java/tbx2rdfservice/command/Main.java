@@ -43,6 +43,11 @@ import tbx2rdfservice.store.RDFStoreFuseki;
  * Main entry point to manage the web application. 
  * The war file is expected to be deployed as tbx2rdf.war AND NOT AS TBX2RDFService. After compile please rename
  * The service is expected to be given under http://tbx2rdf.lider-project.eu/converter/tbx2rdf in lider2
+ * 
+ * TO LAUNCH FUSEKI:
+ * - go to lider2, opt/fuseki
+ * - execute sudo nohup java -jar ./fuseki-server.jar --update --loc=data --port 3031 /tbx&
+
  * @author admin
  */
 public class Main {

@@ -111,7 +111,7 @@ public class Tbx2rdfServlet extends HttpServlet {
         processRequest(request, response);
     }
     
-    protected void serveError(HttpServletRequest req, HttpServletResponse resp)
+    public static void serveError(HttpServletRequest req, HttpServletResponse resp)
     {
         try {
             resp.getWriter().println("Not found or parameters missing");
