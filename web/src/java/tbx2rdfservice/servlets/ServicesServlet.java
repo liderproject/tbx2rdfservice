@@ -34,7 +34,7 @@ public class ServicesServlet extends HttpServlet {
             String offset = request.getParameter("current");
             String limit = request.getParameter("rowCount");
             int current = Integer.parseInt(offset);
-            int total = 1000;
+            int total = RDFStoreFuseki.countEntities("http://www.w3.org/2004/02/skos/core#Concept");
             int ilimit = Integer.parseInt(limit);
             int init = (current - 1) * ilimit;
             List<String> ls = RDFStoreFuseki.listResources(init, ilimit);

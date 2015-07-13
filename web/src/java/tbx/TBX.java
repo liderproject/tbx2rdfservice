@@ -38,8 +38,8 @@ public class TBX {
         
 
         List<LexicalSense> senses = getSampleSenses();
-        String url = senses.get(1).getURI();
-        String nt = senses.get(1).getNT();
+        String url = senses.get(0).getURI();
+        String nt = senses.get(0).getNT();
         System.out.println(url);
         System.out.println(nt);
         boolean ok=RDFStoreClient.post(url, nt);

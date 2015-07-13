@@ -54,8 +54,8 @@ public class Main {
     
     public static void main(String[] argx) throws IOException {
 
-//        String[] args = {"-count","foaf:Agent"};
-        String[] args = {"-dump"};
+        String[] args = {"-count","foaf:Agent"};
+//        String[] args = {"-dump"};
         
         BasicConfigurator.configure();
         Logger.getRootLogger().removeAllAppenders();
