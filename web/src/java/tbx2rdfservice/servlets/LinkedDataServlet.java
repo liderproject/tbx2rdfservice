@@ -61,6 +61,47 @@ public class LinkedDataServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String peticion = request.getRequestURI();
+        if (peticion.endsWith("/resource/")) {                               //SERVING THE LIST OF resources
+            System.out.println("Serving HTML for general players");
+            response.setContentType("text/html;charset=UTF-8");
+            InputStream is1 = LinkedDataServlet.class.getResourceAsStream("../../../../ld.html");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is1));
+            StringBuilder outx = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                outx.append(line);
+            }
+            String body = outx.toString();
+            body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + "List of chess players");
+            String tabla ="<table id=\"grid-data\" class=\"table table-condensed table-hover table-striped\">\n" +
+"        <thead>\n" +
+"                <tr>\n" +
+"                        <th data-column-id=\"resource\" data-formatter=\"link\" data-order=\"desc\">Terms</th>\n" +
+"                </tr>\n" +
+"        </thead>\n" +
+"</table>	\n" +
+"";
+            body = body.replace("<!--TEMPLATE_PGN-->", "<br>" + tabla);
+                
+                
+/*
+                String lista="";
+                List<String> ls = RDFStore.listChessPlayers();
+                for(String s : ls)
+                {
+                    int ultimo = s.lastIndexOf("/");
+                    String name= s.substring(ultimo+1, s.length());
+                    name = URLDecoder.decode(name, "UTF-8");
+                    lista+="<a href=\"" + s +"\">"+name+"</a><br>";
+                }
+            body = body.replace("<!--TEMPLATE_PGN-->", "<br>" + lista);
+            */
+            response.getWriter().println(body);
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;            
+        }        
+        
+        
         String id = request.getRequestURI().replace("/tbx2rdf/resource/", "");
         System.out.println(peticion + " " + id);
         PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/get.txt");

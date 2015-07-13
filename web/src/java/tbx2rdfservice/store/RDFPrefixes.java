@@ -27,6 +27,9 @@ public class RDFPrefixes {
         map.put("http://xmlns.com/foaf/0.1/", "foaf");
         map.put("http://tbx2rdf.lider-project.eu/tbx#", "tbx");
         map.put("http://www.w3.org/ns/lemon/ontolex#", "ontolex");
+        map.put("http://tbx2rdf.lider-project.eu/converter/resource/iate/", "iate");
+        
+        
     }
     public static String reverse(String prefix)
     {

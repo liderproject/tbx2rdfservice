@@ -16,6 +16,7 @@
         <link rel="stylesheet" href="css/chess.css" type="text/css" media="screen" title="no title" charset="utf-8">
         <script src="js/jchess-0.1.0.js" type="text/javascript"></script>
         <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+        <base href="http://tbx2rdf.lider-project.eu/converter/">
     </head>
     <body>
         <nav class="navbar navbar-inverse">
@@ -69,11 +70,11 @@ $("#grid-data").bootgrid({
             currenturl: window.location.href 
         };*/
     },
-    url: "/rdfchess/service/getChessplayers",
+    url: "/rdfchess/service/getResources",
     formatters: {
         "link": function(column, row)
         {
-            return "<a href=\"" + row.chessplayerurl + "\">"+ row.chessplayer +  "</a>";
+            return "<a href=\"" + row.resourceurl + "\">"+ row.resource +  "</a>";
         }
     }
 });
