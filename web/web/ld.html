@@ -29,6 +29,7 @@
                         <li><a href="index.html">TBX2RDFService</a></li>
                         <li><a href="tbx2rdf.html">Service Test</a></li> 
                         <li><a href="download.html">Download</a></li> <!--doc/index.html-->
+                        <li class="active"><a href="resource/">Resources</a></li> <!--doc/index.html-->
                     </ul>
                 </div>
             </div>
@@ -70,7 +71,7 @@ $("#grid-data").bootgrid({
             currenturl: window.location.href 
         };*/
     },
-    url: "/rdfchess/service/getResources",
+    url: "/service/getResources",
     formatters: {
         "link": function(column, row)
         {

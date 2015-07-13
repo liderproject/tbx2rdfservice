@@ -1,16 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package tbx2rdfservice.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLDecoder;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import tbx2rdfservice.store.RDFStoreFuseki;
 
 /**
  *
@@ -30,18 +28,50 @@ public class ServicesServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ServicesServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ServicesServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        String uri = request.getRequestURI();
+        String txt = "";
+        if (uri.equals("/service/getResources")) {
+            String offset = request.getParameter("current");
+            String limit = request.getParameter("rowCount");
+            int current = Integer.parseInt(offset);
+            int total = 1000;
+            int ilimit = Integer.parseInt(limit);
+            int init = (current - 1) * ilimit;
+            List<String> ls = RDFStoreFuseki.listResources(init, ilimit);
+            System.out.println(offset + " " + limit);
+            String s = "{\n"
+                    + "  \"current\": " + current + ",\n"
+                    + "  \"rowCount\": " + ilimit + ",\n"
+                    + "  \"rows\": [\n";
+            int conta = 0;
+            for (String cp : ls) {
+
+                int lasti = cp.lastIndexOf("/");
+                String nombre = cp.substring(lasti + 1, cp.length());
+                nombre = URLDecoder.decode(nombre, "UTF-8");
+                cp = cp.replace(" ", "+");
+                if (conta != 0) {
+                    s += ",\n";
+                }
+                s += "    {\n"
+                        + "      \"resource\": \"" + nombre + "\",\n"
+                        + "      \"resourceurl\": \"" + cp + "\"\n"
+                        + "    } ";
+                conta++;
+            }
+
+            s += "  ],\n"
+                    + "  \"total\": " + total + "\n"
+                    + "}    ";
+            try (PrintWriter out = response.getWriter()) {
+                out.print(s);
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.setContentType("application/json");
+            } catch (Exception e) {
+
+            }
         }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -62,7 +62,7 @@ public class LinkedDataServlet extends HttpServlet {
             throws ServletException, IOException {
         String peticion = request.getRequestURI();
         if (peticion.endsWith("/resource/")) {                               //SERVING THE LIST OF resources
-            System.out.println("Serving HTML for general players");
+            System.out.println("Serving HTML for resources");
             response.setContentType("text/html;charset=UTF-8");
             InputStream is1 = LinkedDataServlet.class.getResourceAsStream("../../../../ld.html");
             BufferedReader reader = new BufferedReader(new InputStreamReader(is1));
@@ -72,7 +72,7 @@ public class LinkedDataServlet extends HttpServlet {
                 outx.append(line);
             }
             String body = outx.toString();
-            body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + "List of chess players");
+            body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + "List of terms");
             String tabla ="<table id=\"grid-data\" class=\"table table-condensed table-hover table-striped\">\n" +
 "        <thead>\n" +
 "                <tr>\n" +
