@@ -42,7 +42,8 @@ public class TBX {
         String nt = senses.get(0).getNT();
         System.out.println(url);
         System.out.println(nt);
-        boolean ok=RDFStoreClient.post(url, nt);
+//        boolean ok=RDFStoreClient.post(url, nt);
+        RDFStoreClient.delete(url);
     }
 
     public static void uploadSenses() {

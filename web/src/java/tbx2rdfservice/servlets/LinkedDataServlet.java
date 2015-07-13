@@ -82,20 +82,6 @@ public class LinkedDataServlet extends HttpServlet {
 "</table>	\n" +
 "";
             body = body.replace("<!--TEMPLATE_PGN-->", "<br>" + tabla);
-                
-                
-/*
-                String lista="";
-                List<String> ls = RDFStore.listChessPlayers();
-                for(String s : ls)
-                {
-                    int ultimo = s.lastIndexOf("/");
-                    String name= s.substring(ultimo+1, s.length());
-                    name = URLDecoder.decode(name, "UTF-8");
-                    lista+="<a href=\"" + s +"\">"+name+"</a><br>";
-                }
-            body = body.replace("<!--TEMPLATE_PGN-->", "<br>" + lista);
-            */
             response.getWriter().println(body);
             response.setStatus(HttpServletResponse.SC_OK);
             return;            
@@ -148,17 +134,6 @@ public class LinkedDataServlet extends HttpServlet {
             Resource entidad = ModelFactory.createDefaultModel().createResource(recurso);
             String titulo = entidad.getLocalName();
             titulo = URLDecoder.decode(titulo, "UTF-8");
-/*          NodeIterator nit = model.listObjectsOfProperty(entidad, RDF.type);
-            String titulo = "Unknown type";
-            if (nit.hasNext()) {
-                Resource clase = nit.next().asResource();
-                titulo = clase.getLocalName();
-            }
-*/
-            
-            
-            
-            
             StringWriter sw = new StringWriter();
             RDFDataMgr.write(sw, model, Lang.TTL);
             response.setCharacterEncoding("UTF-8");
@@ -179,6 +154,18 @@ public class LinkedDataServlet extends HttpServlet {
         
 
     }
+    
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String peticion = request.getRequestURI();
+        String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
+        String xid = peticion.replace("/tbx2rdf/resource/iate/", "");
+        String recurso = base + xid;                
+        RDFStoreFuseki.deleteGraph(recurso);
+        response.sendRedirect("/");
+    }
+    
+    
 
     /**
      * Handles the HTTP <code>POST</code> method.

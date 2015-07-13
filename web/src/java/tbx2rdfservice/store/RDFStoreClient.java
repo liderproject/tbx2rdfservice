@@ -14,6 +14,26 @@ import static org.apache.http.HttpHeaders.USER_AGENT;
  */
 public class RDFStoreClient {
 
+    public static boolean delete(String url)
+    {
+        try{
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("DELETE");
+            con.setRequestProperty("User-Agent", USER_AGENT);
+            con.setDoOutput(true);
+            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+            wr.writeBytes("");
+            wr.flush();
+            wr.close();
+            int responseCode = con.getResponseCode();
+            return true;
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+                
     public static boolean post(String url, String nt) {
         try {
             nt=URLEncoder.encode(nt,"UTF-8");
