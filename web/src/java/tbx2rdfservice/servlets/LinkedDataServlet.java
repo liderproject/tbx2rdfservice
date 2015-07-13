@@ -162,7 +162,8 @@ public class LinkedDataServlet extends HttpServlet {
         String xid = peticion.replace("/tbx2rdf/resource/iate/", "");
         String recurso = base + xid;                
         RDFStoreFuseki.deleteGraph(recurso);
-        response.sendRedirect("/");
+        response.setStatus(HttpServletResponse.SC_OK);
+//        response.sendRedirect("/");
     }
     
     
