@@ -50,6 +50,7 @@ public class RDFStoreFuseki {
     private static EmbeddedFusekiServer fuseki = null;
 
     public static void init() {
+        /*
         if (fuseki == null) {
             try {
                 System.out.println("Launching fuseki server");
@@ -59,7 +60,7 @@ public class RDFStoreFuseki {
             } catch (Exception e) {
                 System.err.println("Could not start fuseki " + e.getMessage());
             }
-        }
+        }*/
     }
 
     public static boolean test() {
@@ -78,7 +79,7 @@ public class RDFStoreFuseki {
                 + "  }\n"
                 + "} LIMIT 1000";
         Query query = QueryFactory.create(sparql);
-        String endpoint = "http://localhost:3030/tbx/query";
+        String endpoint = "http://localhost:3031/tbx/query";
         QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, query);
         ResultSet results = qexec.execSelect();
         String sresults = "";
@@ -99,7 +100,7 @@ public class RDFStoreFuseki {
 
     public static boolean deleteGraph(String graph) {
         init();
-        String endpoint = "http://localhost:3030/tbx/update";
+        String endpoint = "http://localhost:3031/tbx/update";
         UpdateRequest request = UpdateFactory.create();
         request.add("DROP GRAPH <" + graph + ">");
         UpdateProcessor qexec = UpdateExecutionFactory.createRemoteForm(request, endpoint);
@@ -118,7 +119,7 @@ public class RDFStoreFuseki {
         try {
             init();
             System.out.println("We have been posted id: " +id);
-            String endpoint = "http://localhost:3030/tbx/data";
+            String endpoint = "http://localhost:3031/tbx/data";
             DatasetAccessor dataAccessor = DatasetAccessorFactory.createHTTP(endpoint);
             Model model = ModelFactory.createDefaultModel();
             InputStream stream = new ByteArrayInputStream(rdf.getBytes("UTF-8"));
@@ -142,7 +143,7 @@ public class RDFStoreFuseki {
 
     public static void deleteAll() {
         init();
-        String endpoint = "http://localhost:3030/tbx/update";
+        String endpoint = "http://localhost:3031/tbx/update";
         UpdateRequest request = UpdateFactory.create();
         request.add("DROP ALL");
         UpdateProcessor qexec = UpdateExecutionFactory.createRemoteForm(request, endpoint);
@@ -169,7 +170,7 @@ public class RDFStoreFuseki {
                 + "  }\n"
                 + "} ";
         Query query = QueryFactory.create(sparql);
-        String endpoint = "http://localhost:3030/tbx/query";
+        String endpoint = "http://localhost:3031/tbx/query";
         QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, query);
         ResultSet results = qexec.execSelect();
         for (; results.hasNext();) {
@@ -204,7 +205,7 @@ public class RDFStoreFuseki {
                 + "  }\n"
                 + "} LIMIT 1000";
         Query query = QueryFactory.create(sparql);
-        String endpoint = "http://localhost:3030/tbx/query";
+        String endpoint = "http://localhost:3031/tbx/query";
         QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, query);
         ResultSet results = qexec.execSelect();
         String sresults = "";
