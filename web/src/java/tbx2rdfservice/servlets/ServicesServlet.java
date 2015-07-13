@@ -30,7 +30,7 @@ public class ServicesServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String uri = request.getRequestURI();
         String txt = "";
-        if (uri.equals("/service/getResources")) {
+        if (uri.endsWith("/service/getResources")) {
             String offset = request.getParameter("current");
             String limit = request.getParameter("rowCount");
             int current = Integer.parseInt(offset);
@@ -70,6 +70,9 @@ public class ServicesServlet extends HttpServlet {
             } catch (Exception e) {
 
             }
+        }else
+        {
+            Tbx2rdfServlet.serveError(request, response);
         }
 
     }
