@@ -92,9 +92,14 @@ public class LinkedDataServlet extends HttpServlet {
         PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/get.txt");
         archivo.println("requestURI: " + peticion);
         String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
-        String xid = peticion.replace("/tbx2rdf/resource/iate/", "");
-        String recurso = base + xid;
-        System.out.println("I have been getted for this resource: " + recurso);
+//        String xid = peticion.replace("/tbx2rdf/resource/iate/", "");
+        //       String recurso = base + xid;
+
+        String lastid = peticion.substring(peticion.lastIndexOf("/") + 1, peticion.length());
+        String dataset = peticion.substring(peticion.lastIndexOf("resource/") + 9, peticion.lastIndexOf("/"));
+        String domain = base.substring(0, base.indexOf("resource/"));
+        String recurso = domain + "resource/" + dataset + "/" + lastid;
+
         archivo.println("\nrecurso: " + recurso);
         String nt = RDFStoreFuseki.getEntity(recurso);
         if (nt.isEmpty()) {
