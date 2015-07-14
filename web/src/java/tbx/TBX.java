@@ -77,14 +77,38 @@ public class TBX {
         le22.source = "Juriterm - Banque Terminologique de la Common Law. Université de Moncton 1999;";
         ls2.addEntry(le22);
 
-        LexicalSense ls3= new LexicalSense("Derivative work");
+        LexicalSense ls3= new LexicalSense("Derivative work (ES)");
         ls3.base="http://tbx2rdf.lider-project.eu/converter/resource/cc/";
-        ls3.definition.add("Se considerará \"obra derivada\" aquella que se encuentre basada en una obra o en una obra y otras preexistentes, tales como: las traducciones y adaptaciones; las revisiones, actualizaciones y anotaciones; los compendios, resúmenes y extractos; los arreglos musicales y; en general, cualesquiera transformaciones de una obra literaria, artística o científica, salvo que la obra resultante tenga el carácter de obra conjunta en cuyo caso no será considerada como una obra derivada a los efectos de esta licencia. Para evitar la duda, si la obra consiste en una composición musical o grabación de sonidos, la sincronización temporal de la obra con una imagen en movimiento (\"synching\") será considerada como una obra derivada a los efectos de esta licencia.");
-        ls3.definitionlan.add("es-es");
+        ls3.addDefinition("Se considerará obra derivada aquella que se encuentre basada en una obra o en una obra y otras preexistentes, tales como: las traducciones y adaptaciones; las revisiones, actualizaciones y anotaciones; los compendios, resúmenes y extractos; los arreglos musicales y; en general, cualesquiera transformaciones de una obra literaria, artística o científica, salvo que la obra resultante tenga el carácter de obra conjunta en cuyo caso no será considerada como una obra derivada a los efectos de esta licencia. Para evitar la duda, si la obra consiste en una composición musical o grabación de sonidos, la sincronización temporal de la obra con una imagen en movimiento (\"synching\") será considerada como una obra derivada a los efectos de esta licencia.", "es");
+        ls3.addDefinition("Sedrán obres derivaes les feches a partir de la llicenciada, como por exemplu: les tornes y adautaciones; les revisiones, actualizaciones y anotaciones; los compendios, resúmenes y estractos; los arreglos musicales y, en xeneral, les tresformaciones d’una obra lliteraria, artística o científica. Pa que nun se plantegue dulda nenguna, si la obra ye una composición musical o grabación de soníos, la sincronización temporal de la obra con una imaxe en movimientu (synching) consideraráse como una obra derivada a efeutos d’esta llicencia", "ast");
+        ls3.addDefinition("Es consideraran obres derivades aquelles obres creades a partir de l'objecte d'aquesta llicència com, per exemple, les traduccions i adaptacions; les revisions, actualitzacions i anotacions; els compendis, resums i extractes; els arranjaments musicals, i en general qualsevol transformació d'una obra literària, artística o científica. Per aclarir dubtes, si l'obra consisteix en una composició musical o en un enregistrament de sons, la sincronització temporal de l'obra amb una imatge en moviment (synching) serà considerada com una obra derivada als efectes d'aquesta llicència.", "ca");
+        ls3.addDefinition("Lan eratorritzat joko dira lan baimendunetik abiatuta sortutakoak, besteak beste: itzulpenak eta egokitzapenak; berrikuspenak, eguneratzeak eta oharpenak; bildumak, laburpenak eta aterakinak; musika moldaketak eta, orobat, literatur, arte edo zientzia lan baten eraldaketa oro. Zalantzarik egon ez dadin, lana baldin bada musika konposizioa eta soinu grabaketa, lan hori mugimenduzko irudiekin denboraz sinkronizatzea lan eratorritzat joko da baimen honen ondorioetarako.", "eu");
+        ls3.addDefinition("Consideraranse obras derivadas aquelas obras creadas a partir da licenciada, como por exemplo: as traducións e adaptacións; as revisións, actualizacións e anotacións; os compendios, resumos e extractos; os arranxos musicais e, en xeral, calquera transformación dunha obra literaria, artística ou científica. Para evitar a dúbida, se a obra consiste nunha composición musical ou gravación de sons, a sincronización temporal da obra cunha imaxe en movemento (synching) será considerada como unha obra derivada para os efectos desta licenza.", "gl");
+        ls3.addDefinition("Se consideraràn òbres derivades aqueres òbres creades a compdar der objècte d'aguesta licéncia com, per exemple, es traduccions e adaptacions; es revisions, actualizacions e anotacions; es compendis, resums e extractes; es arranjaments musicaus, e en generau quaussevolh transformacion d'ua òbra literària, artistica o scientifica. Entà aclarir dobtes, s'era òbra consistís en ua composicion musicau o en un enregistrament de sons, era sincronizacion temporau dera òbra damb ua imatge en moviment (synching) serà considerada com ua òbra derivada as efèctes d'aguesta licéncia.", "oci");
+        
+        
         LexicalEntry le31 = new LexicalEntry("obra derivada", "es");
         le31.base="http://tbx2rdf.lider-project.eu/converter/resource/cc/";
         le31.source="http://creativecommons.org/licenses/by/2.0/es/legalcode.es";
         ls3.addEntry(le31);
+        LexicalEntry le32 = new LexicalEntry("obra derivada", "ca");
+        le32.base="http://tbx2rdf.lider-project.eu/converter/resource/cc/";
+        le32.source="http://creativecommons.org/licenses/by/3.0/es/legalcode.ca";
+        ls3.addEntry(le32);
+        LexicalEntry le33 = new LexicalEntry("obra derivada", "gl");
+        le33.base="http://tbx2rdf.lider-project.eu/converter/resource/cc/";
+        le33.source="http://creativecommons.org/licenses/by/3.0/es/legalcode.gl";
+        ls3.addEntry(le33);
+        LexicalEntry le34 = new LexicalEntry("òbra derivada", "oci");
+        le34.base="http://tbx2rdf.lider-project.eu/converter/resource/cc/";
+        le34.source="http://creativecommons.org/licenses/by/3.0/es/legalcode.oci";
+        ls3.addEntry(le34);
+        LexicalEntry le35 = new LexicalEntry("lan eratorririk", "eu");
+        le34.base="http://tbx2rdf.lider-project.eu/converter/resource/cc/";
+        le34.source="http://creativecommons.org/licenses/by/3.0/es/legalcode.eu";
+        ls3.addEntry(le35);
+        
+                
         
         senses.add(ls);
         senses.add(ls2);

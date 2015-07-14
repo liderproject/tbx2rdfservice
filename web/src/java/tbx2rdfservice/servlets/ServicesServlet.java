@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringEscapeUtils;
 import tbx2rdfservice.store.RDFStoreFuseki;
 
 /**
@@ -86,8 +87,13 @@ public class ServicesServlet extends HttpServlet {
             if (uri.endsWith("/service/dump")) {
                 String ttl = RDFStoreFuseki.dump();
                 try (PrintWriter out = response.getWriter()) {
+                    String html="<html><head><script src=\"https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js\"></head>";
+                    html+="<body><pre class=\"prettyprint\">";
+                    ttl = StringEscapeUtils.escapeHtml4(ttl);
                     ttl = ttl.replace("\n", "<br>");
-                    out.print(ttl);
+                    html+=ttl;
+                    html+="</pre></body></html>";
+                    out.print(html);
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.setContentType("text/html");
                 } catch (Exception e) {
