@@ -45,6 +45,8 @@ public class LexicalSense {
             for(int i=0;i<n;i++)
             {
                 String def = definition.get(i);
+                def=def.replace("\"", "");
+
                 String deflan= definitionlan.get(i);
                 String lit="\""+def+"\"";
                 if (!deflan.isEmpty())
@@ -55,7 +57,7 @@ public class LexicalSense {
             {
                 nt += "<"+sres+"> <http://www.w3.org/ns/lemon/ontolex#reference> <"+ entry.getURI() +"> .\n"; 
                 
-                nt += entry.getNT();
+          //      nt += entry.getNT();
                 
             }
             return nt;

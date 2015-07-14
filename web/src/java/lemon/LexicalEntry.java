@@ -71,9 +71,11 @@ public class LexicalEntry {
                 nt += "<" + sres + "> <http://tbx2rdf.lider-project.eu/tbx#reliabilityCode> <" + reliabilitycode + "> .\n";
             }
             if (!source.isEmpty()) {
+                source=source.replace("\"", "");
                 nt += "<" + sres + "> <http://purl.org/dc/terms/source> \"" + source + "\" .\n";
             }
             if (!comentario.isEmpty()) {
+                comentario=comentario.replace("\"", "");
                 nt += "<" + sres + "> <http://www.w3.org/2000/01/rdf-schema#comment> \"" + comentario + "\" .\n";
             }
             return nt;

@@ -73,21 +73,20 @@ public class LinkedDataServlet extends HttpServlet {
             }
             String body = outx.toString();
             body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + "List of terms");
-            String tabla ="<table id=\"grid-data\" class=\"table table-condensed table-hover table-striped\">\n" +
-"        <thead>\n" +
-"                <tr>\n" +
-"                        <th data-column-id=\"resource\" data-formatter=\"link\" data-order=\"desc\">Terms</th>\n" +
-"                </tr>\n" +
-"        </thead>\n" +
-"</table>	\n" +
-"";
+            String tabla = "<table id=\"grid-data\" class=\"table table-condensed table-hover table-striped\">\n"
+                    + "        <thead>\n"
+                    + "                <tr>\n"
+                    + "                        <th data-column-id=\"resource\" data-formatter=\"link\" data-order=\"desc\">Terms</th>\n"
+                    + "                </tr>\n"
+                    + "        </thead>\n"
+                    + "</table>	\n"
+                    + "";
             body = body.replace("<!--TEMPLATE_PGN-->", "<br>" + tabla);
             response.getWriter().println(body);
             response.setStatus(HttpServletResponse.SC_OK);
-            return;            
-        }        
-        
-        
+            return;
+        }
+
         String id = request.getRequestURI().replace("/tbx2rdf/resource/", "");
         System.out.println(peticion + " " + id);
         PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/get.txt");
@@ -98,8 +97,7 @@ public class LinkedDataServlet extends HttpServlet {
         System.out.println("I have been getted for this resource: " + recurso);
         archivo.println("\nrecurso: " + recurso);
         String nt = RDFStoreFuseki.getEntity(recurso);
-        if (nt.isEmpty())
-        {
+        if (nt.isEmpty()) {
             Tbx2rdfServlet.serveError(request, response);
             return;
         }
@@ -116,7 +114,7 @@ public class LinkedDataServlet extends HttpServlet {
             response.setContentType("text/turtle;charset=UTF-8");
         } else {
             response.setContentType("text/html;charset=UTF-8");
-            
+
             InputStream is1 = LinkedDataServlet.class.getResourceAsStream("../../../../ld.html");
             BufferedReader reader = new BufferedReader(new InputStreamReader(is1, "UTF-8"));
             StringBuilder outx = new StringBuilder();
@@ -124,13 +122,13 @@ public class LinkedDataServlet extends HttpServlet {
             while ((line = reader.readLine()) != null) {
                 outx.append(line);
             }
-            String body = outx.toString();            
-            
+            String body = outx.toString();
+
             Model model = ModelFactory.createDefaultModel();
             InputStream is = new ByteArrayInputStream(nt.getBytes(StandardCharsets.UTF_8));
             RDFDataMgr.read(model, is, Lang.NT);
             model = RDFPrefixes.addPrefixesIfNeeded(model);
-            
+
             Resource entidad = ModelFactory.createDefaultModel().createResource(recurso);
             String titulo = entidad.getLocalName();
             titulo = URLDecoder.decode(titulo, "UTF-8");
@@ -139,7 +137,7 @@ public class LinkedDataServlet extends HttpServlet {
             response.setCharacterEncoding("UTF-8");
             System.out.println("Serving HTML for " + recurso);
             String ttl2 = StringEscapeUtils.escapeHtml4(sw.toString());
-            
+
             try (PrintWriter out = response.getWriter()) {
                 body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + titulo);
                 body = body.replace("<!--TEMPLATE_TTL-->", "<br>" + ttl2);
@@ -151,22 +149,19 @@ public class LinkedDataServlet extends HttpServlet {
 
         }
         response.setStatus(HttpServletResponse.SC_OK);
-        
 
     }
-    
+
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String peticion = request.getRequestURI();
         String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
         String xid = peticion.replace("/tbx2rdf/resource/iate/", "");
-        String recurso = base + xid;                
+        String recurso = base + xid;
         RDFStoreFuseki.deleteGraph(recurso);
         response.setStatus(HttpServletResponse.SC_OK);
 //        response.sendRedirect("/");
     }
-    
-    
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -188,23 +183,29 @@ public class LinkedDataServlet extends HttpServlet {
         tot = java.net.URLDecoder.decode(tot, "UTF-8");
         try {
             PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/post.txt");
-            archivo.println("requestURI: " + peticion);archivo.flush();
-            archivo.println("content: " + tot);archivo.flush();
-            
-        //TODO HAY QUE CAMBIAR ESTO PARA QUE NO SEA IATE SOLO!!!!!!!!
-        String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
-        String lastid = peticion.substring(peticion.lastIndexOf("/")+1,peticion.length());
-        String dataset = peticion.substring(peticion.lastIndexOf("resource/")+9,peticion.lastIndexOf("/"));
-        String domain = base.substring(0,base.indexOf("resource/"));
-        archivo.println("domain: " + domain);archivo.flush();
-        archivo.println("dataset: " + dataset);archivo.flush();
-        archivo.println("lastid: " + lastid);archivo.flush();
-        String recurso = domain+"resource/"+dataset+"/"+lastid;
+            archivo.println("requestURI: " + peticion);
+            archivo.flush();
+            archivo.println("content: " + tot);
+            archivo.flush();
+
+            //TODO HAY QUE CAMBIAR ESTO PARA QUE NO SEA IATE SOLO!!!!!!!!
+            String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
+            String lastid = peticion.substring(peticion.lastIndexOf("/") + 1, peticion.length());
+            String dataset = peticion.substring(peticion.lastIndexOf("resource/") + 9, peticion.lastIndexOf("/"));
+            String domain = base.substring(0, base.indexOf("resource/"));
+            archivo.println("domain: " + domain);
+            archivo.flush();
+            archivo.println("dataset: " + dataset);
+            archivo.flush();
+            archivo.println("lastid: " + lastid);
+            archivo.flush();
+            String recurso = domain + "resource/" + dataset + "/" + lastid;
 //        String xid = peticion.replace("/tbx2rdf/resource/iate/", "");
 //        String recurso = base + xid;
-        
+
             boolean ok = RDFStoreFuseki.postEntity(recurso, tot, Lang.NT);
-            archivo.println("postedentity: " + ok);archivo.flush();
+            archivo.println("postedentity (name,ok): " + recurso + " " + ok);
+            archivo.flush();
             archivo.close();
         } catch (Exception e) {
             System.err.println("Mal al postear en fuseki");
@@ -212,7 +213,7 @@ public class LinkedDataServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             out.println(tot);
-        }catch(Exception e){
+        } catch (Exception e) {
             System.err.println("Mal al dar respuesta.");
         }
         response.setStatus(HttpServletResponse.SC_OK);
