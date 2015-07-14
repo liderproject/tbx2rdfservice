@@ -17,8 +17,8 @@ public class LexicalSense {
     String id = "";
     String name = "";
     public String subjectField = "";
-    public String definition="";
-    public String definitionlan="";
+    public List<String> definition=new ArrayList();
+    public List<String> definitionlan=new ArrayList();
     List<LexicalEntry> entries = new ArrayList();
     public String base = TBX2RDFServiceConfig.get("datauri","http://localhost:8080/");
     
@@ -41,11 +41,14 @@ public class LexicalSense {
             nt += "<"+sres+"> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .\n"; 
             if (!subjectField.isEmpty())
                 nt += "<"+sres+"> <http://tbx2rdf.lider-project.eu/tbx#subjectField> \""+ subjectField +"\" .\n"; 
-            if (!definition.isEmpty())
+            int n = definition.size();
+            for(int i=0;i<n;i++)
             {
-                String lit="\""+definition+"\"";
-                if (!definitionlan.isEmpty())
-                    lit+="@"+definitionlan;
+                String def = definition.get(i);
+                String deflan= definitionlan.get(i);
+                String lit="\""+def+"\"";
+                if (!deflan.isEmpty())
+                    lit+="@"+deflan;
                 nt += "<"+sres+"> <http://www.w3.org/2004/02/skos/core#definition> "+ lit +" .\n"; 
             }
             for(LexicalEntry entry : entries)

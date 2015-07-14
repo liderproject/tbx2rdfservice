@@ -79,8 +79,8 @@ public class TBX {
 
         LexicalSense ls3= new LexicalSense("Derivative work");
         ls3.base="http://tbx2rdf.lider-project.eu/converter/resource/cc/";
-        ls3.definition="Se considerará \"obra derivada\" aquella que se encuentre basada en una obra o en una obra y otras preexistentes, tales como: las traducciones y adaptaciones; las revisiones, actualizaciones y anotaciones; los compendios, resúmenes y extractos; los arreglos musicales y; en general, cualesquiera transformaciones de una obra literaria, artística o científica, salvo que la obra resultante tenga el carácter de obra conjunta en cuyo caso no será considerada como una obra derivada a los efectos de esta licencia. Para evitar la duda, si la obra consiste en una composición musical o grabación de sonidos, la sincronización temporal de la obra con una imagen en movimiento (\"synching\") será considerada como una obra derivada a los efectos de esta licencia.";
-        ls3.definitionlan="es-es";
+        ls3.definition.add("Se considerará \"obra derivada\" aquella que se encuentre basada en una obra o en una obra y otras preexistentes, tales como: las traducciones y adaptaciones; las revisiones, actualizaciones y anotaciones; los compendios, resúmenes y extractos; los arreglos musicales y; en general, cualesquiera transformaciones de una obra literaria, artística o científica, salvo que la obra resultante tenga el carácter de obra conjunta en cuyo caso no será considerada como una obra derivada a los efectos de esta licencia. Para evitar la duda, si la obra consiste en una composición musical o grabación de sonidos, la sincronización temporal de la obra con una imagen en movimiento (\"synching\") será considerada como una obra derivada a los efectos de esta licencia.");
+        ls3.definitionlan.add("es-es");
         LexicalEntry le31 = new LexicalEntry("obra derivada", "es");
         le31.base="http://tbx2rdf.lider-project.eu/converter/resource/cc/";
         le31.source="http://creativecommons.org/licenses/by/2.0/es/legalcode.es";

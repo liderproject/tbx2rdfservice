@@ -82,6 +82,7 @@ public class ServicesServlet extends HttpServlet {
             } catch (Exception e) {
 
             }
+        }
             if (uri.endsWith("/service/dump")) {
                 String ttl = RDFStoreFuseki.dump();
                 try (PrintWriter out = response.getWriter()) {
@@ -93,7 +94,7 @@ public class ServicesServlet extends HttpServlet {
 
                 }
             }
-        }
+        
         if (uri.endsWith("/service/clear")) {
             RDFStoreFuseki.deleteAll();
             response.setStatus(HttpServletResponse.SC_OK);
