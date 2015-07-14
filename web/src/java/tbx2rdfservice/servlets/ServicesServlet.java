@@ -87,7 +87,7 @@ public class ServicesServlet extends HttpServlet {
             if (uri.endsWith("/service/dump")) {
                 String ttl = RDFStoreFuseki.dump();
                 try (PrintWriter out = response.getWriter()) {
-                    String html="<html><head><script src=\"https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js\"></head>";
+                    String html="<html><head><script src=\"https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js\"></script></head>";
                     html+="<body><pre class=\"prettyprint\">";
                     ttl = StringEscapeUtils.escapeHtml4(ttl);
                     ttl = ttl.replace("\n", "<br>");

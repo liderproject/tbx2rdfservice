@@ -83,7 +83,10 @@ public class RDFStoreFuseki {
             RDFNode o = soln.get("o"); // Get a result variable - must be a resource
             String so = "";
             if (o.isLiteral()) {
-                so = "\"" + o.toString() + "\"";
+                so = "\"" + o.asLiteral().getLexicalForm() + "\"";
+                String l=o.asLiteral().getLanguage();
+                if (!l.isEmpty())
+                    so+="@"+l;
             } else {
                 so = "<" + o.toString() + ">";
             }
