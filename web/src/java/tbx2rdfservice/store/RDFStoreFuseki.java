@@ -45,16 +45,16 @@ public class RDFStoreFuseki {
 
     public static void init() {
         /*
-        if (fuseki == null) {
-            try {
-                System.out.println("Launching fuseki server");
-                DatasetGraph dsg = TDBFactory.createDatasetGraph("data");
-                fuseki = RDFStoreFuseki.create(3030, dsg, "tbx");
-                fuseki.start();
-            } catch (Exception e) {
-                System.err.println("Could not start fuseki " + e.getMessage());
-            }
-        }*/
+         if (fuseki == null) {
+         try {
+         System.out.println("Launching fuseki server");
+         DatasetGraph dsg = TDBFactory.createDatasetGraph("data");
+         fuseki = RDFStoreFuseki.create(3030, dsg, "tbx");
+         fuseki.start();
+         } catch (Exception e) {
+         System.err.println("Could not start fuseki " + e.getMessage());
+         }
+         }*/
     }
 
     public static boolean test() {
@@ -66,31 +66,42 @@ public class RDFStoreFuseki {
      */
     public static String getEntity(String resource) {
         init();
-        String sparql = "SELECT DISTINCT *\n"
-                + "WHERE {\n"
-                + "  GRAPH ?g {\n"
-                + "    <" + resource + "> ?p ?o\n"
-                + "  }\n"
-                + "} LIMIT 1000";
-        Query query = QueryFactory.create(sparql);
-        String endpoint = "http://localhost:3031/tbx/query";
-        QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, query);
-        ResultSet results = qexec.execSelect();
         String sresults = "";
-        for (; results.hasNext();) {
-            QuerySolution soln = results.nextSolution();
-            Resource p = soln.getResource("p");       // Get a result variable by name.
-            RDFNode o = soln.get("o"); // Get a result variable - must be a resource
-            String so = "";
-            if (o.isLiteral()) {
-                so = "\"" + o.asLiteral().getLexicalForm() + "\"";
-                String l=o.asLiteral().getLanguage();
-                if (!l.isEmpty())
-                    so+="@"+l;
-            } else {
-                so = "<" + o.toString() + ">";
+        try {
+            String sparql = "SELECT DISTINCT *\n"
+                    + "WHERE {\n"
+                    + "  GRAPH ?g {\n"
+                    + "    <" + resource + "> ?p ?o\n"
+                    + "  }\n"
+                    + "} LIMIT 1000";
+            Query query = QueryFactory.create(sparql);
+            String endpoint = "http://localhost:3031/tbx/query";
+            QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, query);
+            ResultSet results = qexec.execSelect();
+            for (; results.hasNext();) {
+                QuerySolution soln = results.nextSolution();
+                Resource p = soln.getResource("p");       // Get a result variable by name.
+                RDFNode o = soln.get("o"); // Get a result variable - must be a resource
+                String so = "";
+                if (o.isLiteral()) {
+                    so = "\"" + o.asLiteral().getLexicalForm() + "\"";
+                    String l = o.asLiteral().getLanguage();
+                    if (!l.isEmpty()) {
+                        so += "@" + l;
+                    }
+                } else {
+                    so = "<" + o.toString() + ">";
+                }
+                sresults += "<" + resource + "> <" + p.toString() + "> " + so + " . \n";
             }
-            sresults += "<" + resource + "> <" + p.toString() + "> " + so + " . \n";
+        } catch (Exception e) {
+            try {
+                PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/error.txt");
+                archivo.println(e.getMessage());
+                archivo.close();
+            } catch (Exception ex) {
+            }
+
         }
         return sresults;
     }
@@ -115,7 +126,7 @@ public class RDFStoreFuseki {
     public static boolean postEntity(String id, String rdf, org.apache.jena.riot.Lang lan) {
         try {
             init();
-            System.out.println("We have been posted id: " +id);
+            System.out.println("We have been posted id: " + id);
             String endpoint = "http://localhost:3031/tbx/data";
             DatasetAccessor dataAccessor = DatasetAccessorFactory.createHTTP(endpoint);
             Model model = ModelFactory.createDefaultModel();
@@ -124,11 +135,12 @@ public class RDFStoreFuseki {
             dataAccessor.putModel(id, model); //gameid
             return true;
         } catch (Exception e) {
-            try{
-            PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/error.txt");
-            archivo.println(e.getMessage());
-            archivo.close();
-            }catch(Exception ex){}
+            try {
+                PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/error.txt");
+                archivo.println(e.getMessage());
+                archivo.close();
+            } catch (Exception ex) {
+            }
             e.printStackTrace();
             return false;
         }
@@ -236,14 +248,15 @@ public class RDFStoreFuseki {
                 + "    ?s a <http://www.w3.org/2004/02/skos/core#Concept>\n"
                 + "  }\n"
                 + "} ";
-        sparql += " OFFSET " + offset +"\n";
-        sparql += " LIMIT " + limit +"\n";
-        
-        try{
-        PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/query.txt");
-        archivo.println(sparql);
-        archivo.close();
-        }catch(Exception ex){}
+        sparql += " OFFSET " + offset + "\n";
+        sparql += " LIMIT " + limit + "\n";
+
+        try {
+            PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/query.txt");
+            archivo.println(sparql);
+            archivo.close();
+        } catch (Exception ex) {
+        }
         Query query = QueryFactory.create(sparql);
         String endpoint = "http://localhost:3031/tbx/query";
         QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, query);
@@ -253,7 +266,7 @@ public class RDFStoreFuseki {
             Resource p = soln.getResource("s");       // Get a result variable by name.
             uris.add(p.toString());
         }
-        return uris;                
+        return uris;
     }
 
     public static List<String> listGraphs() {
@@ -264,11 +277,12 @@ public class RDFStoreFuseki {
                 + "    ?s ?p ?o\n"
                 + "  }\n"
                 + "} ";
-        try{
-        PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/query.txt");
-        archivo.println(sparql);
-        archivo.close();
-        }catch(Exception ex){}
+        try {
+            PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/query.txt");
+            archivo.println(sparql);
+            archivo.close();
+        } catch (Exception ex) {
+        }
         Query query = QueryFactory.create(sparql);
         String endpoint = "http://localhost:3031/tbx/query";
         QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, query);
@@ -278,6 +292,7 @@ public class RDFStoreFuseki {
             Resource p = soln.getResource("g");       // Get a result variable by name.
             uris.add(p.toString());
         }
-        return uris;                 }
+        return uris;
+    }
 
 }
