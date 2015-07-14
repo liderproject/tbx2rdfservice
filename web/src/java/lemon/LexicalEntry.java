@@ -13,10 +13,11 @@ public class LexicalEntry {
     String id = "";
     String name = "";
     String uritype = "";
-    String urisense = "";
+    public String urisense = "";
     String uricanonicalform = "";
     String reliabilitycode = "3";
     String lan = "en";
+    public String sense="";
     public String comentario="";
     public String source = "";
     public String base = TBX2RDFServiceConfig.get("datauri", "http://localhost:8080/tbx/");
@@ -34,6 +35,8 @@ public class LexicalEntry {
     public String getURI() {
         try {
             String codificado = URLEncoder.encode(name, "UTF-8");
+            codificado=codificado.replace("+", "%20");
+
             String sres = base + codificado;
             return sres;
         } catch (Exception e) {
@@ -56,6 +59,8 @@ public class LexicalEntry {
         try {
             String nt = "";
             String codificado = URLEncoder.encode(name, "UTF-8");
+            codificado=codificado.replace("+", "%20");
+            
             String sres = base + codificado;
             nt += "<" + sres + "> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/lemon/ontolex#LexicalEntry> .\n";
             if (!uritype.isEmpty()) {
@@ -69,6 +74,10 @@ public class LexicalEntry {
             }
             if (!reliabilitycode.isEmpty()) {
                 nt += "<" + sres + "> <http://tbx2rdf.lider-project.eu/tbx#reliabilityCode> \"" + reliabilitycode + "\" .\n";
+            }
+            if (!lan.isEmpty()) {
+                lan=lan.replace("\"", "");
+                nt += "<" + sres + "> <http://lemon-model.net/lemon#language> \"" + lan + "\" .\n";
             }
             if (!source.isEmpty()) {
                 source=source.replace("\"", "");

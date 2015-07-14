@@ -61,46 +61,23 @@ public class LinkedDataServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String peticion = request.getRequestURI();
-        if (peticion.endsWith("/resource/")) {                               //SERVING THE LIST OF resources
-            System.out.println("Serving HTML for resources");
-            response.setContentType("text/html;charset=UTF-8");
-            InputStream is1 = LinkedDataServlet.class.getResourceAsStream("../../../../ld.html");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is1));
-            StringBuilder outx = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                outx.append(line);
-            }
-            String body = outx.toString();
-            body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + "List of terms");
-            String tabla = "<table id=\"grid-data\" class=\"table table-condensed table-hover table-striped\">\n"
-                    + "        <thead>\n"
-                    + "                <tr>\n"
-                    + "                        <th data-column-id=\"resource\" data-formatter=\"link\" data-order=\"desc\">Terms</th>\n"
-                    + "                </tr>\n"
-                    + "        </thead>\n"
-                    + "</table>	\n"
-                    + "";
-            body = body.replace("<!--TEMPLATE_PGN-->", "<br>" + tabla);
-            response.getWriter().println(body);
-            response.setStatus(HttpServletResponse.SC_OK);
+        if (peticion.endsWith("/resource/")) {
+            listResources(request, response);
             return;
         }
 
         String id = request.getRequestURI().replace("/tbx2rdf/resource/", "");
         System.out.println(peticion + " " + id);
         PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/get.txt");
-        archivo.println("requestURI: " + peticion);archivo.flush();
+        archivo.println("requestURI: " + peticion);
+        archivo.flush();
         String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
-//        String xid = peticion.replace("/tbx2rdf/resource/iate/", "");
-        //       String recurso = base + xid;
-
         String lastid = peticion.substring(peticion.lastIndexOf("/") + 1, peticion.length());
         String dataset = peticion.substring(peticion.lastIndexOf("resource/") + 9, peticion.lastIndexOf("/"));
         String domain = base.substring(0, base.indexOf("resource/"));
         String recurso = domain + "resource/" + dataset + "/" + lastid;
-
-        archivo.println("\nrecurso: " + recurso);archivo.flush();
+        archivo.println("\nrecurso: " + recurso);
+        archivo.flush();
         String nt = RDFStoreFuseki.getEntity(recurso);
         if (nt.isEmpty()) {
             Tbx2rdfServlet.serveError(request, response);
@@ -136,7 +113,7 @@ public class LinkedDataServlet extends HttpServlet {
 
             Resource entidad = ModelFactory.createDefaultModel().createResource(recurso);
             String titulo = entidad.getLocalName(); //mal, creo
-            titulo = entidad.toString().substring(entidad.toString().lastIndexOf("/"), entidad.toString().length());
+            titulo = entidad.toString().substring(entidad.toString().lastIndexOf("/") + 1, entidad.toString().length());
             titulo = URLDecoder.decode(titulo, "UTF-8");
             StringWriter sw = new StringWriter();
             RDFDataMgr.write(sw, model, Lang.TTL);
@@ -283,6 +260,36 @@ public class LinkedDataServlet extends HttpServlet {
             }
         }
         return false;
+    }
+
+    private void listResources(HttpServletRequest request, HttpServletResponse response) {
+        //SERVING THE LIST OF resources
+        System.out.println("Serving HTML for resources");
+        try {
+            response.setContentType("text/html;charset=UTF-8");
+            InputStream is1 = LinkedDataServlet.class.getResourceAsStream("../../../../ld.html");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is1));
+            StringBuilder outx = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                outx.append(line);
+            }
+            String body = outx.toString();
+            body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + "List of terms");
+            String tabla = "<table id=\"grid-data\" class=\"table table-condensed table-hover table-striped\">\n"
+                    + "        <thead>\n"
+                    + "                <tr>\n"
+                    + "                        <th data-column-id=\"resource\" data-formatter=\"link\" data-order=\"desc\">Terms</th>\n"
+                    + "                </tr>\n"
+                    + "        </thead>\n"
+                    + "</table>	\n"
+                    + "";
+            body = body.replace("<!--TEMPLATE_PGN-->", "<br>" + tabla);
+            response.getWriter().println(body);
+            response.setStatus(HttpServletResponse.SC_OK);
+        } catch (Exception e) {
+            Tbx2rdfServlet.serveError(request, response);
+        }
     }
 
 }

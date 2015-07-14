@@ -19,7 +19,7 @@ public class LexicalSense {
     public String subjectField = "";
     public List<String> definitions=new ArrayList();
     public List<String> definitionlans=new ArrayList();
-    List<LexicalEntry> entries = new ArrayList();
+    private List<LexicalEntry> entries = new ArrayList();
     public String base = TBX2RDFServiceConfig.get("datauri","http://localhost:8080/");
     
     public LexicalSense()
@@ -36,6 +36,8 @@ public class LexicalSense {
         try {
             String nt="";
             String codificado = URLEncoder.encode(name, "UTF-8");
+            codificado=codificado.replace("+", "%20");
+            
             String sres = base + codificado;
             nt += "<"+sres+"> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .\n"; 
             if (!subjectField.isEmpty())
@@ -68,6 +70,8 @@ public class LexicalSense {
     public String getXML() {
         try {
             String codificado = URLEncoder.encode(name, "UTF-8");
+                        codificado=codificado.replace("+", "%20");
+
             String xml = "<termEntry id=\"" + codificado + ">\n";
             if (!subjectField.isEmpty()) {
                 xml += " <descripGrp>\n";
@@ -87,11 +91,14 @@ public class LexicalSense {
     }
 
     public void addEntry(LexicalEntry le) {
+        le.urisense=this.getURI();
         entries.add(le);
     }
     public String getURI() {
         try {
             String codificado = URLEncoder.encode(name, "UTF-8");
+                        codificado=codificado.replace("+", "%20");
+
             String sres = base + codificado;
             return sres;
         } catch (Exception e) {
