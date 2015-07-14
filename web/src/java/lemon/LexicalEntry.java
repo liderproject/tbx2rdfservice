@@ -68,7 +68,7 @@ public class LexicalEntry {
                 nt += "<" + sres + "> <http://www.w3.org/ns/lemon/ontolex#canonicalForm> <" + uricanonicalform + "> .\n";
             }
             if (!reliabilitycode.isEmpty()) {
-                nt += "<" + sres + "> <http://tbx2rdf.lider-project.eu/tbx#reliabilityCode> <" + reliabilitycode + "> .\n";
+                nt += "<" + sres + "> <http://tbx2rdf.lider-project.eu/tbx#reliabilityCode> \"" + reliabilitycode + "\" .\n";
             }
             if (!source.isEmpty()) {
                 source=source.replace("\"", "");

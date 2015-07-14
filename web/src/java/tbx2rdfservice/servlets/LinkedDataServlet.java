@@ -90,7 +90,7 @@ public class LinkedDataServlet extends HttpServlet {
         String id = request.getRequestURI().replace("/tbx2rdf/resource/", "");
         System.out.println(peticion + " " + id);
         PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/get.txt");
-        archivo.println("requestURI: " + peticion);
+        archivo.println("requestURI: " + peticion);archivo.flush();
         String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
 //        String xid = peticion.replace("/tbx2rdf/resource/iate/", "");
         //       String recurso = base + xid;
@@ -100,7 +100,7 @@ public class LinkedDataServlet extends HttpServlet {
         String domain = base.substring(0, base.indexOf("resource/"));
         String recurso = domain + "resource/" + dataset + "/" + lastid;
 
-        archivo.println("\nrecurso: " + recurso);
+        archivo.println("\nrecurso: " + recurso);archivo.flush();
         String nt = RDFStoreFuseki.getEntity(recurso);
         if (nt.isEmpty()) {
             Tbx2rdfServlet.serveError(request, response);
@@ -135,7 +135,8 @@ public class LinkedDataServlet extends HttpServlet {
             model = RDFPrefixes.addPrefixesIfNeeded(model);
 
             Resource entidad = ModelFactory.createDefaultModel().createResource(recurso);
-            String titulo = entidad.getLocalName();
+            String titulo = entidad.getLocalName(); //mal, creo
+            titulo = entidad.toString().substring(entidad.toString().lastIndexOf("/"), entidad.toString().length());
             titulo = URLDecoder.decode(titulo, "UTF-8");
             StringWriter sw = new StringWriter();
             RDFDataMgr.write(sw, model, Lang.TTL);
