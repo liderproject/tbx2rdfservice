@@ -70,23 +70,34 @@ public class ServicesServlet extends HttpServlet {
             } catch (Exception e) {
 
             }
-        }        
+        }
         if (uri.endsWith("/service/joker")) {
             List<String> ls = RDFStoreFuseki.listGraphs();
             try (PrintWriter out = response.getWriter()) {
-                for(String s : ls)
-                    out.print(s+"<br>");
+                for (String s : ls) {
+                    out.print(s + "<br>");
+                }
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.setContentType("text/html");
             } catch (Exception e) {
 
             }
-            
-        }if (uri.endsWith("/service/clear")) {
+            if (uri.endsWith("/service/dump")) {
+                String ttl = RDFStoreFuseki.dump();
+                try (PrintWriter out = response.getWriter()) {
+                    ttl = ttl.replace("\n", "<br>");
+                    out.print(ttl);
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.setContentType("text/html");
+                } catch (Exception e) {
+
+                }
+            }
+        }
+        if (uri.endsWith("/service/clear")) {
             RDFStoreFuseki.deleteAll();
             response.setStatus(HttpServletResponse.SC_OK);
-        }else
-        {
+        } else {
             Tbx2rdfServlet.serveError(request, response);
         }
 

@@ -17,7 +17,10 @@ public class LexicalSense {
     String id = "";
     String name = "";
     public String subjectField = "";
+    public String definition="";
+    public String definitionlan="";
     List<LexicalEntry> entries = new ArrayList();
+    public String base = TBX2RDFServiceConfig.get("datauri","http://localhost:8080/");
     
     public LexicalSense()
     {
@@ -34,12 +37,17 @@ public class LexicalSense {
         try {
             String nt="";
             String codificado = URLEncoder.encode(name, "UTF-8");
-            String base = TBX2RDFServiceConfig.get("datauri","http://localhost:8080/");
             String sres = base + codificado;
             nt += "<"+sres+"> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .\n"; 
             if (!subjectField.isEmpty())
                 nt += "<"+sres+"> <http://tbx2rdf.lider-project.eu/tbx#subjectField> \""+ subjectField +"\" .\n"; 
-            
+            if (!definition.isEmpty())
+            {
+                String lit="\""+definition+"\"";
+                if (!definitionlan.isEmpty())
+                    lit+="@"+definitionlan;
+                nt += "<"+sres+"> <http://www.w3.org/2004/02/skos/core#definition> "+ lit +" .\n"; 
+            }
             for(LexicalEntry entry : entries)
             {
                 nt += "<"+sres+"> <http://www.w3.org/ns/lemon/ontolex#reference> <"+ entry.getURI() +"> .\n"; 
@@ -78,7 +86,6 @@ public class LexicalSense {
     public String getURI() {
         try {
             String codificado = URLEncoder.encode(name, "UTF-8");
-            String base = TBX2RDFServiceConfig.get("datauri", "http://localhost:8080/");
             String sres = base + codificado;
             return sres;
         } catch (Exception e) {

@@ -38,12 +38,12 @@ public class TBX {
         
 
         List<LexicalSense> senses = getSampleSenses();
-        String url = senses.get(0).getURI();
-        String nt = senses.get(0).getNT();
+        String url = senses.get(2).getURI();
+        String nt = senses.get(2).getNT();
         System.out.println(url);
         System.out.println(nt);
-//        boolean ok=RDFStoreClient.post(url, nt);
-        RDFStoreClient.delete(url);
+        boolean ok=RDFStoreClient.post(url, nt);
+//        RDFStoreClient.delete(url);
     }
 
     public static void uploadSenses() {
@@ -76,8 +76,19 @@ public class TBX {
         le22.comentario = "propriété intellectuelle Note: oeuvre composite. - Oeuvre dérivée ou de seconde main qui procède de la juxtaposition d'une oeuvre nouvelle à une oeuvre préexistante (mise en musique d'un sonnet) et, dans une conception extensive, de l'incorporation à une oeuvre nouvelle des éléments originaux d'une oeuvre préexistante (adaptation cinématographique d'un roman, traduction, anthologie). [Cornu, Vocabulaire juridique, 3e éd., p. 552.]; composite. - 1. Qui participe de plusieurs styles d'architecture. ((...)) 2. Par ext. Formé d'éléments très différents, souvent disparates. ((Ex.)) Un mobilier composite. [Petit Robert, 1994, p. 424.];";
         le22.source = "Juriterm - Banque Terminologique de la Common Law. Université de Moncton 1999;";
         ls2.addEntry(le22);
+
+        LexicalSense ls3= new LexicalSense("Derivative work");
+        ls3.base="http://tbx2rdf.lider-project.eu/converter/resource/cc/";
+        ls3.definition="Se considerará \"obra derivada\" aquella que se encuentre basada en una obra o en una obra y otras preexistentes, tales como: las traducciones y adaptaciones; las revisiones, actualizaciones y anotaciones; los compendios, resúmenes y extractos; los arreglos musicales y; en general, cualesquiera transformaciones de una obra literaria, artística o científica, salvo que la obra resultante tenga el carácter de obra conjunta en cuyo caso no será considerada como una obra derivada a los efectos de esta licencia. Para evitar la duda, si la obra consiste en una composición musical o grabación de sonidos, la sincronización temporal de la obra con una imagen en movimiento (\"synching\") será considerada como una obra derivada a los efectos de esta licencia.";
+        ls3.definitionlan="es-es";
+        LexicalEntry le31 = new LexicalEntry("obra derivada", "es");
+        le31.base="http://tbx2rdf.lider-project.eu/converter/resource/cc/";
+        le31.source="http://creativecommons.org/licenses/by/2.0/es/legalcode.es";
+        ls3.addEntry(le31);
+        
         senses.add(ls);
         senses.add(ls2);
+        senses.add(ls3);
         return senses;
     }
 
