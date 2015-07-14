@@ -191,7 +191,15 @@ public class LinkedDataServlet extends HttpServlet {
             archivo.println("requestURI: " + peticion);archivo.flush();
             archivo.println("content: " + tot);archivo.flush();
             
+        //TODO HAY QUE CAMBIAR ESTO PARA QUE NO SEA IATE SOLO!!!!!!!!
         String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
+        String lastid = peticion.substring(peticion.lastIndexOf("/")+1,peticion.length());
+        String dataset = peticion.substring(peticion.lastIndexOf("resource/")+9,peticion.lastIndexOf("/"));
+        String domain = peticion.substring(0,peticion.indexOf("resource/"));
+        archivo.println("domain: " + domain);archivo.flush();
+        archivo.println("dataset: " + dataset);archivo.flush();
+        archivo.println("lastid: " + lastid);archivo.flush();
+        
         String xid = peticion.replace("/tbx2rdf/resource/iate/", "");
         String recurso = base + xid;
         
