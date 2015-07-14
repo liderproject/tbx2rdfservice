@@ -81,6 +81,7 @@
     <echo message="Victor edition: generating also a jar file with"/>
 	<echo>Apache Ant version is ${ant.version}</echo>
 	<mkdir dir="build2"/> 
+	<copy file"dist/TBX2RDFService.war" tofile="dist/tbx2rdf.war"/>
 	<javac srcdir="${src}" destdir="build2" classpathref="classpath" includeantruntime="false"/>  
 	<jar destfile = "dist/tbx2rdfservice-nolibs.jar"
 		basedir = "build2"
@@ -100,7 +101,6 @@
 	    <delete file="dist/TBX2RDFService.war"/> 
 	-->
 	<delete dir="build2"/>
-	
 	<delete file="dist/tbx2rdfservice-nolibs.jar"/>
 </target>	
 

@@ -2,6 +2,7 @@ package tbx2rdfservice.store;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import java.io.StringWriter;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -88,6 +89,19 @@ public class RDFPrefixes {
         if (prefex.isEmpty())
             return param;
         return prefex+right;
+    }
+
+    public static String encode(String base, String name) {
+        try {
+            String codificado = URLEncoder.encode(name, "UTF-8");
+            codificado=codificado.replace("+", "%20");
+            codificado=codificado.replace("(", "%28");
+            codificado=codificado.replace(")", "%29");
+            String sres = base + codificado;
+            return sres;
+        } catch (Exception e) {
+            return ""; 
+        }
     }
     
 }

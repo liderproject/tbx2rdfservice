@@ -36,8 +36,10 @@ public class RDFStoreClient {
                 
     public static boolean post(String url, String nt) {
         try {
-            nt=URLEncoder.encode(nt,"UTF-8");
-            nt=nt.replace("+", "%20");
+            nt=URLEncoder.encode(nt,"UTF-8");   
+            nt=nt.replace("+", "%20");//aqui no estoy seguro de esto
+            nt=nt.replace("(", "%28");
+            nt=nt.replace(")", "%29");
 
             //String url = "http://tbx2rdf.lider-project.eu/converter/resource/iate/IATE-84";
             URL obj = new URL(url);

@@ -2,6 +2,7 @@ package lemon;
 
 import java.net.URLEncoder;
 import tbx2rdfservice.TBX2RDFServiceConfig;
+import tbx2rdfservice.store.RDFPrefixes;
 
 /**
  * This class represents a lexical entry
@@ -33,15 +34,8 @@ public class LexicalEntry {
     }
 
     public String getURI() {
-        try {
-            String codificado = URLEncoder.encode(name, "UTF-8");
-            codificado=codificado.replace("+", "%20");
-
-            String sres = base + codificado;
-            return sres;
-        } catch (Exception e) {
-            return ""; 
-        }
+         return RDFPrefixes.encode(base,name);
+        
     }
 
     public String getXML() {
@@ -58,11 +52,9 @@ public class LexicalEntry {
     public String getNT() {
         try {
             String nt = "";
-            String codificado = URLEncoder.encode(name, "UTF-8");
-            codificado=codificado.replace("+", "%20");
-            
-            String sres = base + codificado;
+            String sres=RDFPrefixes.encode(base,name);
             nt += "<" + sres + "> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/lemon/ontolex#LexicalEntry> .\n";
+            nt += "<"+sres+"> <http://www.w3.org/2000/01/rdf-schema#label> \""+name+ "\" .\n"; 
             if (!uritype.isEmpty()) {
                 nt += "<" + sres + "> <http://tbx2rdf.lider-project.eu/tbx#termType> <" + uritype + "> .\n";
             }
