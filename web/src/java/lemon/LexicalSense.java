@@ -54,6 +54,9 @@ public class LexicalSense {
             for(LexicalEntry entry : entries)
             {
                 nt += "<"+sres+"> <http://www.w3.org/ns/lemon/ontolex#reference> <"+ entry.getURI() +"> .\n"; 
+                
+                nt += entry.getNT();
+                
             }
             return nt;
         }catch(Exception e)

@@ -199,9 +199,9 @@ public class LinkedDataServlet extends HttpServlet {
         archivo.println("domain: " + domain);archivo.flush();
         archivo.println("dataset: " + dataset);archivo.flush();
         archivo.println("lastid: " + lastid);archivo.flush();
-        
-        String xid = peticion.replace("/tbx2rdf/resource/iate/", "");
-        String recurso = base + xid;
+        String recurso = domain+"resource/"+dataset+"/"+lastid;
+//        String xid = peticion.replace("/tbx2rdf/resource/iate/", "");
+//        String recurso = base + xid;
         
             boolean ok = RDFStoreFuseki.postEntity(recurso, tot, Lang.NT);
             archivo.println("postedentity: " + ok);archivo.flush();
