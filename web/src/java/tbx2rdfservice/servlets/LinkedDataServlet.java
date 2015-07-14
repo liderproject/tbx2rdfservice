@@ -76,6 +76,11 @@ public class LinkedDataServlet extends HttpServlet {
         String dataset = peticion.substring(peticion.lastIndexOf("resource/") + 9, peticion.lastIndexOf("/"));
         String domain = base.substring(0, base.indexOf("resource/"));
         String recurso = domain + "resource/" + dataset + "/" + lastid;
+        
+        recurso=recurso.replace("(", "%28");
+        recurso=recurso.replace(")", "%29");
+        
+        
         archivo.println("\nrecurso: " + recurso);
         archivo.flush();
         String nt = RDFStoreFuseki.getEntity(recurso);
