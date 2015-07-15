@@ -200,12 +200,32 @@ public class LinkedDataServlet extends HttpServlet {
         
         for(int i=0;i<sense.definitions.size();i++)
         {
-            tabla += "<tr class=\"" + tipo + "\"><td>" + "Definition" + "</td><td>" + sense.definitions.get(i)+" <kbd>"+sense.definitionlans.get(i) + "</kbd></td></tr>\n";
+            tabla += "<tr><td>" + "Definition" + "</td><td>" + sense.definitions.get(i)+" <kbd>"+sense.definitionlans.get(i) + "</kbd></td></tr>\n";
         }
+            //<span class="glyphicon glyphicon-share-alt"></span>
         for(int i=0;i<sense.entries.size();i++)
         {
             LexicalEntry le = sense.entries.get(i);
-            tabla += "<tr class=\"" + tipo + "\"><td><b>" + RDFPrefixes.getLastPart(le.getURI()) + "</b></td><td>" + "" + "</td></tr>\n";
+            tabla += "<tr><td><b>" + RDFPrefixes.getLastPart(le.getURI()) + "</b></td><td>";
+            
+            tabla+="<table class=\"table table-condensed\">";
+            
+            tabla+="<tr class=\"info\"><td width=\"30%\">";
+            tabla+="hola";
+            tabla+="</td><td width=\"70%\">";
+            tabla+="mundo";
+            tabla+="</td></tr>\n";
+            
+            tabla+="<tr class=\"info\"><td width=\"30%\">";
+            tabla+="hello";
+            tabla+="</td><td width=\"70%\">";
+            tabla+="world";
+            tabla+="</td></tr>\n";
+            
+            tabla+="</table>";
+            
+            
+            tabla+="</td></tr>\n";
         }
         
         

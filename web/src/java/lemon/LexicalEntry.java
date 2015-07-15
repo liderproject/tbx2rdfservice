@@ -6,6 +6,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import java.net.URLEncoder;
 import tbx2rdfservice.TBX2RDFServiceConfig;
 import tbx2rdfservice.store.RDFPrefixes;
+import tbx2rdfservice.store.RDFUtil;
 
 /**
  * This class represents a lexical entry
@@ -38,19 +39,24 @@ public class LexicalEntry {
     public LexicalEntry(Model model, Resource res)
     {
         name = RDFPrefixes.getLastPart(res.getURI().toString());
+        String uri = res.getURI();
         NodeIterator ni = model.listObjectsOfProperty(res, model.createProperty("http://lemon-model.net/lemon#language"));
         if (ni.hasNext())
             lan = ni.next().asLiteral().getLexicalForm();
         ni = model.listObjectsOfProperty(res, model.createProperty("http://purl.org/dc/terms/source"));
         if (ni.hasNext())
             source = ni.next().asLiteral().getLexicalForm();
-        ni = model.listObjectsOfProperty(res, model.createProperty("http://www.w3.org/2000/01/rdf-schema#comment"));
+        /*ni = model.listObjectsOfProperty(res, model.createProperty("http://www.w3.org/2000/01/rdf-schema#comment"));
         if (ni.hasNext())
-            comentario = ni.next().asLiteral().getLexicalForm();
+            comentario = ni.next().asLiteral().getLexicalForm();*/
+        comentario = RDFUtil.getFirst(model, uri, "http://www.w3.org/2000/01/rdf-schema#comment");
+        
+        
         ni = model.listObjectsOfProperty(res, model.createProperty("http://tbx2rdf.lider-project.eu/tbx#reliabilityCode"));
         if (ni.hasNext())
             reliabilitycode = ni.next().asLiteral().getLexicalForm();
-        
+
+        uricanonicalform = RDFUtil.getFirst(model, uri, "http://www.w3.org/ns/lemon/ontolex#canonicalForm");
         
         
         
