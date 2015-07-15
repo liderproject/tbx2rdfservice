@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import tbx2rdfservice.TBX2RDFServiceConfig;
 import tbx2rdfservice.store.RDFPrefixes;
+import tbx2rdfservice.store.RDFUtil;
 
 /**
  *
@@ -41,8 +42,9 @@ public class LexicalSense {
     }
 
     public LexicalSense(Model model, Resource res)
-    {
-        name = RDFPrefixes.getLastPart(res.getURI().toString());
+    { 
+        String uri = res.getURI();
+        name = RDFPrefixes.getLastPart(uri);
         NodeIterator ni = model.listObjectsOfProperty(res, model.createProperty("http://creativecommons.org/ns#jurisdiction"));
         if (ni.hasNext())
             jurisdiction = ni.next().asResource().toString();
@@ -53,9 +55,11 @@ public class LexicalSense {
             definitionlans.add(nodo.asLiteral().getLanguage());
             definitions.add(nodo.asLiteral().getLexicalForm());
         }
+        parent = RDFUtil.getFirst(model, uri, "http://www.w3.org/2004/02/skos/core#narrower");
+        /*
         ni = model.listObjectsOfProperty(res, model.createProperty("http://www.w3.org/2004/02/skos/core#narrower"));
         if (ni.hasNext())
-            parent = ni.next().asResource().toString();
+            parent = ni.next().asResource().toString();*/
         ni = model.listObjectsOfProperty(res, model.createProperty("http://lemon-model.net/lemon#reference"));
         if (ni.hasNext())
             reference = ni.next().asResource().toString();
