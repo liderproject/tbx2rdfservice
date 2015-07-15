@@ -78,16 +78,11 @@ public class LinkedDataServlet extends HttpServlet {
         }
         String last = partes.get(partes.size()-1);
         String prelast = partes.get(partes.size()-2);
-        if (prelast.equals("resource")) {
-            try {
-                response.getWriter().println("horra " + last);
-            } catch (IOException ex) {
-
-            }
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return;
+        if (prelast.equals("resource")) 
+        {
+                listResources(request, response,last);
+                return;
         }
-
         if (peticion.endsWith("/resource/")) {
             listResources(request, response);
             return;
@@ -122,9 +117,19 @@ public class LinkedDataServlet extends HttpServlet {
             RDFDataMgr.write(sw, model, Lang.TTL);
             response.getWriter().println(sw);
             response.setContentType("text/turtle;charset=UTF-8");
-        } else {
+        } else if (isRDFXML(request))
+        {
+            System.out.println("Serving RDF/XML for " + recurso);
+            Model model = ModelFactory.createDefaultModel();
+            InputStream is = new ByteArrayInputStream(nt.getBytes(StandardCharsets.UTF_8));
+            RDFDataMgr.read(model, is, Lang.NT);
+            StringWriter sw = new StringWriter();
+            RDFDataMgr.write(sw, model, Lang.RDFXML);
+            response.getWriter().println(sw);
+            response.setContentType("application/rdf+xml;charset=UTF-8");
+        }
+        else {
             response.setContentType("text/html;charset=UTF-8");
-
             InputStream is1 = LinkedDataServlet.class.getResourceAsStream("../../../../ld.html");
             BufferedReader reader = new BufferedReader(new InputStreamReader(is1, "UTF-8"));
             StringBuilder outx = new StringBuilder();
@@ -140,14 +145,21 @@ public class LinkedDataServlet extends HttpServlet {
             model = RDFPrefixes.addPrefixesIfNeeded(model);
 
             Resource entidad = ModelFactory.createDefaultModel().createResource(recurso);
-            String titulo = entidad.getLocalName(); //mal, creo
-            titulo = entidad.toString().substring(entidad.toString().lastIndexOf("/") + 1, entidad.toString().length());
+            String titulo = entidad.toString().substring(entidad.toString().lastIndexOf("/") + 1, entidad.toString().length());
             titulo = URLDecoder.decode(titulo, "UTF-8");
             StringWriter sw = new StringWriter();
             RDFDataMgr.write(sw, model, Lang.TTL);
             response.setCharacterEncoding("UTF-8");
             System.out.println("Serving HTML for " + recurso);
             String ttl2 = StringEscapeUtils.escapeHtml4(sw.toString());
+
+            String tipo="";
+            NodeIterator tipos = model.listObjectsOfProperty(entidad, RDF.type);
+            if (tipos.hasNext())
+                tipo=tipos.next().asResource().getLocalName();
+            
+            String html="<h2>"+tipo+"</h2>";
+            body = body.replace("<!--TEMPLATE_PGN-->", html);
 
             try (PrintWriter out = response.getWriter()) {
                 body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + titulo);
@@ -319,5 +331,33 @@ public class LinkedDataServlet extends HttpServlet {
             Tbx2rdfServlet.serveError(request, response);
         }
     }
-
+    private void listResources(HttpServletRequest request, HttpServletResponse response, String dataset) {
+        //SERVING THE LIST OF resources
+        System.out.println("Serving HTML for resources");
+        try {
+            response.setContentType("text/html;charset=UTF-8");
+            InputStream is1 = LinkedDataServlet.class.getResourceAsStream("../../../../ld.html");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is1));
+            StringBuilder outx = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                outx.append(line);
+            }
+            String body = outx.toString();
+            body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + "List of terms of " + dataset);
+            String tabla = "<table id=\"grid-data\" class=\"table table-condensed table-hover table-striped\">\n"
+                    + "        <thead>\n"
+                    + "                <tr>\n"
+                    + "                        <th data-column-id=\"resource\" data-formatter=\"link\" data-order=\"desc\">Terms</th>\n"
+                    + "                </tr>\n"
+                    + "        </thead>\n"
+                    + "</table>	\n"
+                    + "";
+            body = body.replace("<!--TEMPLATE_PGN-->", "<br>" + tabla);
+            response.getWriter().println(body);
+            response.setStatus(HttpServletResponse.SC_OK);
+        } catch (Exception e) {
+            Tbx2rdfServlet.serveError(request, response);
+        }
+    }
 }
