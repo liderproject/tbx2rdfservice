@@ -19,6 +19,7 @@ public class LexicalSense {
     String name = "";
     public String subjectField = "";
     public String reference ="";
+    public String parent="";
     public List<String> definitions=new ArrayList();
     public List<String> definitionlans=new ArrayList();
     public List<String> links = new ArrayList();
@@ -49,6 +50,8 @@ public class LexicalSense {
                 nt += "<"+sres+"> <http://creativecommons.org/ns#jurisdiction> <"+ jurisdiction +"> .\n"; 
             if (!reference.isEmpty())
                 nt += "<"+sres+"> <http://lemon-model.net/lemon#reference> <"+ reference +"> .\n"; 
+            if (!parent.isEmpty())
+                nt += "<"+sres+"> <http://www.w3.org/2004/02/skos/core#narrower> <"+ parent +"> .\n"; 
             int n = definitions.size();
             for(int i=0;i<n;i++)
             {
