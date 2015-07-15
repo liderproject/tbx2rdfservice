@@ -19,9 +19,9 @@ public class LexicalEntry {
     String name = "";
     String uritype = "";
     public String urisense = "";
-    String uricanonicalform = "";
-    String reliabilitycode = "3";
-    String lan = "en";
+    public String uricanonicalform = "";
+    public String reliabilitycode = "3";
+    public String lan = "en";
     public String sense="";
     public String comentario="";
     public String source = "";
@@ -40,26 +40,11 @@ public class LexicalEntry {
     {
         name = RDFPrefixes.getLastPart(res.getURI().toString());
         String uri = res.getURI();
-        NodeIterator ni = model.listObjectsOfProperty(res, model.createProperty("http://lemon-model.net/lemon#language"));
-        if (ni.hasNext())
-            lan = ni.next().asLiteral().getLexicalForm();
-        ni = model.listObjectsOfProperty(res, model.createProperty("http://purl.org/dc/terms/source"));
-        if (ni.hasNext())
-            source = ni.next().asLiteral().getLexicalForm();
-        /*ni = model.listObjectsOfProperty(res, model.createProperty("http://www.w3.org/2000/01/rdf-schema#comment"));
-        if (ni.hasNext())
-            comentario = ni.next().asLiteral().getLexicalForm();*/
+        lan = RDFUtil.getFirstLiteral(model, uri, "http://lemon-model.net/lemon#language");
+        source = RDFUtil.getFirstLiteral(model, uri, "http://purl.org/dc/terms/source");
         comentario = RDFUtil.getFirstLiteral(model, uri, "http://www.w3.org/2000/01/rdf-schema#comment");
-        
-        
-        ni = model.listObjectsOfProperty(res, model.createProperty("http://tbx2rdf.lider-project.eu/tbx#reliabilityCode"));
-        if (ni.hasNext())
-            reliabilitycode = ni.next().asLiteral().getLexicalForm();
-
+        reliabilitycode = RDFUtil.getFirstLiteral(model, uri, "http://tbx2rdf.lider-project.eu/tbx#reliabilityCode");
         uricanonicalform = RDFUtil.getFirstResource(model, uri, "http://www.w3.org/ns/lemon/ontolex#canonicalForm");
-        
-        
-        
     }
     public String getURI() {
          return RDFPrefixes.encode(base,name);

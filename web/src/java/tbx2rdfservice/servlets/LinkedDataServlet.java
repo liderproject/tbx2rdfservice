@@ -191,7 +191,7 @@ public class LinkedDataServlet extends HttpServlet {
         LexicalSense sense = new LexicalSense(model, res);
         if (!sense.jurisdiction.isEmpty())
         {
-            tabla += "<tr><td>" + "Jurisdiction" + "</td><td>" + RDFPrefixes.getLastPart(sense.jurisdiction) + "</td></tr>\n";
+            tabla += "<tr><td>" + "Jurisdiction" + "</td><td><a href=\""+sense.jurisdiction+"\">"+ RDFPrefixes.getLastPart(sense.jurisdiction) + "</a><span class=\"glyphicon glyphicon-share-alt\"></span></td></tr>\n";
         }
         if (!sense.parent.isEmpty())
         {
@@ -202,25 +202,52 @@ public class LinkedDataServlet extends HttpServlet {
         {
             tabla += "<tr><td>" + "Definition" + "</td><td>" + sense.definitions.get(i)+" <kbd>"+sense.definitionlans.get(i) + "</kbd></td></tr>\n";
         }
-            //<span class="glyphicon glyphicon-share-alt"></span>
+            //
         for(int i=0;i<sense.entries.size();i++)
         {
             LexicalEntry le = sense.entries.get(i);
-            tabla += "<tr><td><b>" + RDFPrefixes.getLastPart(le.getURI()) + "</b></td><td>";
+            tabla += "<tr><td><b>" + "is sense of" + "</b></td><td>";
             
             tabla+="<table class=\"table table-condensed\">";
-            
+
             tabla+="<tr class=\"info\"><td width=\"30%\">";
-            tabla+="hola";
+            tabla+="Term";
             tabla+="</td><td width=\"70%\">";
-            tabla+="mundo";
+            tabla+=RDFPrefixes.getLastPart(le.getURI());
             tabla+="</td></tr>\n";
             
-            tabla+="<tr class=\"info\"><td width=\"30%\">";
-            tabla+="hello";
-            tabla+="</td><td width=\"70%\">";
-            tabla+="world";
-            tabla+="</td></tr>\n";
+            if (!le.comentario.isEmpty())
+            {
+                tabla+="<tr><td width=\"30%\">";
+                tabla+="Comment";
+                tabla+="</td><td width=\"70%\">";
+                tabla+=le.comentario + "<kbd>"+le.lan+"</kbd>";
+                tabla+="</td></tr>\n";
+            }
+            if (!le.source.isEmpty())
+            {
+                tabla+="<tr><td width=\"30%\">";
+                tabla+="Source";
+                tabla+="</td><td width=\"70%\">";
+                tabla+=le.source;
+                tabla+="</td></tr>\n";
+            }            
+            if (!le.uricanonicalform.isEmpty())
+            {
+                tabla+="<tr><td width=\"30%\">";
+                tabla+="Canonicalform";
+                tabla+="</td><td width=\"70%\">";
+                tabla+=le.uricanonicalform;
+                tabla+="</td></tr>\n";
+            }            
+            if (!le.reliabilitycode.isEmpty())
+            {
+                tabla+="<tr><td width=\"30%\">";
+                tabla+="Reliability";
+                tabla+="</td><td width=\"70%\">";
+                tabla+=le.reliabilitycode;
+                tabla+="</td></tr>\n";
+            }            
             
             tabla+="</table>";
             

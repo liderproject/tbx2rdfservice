@@ -45,24 +45,17 @@ public class LexicalSense {
     { 
         String uri = res.getURI();
         name = RDFPrefixes.getLastPart(uri);
-        NodeIterator ni = model.listObjectsOfProperty(res, model.createProperty("http://creativecommons.org/ns#jurisdiction"));
-        if (ni.hasNext())
-            jurisdiction = ni.next().asResource().toString();
-        ni = model.listObjectsOfProperty(res, model.createProperty("http://www.w3.org/2004/02/skos/core#definition"));
+        NodeIterator ni = model.listObjectsOfProperty(res, model.createProperty("http://www.w3.org/2004/02/skos/core#definition"));
         while (ni.hasNext())
         {
             RDFNode nodo = ni.next();
             definitionlans.add(nodo.asLiteral().getLanguage());
             definitions.add(nodo.asLiteral().getLexicalForm());
         }
+        subjectField = RDFUtil.getFirstLiteral(model, uri, "http://tbx2rdf.lider-project.eu/tbx#subjectField");
+        jurisdiction = RDFUtil.getFirstResource(model, uri, "http://creativecommons.org/ns#jurisdiction");
         parent = RDFUtil.getFirstResource(model, uri, "http://www.w3.org/2004/02/skos/core#narrower");
-        /*
-        ni = model.listObjectsOfProperty(res, model.createProperty("http://www.w3.org/2004/02/skos/core#narrower"));
-        if (ni.hasNext())
-            parent = ni.next().asResource().toString();*/
-        ni = model.listObjectsOfProperty(res, model.createProperty("http://lemon-model.net/lemon#reference"));
-        if (ni.hasNext())
-            reference = ni.next().asResource().toString();
+        reference = RDFUtil.getFirstResource(model, uri, "http://lemon-model.net/lemon#reference");
         ni = model.listObjectsOfProperty(res, model.createProperty("http://www.w3.org/ns/lemon/ontolex#isSenseOf"));
         while (ni.hasNext())
         {
