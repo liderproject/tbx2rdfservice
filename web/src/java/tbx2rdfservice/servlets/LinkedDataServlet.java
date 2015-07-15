@@ -15,6 +15,8 @@ import java.io.StringWriter;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -61,13 +63,26 @@ public class LinkedDataServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String peticion = request.getRequestURI();
+
+        int last0 = peticion.lastIndexOf("/");
+        int last1 = peticion.lastIndexOf(peticion, last0);
+        String lasttoken0 = peticion.substring(last0 + 1, peticion.length()); //iate33,"",""
+        String lasttoken1 = peticion.substring(last1 + 1, last0); //cc,resource,cc
+        if (!lasttoken1.equals("resource") && lasttoken0.isEmpty()) {
+            try {
+                response.getWriter().println("horra " + lasttoken1);
+            } catch (IOException ex) {
+
+            }
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
         if (peticion.endsWith("/resource/")) {
             listResources(request, response);
             return;
         }
 
-        String id = request.getRequestURI().replace("/tbx2rdf/resource/", "");
-        System.out.println(peticion + " " + id);
         PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/get.txt");
         archivo.println("requestURI: " + peticion);
         archivo.flush();
@@ -76,11 +91,9 @@ public class LinkedDataServlet extends HttpServlet {
         String dataset = peticion.substring(peticion.lastIndexOf("resource/") + 9, peticion.lastIndexOf("/"));
         String domain = base.substring(0, base.indexOf("resource/"));
         String recurso = domain + "resource/" + dataset + "/" + lastid;
-        
-        recurso=recurso.replace("(", "%28");
-        recurso=recurso.replace(")", "%29");
-        
-        
+        recurso = recurso.replace("(", "%28");
+        recurso = recurso.replace(")", "%29");
+
         archivo.println("\nrecurso: " + recurso);
         archivo.flush();
         String nt = RDFStoreFuseki.getEntity(recurso);

@@ -30,6 +30,8 @@ public class RDFPrefixes {
         map.put("http://www.w3.org/ns/lemon/ontolex#", "ontolex");
         map.put("http://tbx2rdf.lider-project.eu/converter/resource/iate/", "iate");
         map.put("http://lemon-model.net/lemon#", "lemon");
+        map.put("http://creativecommons.org/ns#", "cc");
+        
         
         
         

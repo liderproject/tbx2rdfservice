@@ -18,8 +18,11 @@ public class LexicalSense {
     String id = "";
     String name = "";
     public String subjectField = "";
+    public String reference ="";
     public List<String> definitions=new ArrayList();
     public List<String> definitionlans=new ArrayList();
+    public List<String> links = new ArrayList();
+    public String jurisdiction ="";
     private List<LexicalEntry> entries = new ArrayList();
     public String base = TBX2RDFServiceConfig.get("datauri","http://localhost:8080/");
     
@@ -42,6 +45,10 @@ public class LexicalSense {
             nt += "<"+sres+"> <http://www.w3.org/2000/01/rdf-schema#label> \""+name+ "\" .\n"; 
             if (!subjectField.isEmpty())
                 nt += "<"+sres+"> <http://tbx2rdf.lider-project.eu/tbx#subjectField> \""+ subjectField +"\" .\n"; 
+            if (!jurisdiction.isEmpty())
+                nt += "<"+sres+"> <http://creativecommons.org/ns#jurisdiction> <"+ jurisdiction +"> .\n"; 
+            if (!reference.isEmpty())
+                nt += "<"+sres+"> <http://lemon-model.net/lemon#reference> <"+ reference +"> .\n"; 
             int n = definitions.size();
             for(int i=0;i<n;i++)
             {
@@ -52,6 +59,10 @@ public class LexicalSense {
                 if (!deflan.isEmpty())
                     lit+="@"+deflan;
                 nt += "<"+sres+"> <http://www.w3.org/2004/02/skos/core#definition> "+ lit +" .\n"; 
+            }
+            for(String link : links)
+            {
+                nt += "<"+sres+"> <http://www.w3.org/2004/02/skos/core#closeMatch> <"+ link +"> .\n"; 
             }
             for(LexicalEntry entry : entries)
             {
@@ -99,6 +110,7 @@ public class LexicalSense {
     }
 
     public void addDefinition(String def, String es) {
+        def=def.replace("\n","");
         definitions.add(def);
         definitionlans.add(es);
     }

@@ -31,6 +31,7 @@ public class ServicesServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String uri = request.getRequestURI();
         String txt = "";
+        //http://tbx2rdf.lider-project.eu/converter/service/getResources?current=1&rowCount=10&sort[resource]=desc&searchPhrase=
         if (uri.endsWith("/service/getResources")) {
             String offset = request.getParameter("current");
             String limit = request.getParameter("rowCount");
