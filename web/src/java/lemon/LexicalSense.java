@@ -2,6 +2,7 @@ package lemon;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -45,6 +46,16 @@ public class LexicalSense {
         NodeIterator ni = model.listObjectsOfProperty(res, model.createProperty("http://creativecommons.org/ns#jurisdiction"));
         if (ni.hasNext())
             jurisdiction = ni.next().asResource().toString();
+        ni = model.listObjectsOfProperty(res, model.createProperty("http://www.w3.org/2004/02/skos/core#definition"));
+        while (ni.hasNext())
+        {
+            RDFNode nodo = ni.next();
+            definitionlans.add(nodo.asLiteral().getLanguage());
+            definitions.add(nodo.asLiteral().getLexicalForm());
+        }
+        ni = model.listObjectsOfProperty(res, model.createProperty("http://www.w3.org/2004/02/skos/core#narrower"));
+        if (ni.hasNext())
+            parent = ni.next().asResource().toString();
     }
             
     

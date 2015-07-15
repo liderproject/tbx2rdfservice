@@ -186,12 +186,23 @@ public class LinkedDataServlet extends HttpServlet {
         tabla += "<table class=\"table table-condensed\">"; //table-striped 
         tabla += "<thead><tr><td width=\"30%\"><strong>Property</strong></td><td width=\"70%\"><strong>Value</strong></td></tr></thead>\n";
 
-        String tipo="primary";
+        String tipo="success"; //primary
         LexicalSense sense = new LexicalSense(model, res);
         if (!sense.jurisdiction.isEmpty())
         {
             tabla += "<tr class=\"" + tipo + "\"><td>" + "Jurisdiction" + "</td><td>" + RDFPrefixes.getLastPart(sense.jurisdiction) + "</td></tr>\n";
         }
+        if (!sense.parent.isEmpty())
+        {
+            tabla += "<tr class=\"" + tipo + "\"><td>" + "General concept" + "</td><td><a href=\""+sense.parent+"\">"+RDFPrefixes.getLastPart(sense.parent) + "</a></td></tr>\n";
+        }
+        
+        for(int i=0;i<sense.definitions.size();i++)
+        {
+            tabla += "<tr class=\"" + tipo + "\"><td>" + "Definition" + "</td><td>" + sense.definitions.get(i)+" <kbd>"+sense.definitionlans.get(i) + "</kbd></td></tr>\n";
+        }
+        
+        
         tabla += "</table>\n";
 
         return tabla;

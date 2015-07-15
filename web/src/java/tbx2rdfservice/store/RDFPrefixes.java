@@ -108,7 +108,7 @@ public class RDFPrefixes {
 
     public static String getLastPart(String uri) {
         String s="";
-        int index=s.lastIndexOf("/");
+        int index=uri.lastIndexOf("/");
         if (index==-1)
             return uri;
         s=uri.substring(index+1, uri.length());
