@@ -1,5 +1,8 @@
 package lemon;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
+import com.hp.hpl.jena.rdf.model.Resource;
 import java.net.URLEncoder;
 import tbx2rdfservice.TBX2RDFServiceConfig;
 import tbx2rdfservice.store.RDFPrefixes;
@@ -29,13 +32,31 @@ public class LexicalEntry {
     }
 
     public LexicalEntry(String _name, String _lan) {
-        name = _name;
+        name = _name+"_"+_lan;
         lan = _lan;
     }
-
+    public LexicalEntry(Model model, Resource res)
+    {
+        name = RDFPrefixes.getLastPart(res.getURI().toString());
+        NodeIterator ni = model.listObjectsOfProperty(res, model.createProperty("http://lemon-model.net/lemon#language"));
+        if (ni.hasNext())
+            lan = ni.next().asLiteral().getLexicalForm();
+        ni = model.listObjectsOfProperty(res, model.createProperty("http://purl.org/dc/terms/source"));
+        if (ni.hasNext())
+            source = ni.next().asLiteral().getLexicalForm();
+        ni = model.listObjectsOfProperty(res, model.createProperty("http://www.w3.org/2000/01/rdf-schema#comment"));
+        if (ni.hasNext())
+            comentario = ni.next().asLiteral().getLexicalForm();
+        ni = model.listObjectsOfProperty(res, model.createProperty("http://tbx2rdf.lider-project.eu/tbx#reliabilityCode"));
+        if (ni.hasNext())
+            reliabilitycode = ni.next().asLiteral().getLexicalForm();
+        
+        
+        
+        
+    }
     public String getURI() {
          return RDFPrefixes.encode(base,name);
-        
     }
 
     public String getXML() {

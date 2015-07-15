@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lemon.LexicalEntry;
 import lemon.LexicalSense;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.jena.riot.Lang;
@@ -190,16 +191,21 @@ public class LinkedDataServlet extends HttpServlet {
         LexicalSense sense = new LexicalSense(model, res);
         if (!sense.jurisdiction.isEmpty())
         {
-            tabla += "<tr class=\"" + tipo + "\"><td>" + "Jurisdiction" + "</td><td>" + RDFPrefixes.getLastPart(sense.jurisdiction) + "</td></tr>\n";
+            tabla += "<tr><td>" + "Jurisdiction" + "</td><td>" + RDFPrefixes.getLastPart(sense.jurisdiction) + "</td></tr>\n";
         }
         if (!sense.parent.isEmpty())
         {
-            tabla += "<tr class=\"" + tipo + "\"><td>" + "General concept" + "</td><td><a href=\""+sense.parent+"\">"+RDFPrefixes.getLastPart(sense.parent) + "</a></td></tr>\n";
+            tabla += "<tr><td>" + "General concept" + "</td><td><a href=\""+sense.parent+"\">"+RDFPrefixes.getLastPart(sense.parent) + "</a></td></tr>\n";
         }
         
         for(int i=0;i<sense.definitions.size();i++)
         {
             tabla += "<tr class=\"" + tipo + "\"><td>" + "Definition" + "</td><td>" + sense.definitions.get(i)+" <kbd>"+sense.definitionlans.get(i) + "</kbd></td></tr>\n";
+        }
+        for(int i=0;i<sense.entries.size();i++)
+        {
+            LexicalEntry le = sense.entries.get(i);
+            tabla += "<tr class=\"" + tipo + "\"><td><b>" + RDFPrefixes.getLastPart(le.getURI()) + "</b></td><td>" + "" + "</td></tr>\n";
         }
         
         

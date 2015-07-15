@@ -28,7 +28,7 @@ public class LexicalSense {
     public List<String> definitionlans=new ArrayList();
     public List<String> links = new ArrayList();
     public String jurisdiction ="";
-    private List<LexicalEntry> entries = new ArrayList();
+    public List<LexicalEntry> entries = new ArrayList();
     public String base = TBX2RDFServiceConfig.get("datauri","http://localhost:8080/");
     
     public LexicalSense()
@@ -56,6 +56,17 @@ public class LexicalSense {
         ni = model.listObjectsOfProperty(res, model.createProperty("http://www.w3.org/2004/02/skos/core#narrower"));
         if (ni.hasNext())
             parent = ni.next().asResource().toString();
+        ni = model.listObjectsOfProperty(res, model.createProperty("http://lemon-model.net/lemon#reference"));
+        if (ni.hasNext())
+            reference = ni.next().asResource().toString();
+        ni = model.listObjectsOfProperty(res, model.createProperty("http://www.w3.org/ns/lemon/ontolex#isSenseOf"));
+        while (ni.hasNext())
+        {
+            RDFNode nodo = ni.next();
+            LexicalEntry le = new LexicalEntry(model, nodo.asResource());
+            entries.add(le);
+        }
+        
     }
             
     
@@ -92,7 +103,7 @@ public class LexicalSense {
             }
             for(LexicalEntry entry : entries)
             {
-                nt += "<"+sres+"> <http://www.w3.org/ns/lemon/ontolex#reference> <"+ entry.getURI() +"> .\n"; 
+                nt += "<"+sres+"> <http://www.w3.org/ns/lemon/ontolex#isSenseOf> <"+ entry.getURI() +"> .\n"; 
                 
                 nt += entry.getNT();
                 
