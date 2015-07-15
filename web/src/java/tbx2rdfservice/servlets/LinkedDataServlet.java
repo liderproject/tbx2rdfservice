@@ -65,7 +65,7 @@ public class LinkedDataServlet extends HttpServlet {
         String peticion = request.getRequestURI();
 
         int last0 = peticion.lastIndexOf("/");
-        int last1 = peticion.lastIndexOf(peticion, last0);
+        int last1 = peticion.lastIndexOf("/", last0);
         String lasttoken0 = peticion.substring(last0 + 1, peticion.length()); //iate33,"",""
         String lasttoken1 = peticion.substring(last1 + 1, last0); //cc,resource,cc
         if (!lasttoken1.equals("resource") && lasttoken0.isEmpty()) {
