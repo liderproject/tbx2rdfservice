@@ -49,14 +49,14 @@ public class LexicalEntry {
         /*ni = model.listObjectsOfProperty(res, model.createProperty("http://www.w3.org/2000/01/rdf-schema#comment"));
         if (ni.hasNext())
             comentario = ni.next().asLiteral().getLexicalForm();*/
-        comentario = RDFUtil.getFirst(model, uri, "http://www.w3.org/2000/01/rdf-schema#comment");
+        comentario = RDFUtil.getFirstLiteral(model, uri, "http://www.w3.org/2000/01/rdf-schema#comment");
         
         
         ni = model.listObjectsOfProperty(res, model.createProperty("http://tbx2rdf.lider-project.eu/tbx#reliabilityCode"));
         if (ni.hasNext())
             reliabilitycode = ni.next().asLiteral().getLexicalForm();
 
-        uricanonicalform = RDFUtil.getFirst(model, uri, "http://www.w3.org/ns/lemon/ontolex#canonicalForm");
+        uricanonicalform = RDFUtil.getFirstResource(model, uri, "http://www.w3.org/ns/lemon/ontolex#canonicalForm");
         
         
         

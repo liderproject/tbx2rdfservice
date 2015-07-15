@@ -55,7 +55,7 @@ public class LexicalSense {
             definitionlans.add(nodo.asLiteral().getLanguage());
             definitions.add(nodo.asLiteral().getLexicalForm());
         }
-        parent = RDFUtil.getFirst(model, uri, "http://www.w3.org/2004/02/skos/core#narrower");
+        parent = RDFUtil.getFirstResource(model, uri, "http://www.w3.org/2004/02/skos/core#narrower");
         /*
         ni = model.listObjectsOfProperty(res, model.createProperty("http://www.w3.org/2004/02/skos/core#narrower"));
         if (ni.hasNext())
