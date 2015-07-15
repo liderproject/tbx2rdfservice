@@ -188,7 +188,14 @@ public class LinkedDataServlet extends HttpServlet {
         tabla += "<thead><tr><td width=\"30%\"><strong>Property</strong></td><td width=\"70%\"><strong>Value</strong></td></tr></thead>\n";
 
         String tipo="success"; //primary
-        LexicalSense sense = new LexicalSense(model, res);
+
+        //we have to load the sense
+        String rdfsense = RDFStoreFuseki.getEntity(res.getURI());
+        Model ms = ModelFactory.createDefaultModel();
+        InputStream is = new ByteArrayInputStream(rdfsense.getBytes(StandardCharsets.UTF_8));
+        RDFDataMgr.read(ms, is, Lang.NT);
+        
+        LexicalSense sense = new LexicalSense(ms, ms.createResource(res.getURI()));
         if (!sense.jurisdiction.isEmpty())
         {
             tabla += "<tr><td>" + "Jurisdiction" + "</td><td><a href=\""+sense.jurisdiction+"\">"+ RDFPrefixes.getLastPart(sense.jurisdiction) + "</a><span class=\"glyphicon glyphicon-share-alt\"></span></td></tr>\n";
@@ -210,7 +217,7 @@ public class LinkedDataServlet extends HttpServlet {
             
             tabla+="<table class=\"table table-condensed\">";
 
-            tabla+="<tr class=\"info\"><td width=\"30%\">";
+            tabla+="<tr><td width=\"30%\">";
             tabla+="Term";
             tabla+="</td><td width=\"70%\">";
             tabla+=RDFPrefixes.getLastPart(le.getURI());
