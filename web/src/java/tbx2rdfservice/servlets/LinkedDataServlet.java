@@ -209,6 +209,10 @@ public class LinkedDataServlet extends HttpServlet {
         {
             tabla += "<tr><td>" + "Definition" + "</td><td>" + sense.definitions.get(i)+" <kbd>"+sense.definitionlans.get(i) + "</kbd></td></tr>\n";
         }
+        for(int i=0;i<sense.links.size();i++)
+        {
+            tabla += "<tr><td>" + "Matches" + "</td><td><a href=\""+ sense.links.get(i)+"\""+RDFPrefixes.getLastPart(sense.links.get(i)) +"</a><span class=\"glyphicon glyphicon-share-alt\"></span></td></tr>\n";
+        }
             //
         for(int i=0;i<sense.entries.size();i++)
         {

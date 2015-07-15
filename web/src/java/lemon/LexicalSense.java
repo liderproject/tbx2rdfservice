@@ -63,6 +63,12 @@ public class LexicalSense {
             LexicalEntry le = new LexicalEntry(model, nodo.asResource());
             entries.add(le);
         }
+        ni = model.listObjectsOfProperty(res, model.createProperty("http://www.w3.org/2004/02/skos/core#closeMatch"));
+        while (ni.hasNext())
+        {
+            RDFNode nodo = ni.next();
+            links.add(nodo.asResource().toString());
+        }
         
     }
             
