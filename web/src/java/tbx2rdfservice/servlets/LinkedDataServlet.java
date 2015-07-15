@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lemon.LexicalSense;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -159,6 +160,10 @@ public class LinkedDataServlet extends HttpServlet {
                 tipo=tipos.next().asResource().getLocalName();
             
             String html="<h2>"+tipo+"</h2>";
+            if (tipo.equals("Concept"))
+            {
+                html+=getTable(model, entidad);
+            }
             body = body.replace("<!--TEMPLATE_PGN-->", html);
 
             try (PrintWriter out = response.getWriter()) {
@@ -173,6 +178,23 @@ public class LinkedDataServlet extends HttpServlet {
         }
         response.setStatus(HttpServletResponse.SC_OK);
 
+    }
+    
+    public static String getTable(Model model, Resource res)
+    {
+        String tabla="";
+        tabla += "<table class=\"table table-condensed\">"; //table-striped 
+        tabla += "<thead><tr><td width=\"30%\"><strong>Property</strong></td><td width=\"70%\"><strong>Value</strong></td></tr></thead>\n";
+
+        String tipo="primary";
+        LexicalSense sense = new LexicalSense(model, res);
+        if (!sense.jurisdiction.isEmpty())
+        {
+            tabla += "<tr class=\"" + tipo + "\"><td>" + "Jurisdiction" + "</td><td>" + RDFPrefixes.getLastPart(sense.jurisdiction) + "</td></tr>\n";
+        }
+        tabla += "</table>\n";
+
+        return tabla;
     }
 
     @Override

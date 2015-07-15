@@ -1,5 +1,8 @@
 package lemon;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
+import com.hp.hpl.jena.rdf.model.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -35,6 +38,15 @@ public class LexicalSense {
     {
         name=_name;
     }
+
+    public LexicalSense(Model model, Resource res)
+    {
+        name = RDFPrefixes.getLastPart(res.getURI().toString());
+        NodeIterator ni = model.listObjectsOfProperty(res, model.createProperty("http://creativecommons.org/ns#jurisdiction"));
+        if (ni.hasNext())
+            jurisdiction = ni.next().asResource().toString();
+    }
+            
     
     public String getNT()
     {
