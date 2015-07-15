@@ -14,7 +14,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -63,14 +66,21 @@ public class LinkedDataServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String peticion = request.getRequestURI();
-
-        int last0 = peticion.lastIndexOf("/");
-        int last1 = peticion.lastIndexOf("/", last0);
-        String lasttoken0 = peticion.substring(last0 + 1, peticion.length()); //iate33,"",""
-        String lasttoken1 = peticion.substring(last1 + 1, last0); //cc,resource,cc
-        if (!lasttoken1.equals("resource") && lasttoken0.isEmpty()) {
+        StringTokenizer tokens=new StringTokenizer(peticion, "/");
+        List<String> partes=new ArrayList();
+        while(tokens.hasMoreTokens())
+        {
+            partes.add(tokens.nextToken());
+        }
+        if (partes.size()<2) {
+            Tbx2rdfServlet.serveError(request, response);
+            return;
+        }
+        String last = partes.get(partes.size()-1);
+        String prelast = partes.get(partes.size()-2);
+        if (prelast.equals("resource")) {
             try {
-                response.getWriter().println("horra " + lasttoken1);
+                response.getWriter().println("horra " + last);
             } catch (IOException ex) {
 
             }
