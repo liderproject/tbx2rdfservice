@@ -227,7 +227,8 @@ public class LinkedDataServlet extends HttpServlet {
             
             
             Model ms = ModelFactory.createDefaultModel();
-            InputStream is = new ByteArrayInputStream(les.getBytes(StandardCharsets.UTF_8));
+            String rdf=RDFStoreFuseki.getEntity(les);
+            InputStream is = new ByteArrayInputStream(rdf.getBytes(StandardCharsets.UTF_8));
             RDFDataMgr.read(ms, is, Lang.NT);            
             LexicalEntry le = new LexicalEntry(ms, ms.createResource(les));
             tabla += "<tr><td><b>" + "is sense of" + "</b></td><td>";
