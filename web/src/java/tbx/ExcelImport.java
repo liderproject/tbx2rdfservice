@@ -81,6 +81,7 @@ public class ExcelImport {
                     String def12 = sheet.getCell(ind+2, i).getContents();
                     String source13 = sheet.getCell(ind+3, i).getContents();
                     String comentario14 = sheet.getCell(ind+4, i).getContents();
+                    String fiabilidad15 = sheet.getCell(ind+5, i).getContents();
                     
                     LexicalEntry le31 = new LexicalEntry(term10, lan11);
                     le31.base = "http://tbx2rdf.lider-project.eu/converter/resource/cc/";
@@ -93,8 +94,11 @@ public class ExcelImport {
                     if (!source13.isEmpty()) {
                         le31.source = source13;
                     }
+                    if (!fiabilidad15.isEmpty()) {
+                        le31.reliabilitycode = fiabilidad15;
+                    }
                     ls3.addEntry(le31);
-                    ind+=5;
+                    ind+=6;
                 }
                 senses.add(ls3);
             }
