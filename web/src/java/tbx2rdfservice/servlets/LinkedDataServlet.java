@@ -194,13 +194,6 @@ public class LinkedDataServlet extends HttpServlet {
         Model ms = ModelFactory.createDefaultModel();
         InputStream is = new ByteArrayInputStream(rdfsense.getBytes(StandardCharsets.UTF_8));
         RDFDataMgr.read(ms, is, Lang.NT);
-            try {
-                PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/error.txt");
-                archivo.println(res.getURI());
-                archivo.println(rdfsense);
-                archivo.close();
-            } catch (Exception ex) {
-            }
        */
         LexicalSense sense = new LexicalSense(model, res);
         
@@ -225,6 +218,14 @@ public class LinkedDataServlet extends HttpServlet {
         for(int i=0;i<sense.entries.size();i++)
         {
             String les = sense.entries.get(i).getURI();
+            try {
+                PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/error.txt");
+                archivo.println(les);
+                archivo.close();
+            } catch (Exception ex) {
+            }
+            
+            
             Model ms = ModelFactory.createDefaultModel();
             InputStream is = new ByteArrayInputStream(les.getBytes(StandardCharsets.UTF_8));
             RDFDataMgr.read(ms, is, Lang.NT);            
