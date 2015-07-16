@@ -29,7 +29,7 @@ public class ExcelImport {
             String fname = "D:\\Dropbox\\_COMPARTIDAS\\CRISTIANAVICTOR\\output\\2015 Terminology of legal terms in common licenses RANLP 2015\\import.xls";
             WorkbookSettings ws = new WorkbookSettings();
             ws.setEncoding("cp1252");
-            Workbook workbook = Workbook.getWorkbook(new File(fname),ws);
+            Workbook workbook = Workbook.getWorkbook(new File(fname), ws);
             Sheet sheet = workbook.getSheet(0);
             int nrows = sheet.getRows();
             for (int i = 2; i < nrows; i++) {
@@ -39,7 +39,7 @@ public class ExcelImport {
 
                 String juris1 = sheet.getCell(1, i).getContents();
                 if (!juris1.isEmpty()) {
-                    ls3.jurisdiction = "http://dbpedia.org/resource/"+juris1;
+                    ls3.jurisdiction = "http://dbpedia.org/resource/" + juris1;
                 }
 
                 String iate2 = sheet.getCell(2, i).getContents();
@@ -54,10 +54,10 @@ public class ExcelImport {
 
                 String parent4 = sheet.getCell(4, i).getContents();
                 if (!parent4.isEmpty()) {
-                    parent4=parent4.replace(" ", "%20");
-                    parent4=parent4.replace("(", "%28");
-                    parent4=parent4.replace(")", "%29");
-                    ls3.parent = "http://tbx2rdf.lider-project.eu/converter/resource/cc/"+parent4;
+                    parent4 = parent4.replace(" ", "%20");
+                    parent4 = parent4.replace("(", "%28");
+                    parent4 = parent4.replace(")", "%29");
+                    ls3.parent = "http://tbx2rdf.lider-project.eu/converter/resource/cc/" + parent4;
                 }
 
                 String def5 = sheet.getCell(5, i).getContents();
@@ -70,47 +70,38 @@ public class ExcelImport {
                     String lan8 = sheet.getCell(8, i).getContents();
                     ls3.addDefinition(def7, lan8);
                 }
-                
-                String term10 = sheet.getCell(10, i).getContents();
-                if (!term10.isEmpty())
-                {
-                    String lan11 = sheet.getCell(11, i).getContents();
-                    String source13 = sheet.getCell(13, i).getContents();
-                    String def12 = sheet.getCell(12, i).getContents();
-                    String comentario14 = sheet.getCell(14, i).getContents();
-                    LexicalEntry le31 = new LexicalEntry(term10, lan11);
-                    le31.base="http://tbx2rdf.lider-project.eu/converter/resource/cc/";
-                    if (!def12.isEmpty())
-                    {
-                        le31.definition=def12;
+
+                int ind = 10;
+                while (true) {
+                    String term10 = sheet.getCell(ind, i).getContents();
+                    if (term10.isEmpty()) {
+                        break;
                     }
-                    if (!comentario14.isEmpty())
-                        le31.comentario=comentario14;
-                    if (!source13.isEmpty())
-                        le31.source=source13;
+                    String lan11 = sheet.getCell(ind+1, i).getContents();
+                    String def12 = sheet.getCell(ind+2, i).getContents();
+                    String source13 = sheet.getCell(ind+3, i).getContents();
+                    String comentario14 = sheet.getCell(ind+4, i).getContents();
+                    
+                    LexicalEntry le31 = new LexicalEntry(term10, lan11);
+                    le31.base = "http://tbx2rdf.lider-project.eu/converter/resource/cc/";
+                    if (!def12.isEmpty()) {
+                        le31.definition = def12;
+                    }
+                    if (!comentario14.isEmpty()) {
+                        le31.comentario = comentario14;
+                    }
+                    if (!source13.isEmpty()) {
+                        le31.source = source13;
+                    }
                     ls3.addEntry(le31);
-                }
-                String term15 = sheet.getCell(15, i).getContents();
-                if (!term15.isEmpty())
-                {
-                    String lan16 = sheet.getCell(16, i).getContents();
-                    String def17 = sheet.getCell(17, i).getContents();
-                    String source18 = sheet.getCell(18, i).getContents();
-                    String comentario19 = sheet.getCell(19, i).getContents();
-                    LexicalEntry le31 = new LexicalEntry(term15, lan16);
-                    le31.base="http://tbx2rdf.lider-project.eu/converter/resource/cc/";
-                    if (!comentario19.isEmpty())
-                        le31.comentario=comentario19;
-                    if (!source18.isEmpty())
-                        le31.source=source18;
-                    ls3.addEntry(le31);
+                    ind+=5;
                 }
                 senses.add(ls3);
             }
-            for(LexicalSense sense : senses)
-            {
+            
+            for (LexicalSense sense : senses) {
                 System.out.println(sense.getURI());
-                boolean ok=RDFStoreClient.post(sense.getURI(), sense.getNT());
+                boolean ok = RDFStoreClient.post(sense.getURI(), sense.getNT());
 
             }
         } catch (Exception ex) {
