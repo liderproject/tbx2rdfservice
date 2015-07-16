@@ -26,6 +26,7 @@ public class LexicalEntry {
     public String comentario="";
     public String source = "";
     public String base = TBX2RDFServiceConfig.get("datauri", "http://localhost:8080/tbx/");
+    public String definition="";
 
 
     public LexicalEntry() {
@@ -46,6 +47,7 @@ public class LexicalEntry {
         comentario = RDFUtil.getFirstLiteral(model, uri, "http://www.w3.org/2000/01/rdf-schema#comment");
         reliabilitycode = RDFUtil.getFirstLiteral(model, uri, "http://tbx2rdf.lider-project.eu/tbx#reliabilityCode");
         uricanonicalform = RDFUtil.getFirstResource(model, uri, "http://www.w3.org/ns/lemon/ontolex#canonicalForm");
+        definition = RDFUtil.getFirstLiteral(model, uri, "http://www.w3.org/2004/02/skos/core#definition");
     }
     public String getURI() {
          return RDFPrefixes.encode(base,name);
@@ -91,6 +93,10 @@ public class LexicalEntry {
             if (!comentario.isEmpty()) {
                 comentario=comentario.replace("\"", "");
                 nt += "<" + sres + "> <http://www.w3.org/2000/01/rdf-schema#comment> \"" + comentario + "\" .\n";
+            }
+            if (!definition.isEmpty()) {
+                definition=definition.replace("\"", "");
+                nt += "<" + sres + "> <http://www.w3.org/2004/02/skos/core#definition> \"" + definition + "\" .\n";
             }
             return nt;
         } catch (Exception e) {

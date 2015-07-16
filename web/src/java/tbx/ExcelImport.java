@@ -76,9 +76,14 @@ public class ExcelImport {
                 {
                     String lan11 = sheet.getCell(11, i).getContents();
                     String source13 = sheet.getCell(13, i).getContents();
+                    String def12 = sheet.getCell(12, i).getContents();
                     String comentario14 = sheet.getCell(14, i).getContents();
                     LexicalEntry le31 = new LexicalEntry(term10, lan11);
                     le31.base="http://tbx2rdf.lider-project.eu/converter/resource/cc/";
+                    if (!def12.isEmpty())
+                    {
+                        le31.definition=def12;
+                    }
                     if (!comentario14.isEmpty())
                         le31.comentario=comentario14;
                     if (!source13.isEmpty())
@@ -89,6 +94,7 @@ public class ExcelImport {
                 if (!term15.isEmpty())
                 {
                     String lan16 = sheet.getCell(16, i).getContents();
+                    String def17 = sheet.getCell(17, i).getContents();
                     String source18 = sheet.getCell(18, i).getContents();
                     String comentario19 = sheet.getCell(19, i).getContents();
                     LexicalEntry le31 = new LexicalEntry(term15, lan16);
