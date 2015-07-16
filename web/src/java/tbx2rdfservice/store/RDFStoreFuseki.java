@@ -239,6 +239,32 @@ public class RDFStoreFuseki {
         RDFDataMgr.write(sw, model, Lang.TTL);
         return sw.toString();
     }
+    public static List<String> getNarrower(String res) {
+        List<String> uris = new ArrayList();
+        String sparql = "SELECT DISTINCT ?s\n"
+                + "WHERE {\n"
+                + "  GRAPH ?g {\n"
+                + "    ?s <http://www.w3.org/2004/02/skos/core#narrower> <"+res+">\n"
+                + "  }\n"
+                + "} ";
+ 
+        try {
+            PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/query.txt");
+            archivo.println(sparql);
+            archivo.close();
+        } catch (Exception ex) {
+        }
+        Query query = QueryFactory.create(sparql);
+        String endpoint = "http://localhost:3031/tbx/query";
+        QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, query);
+        ResultSet results = qexec.execSelect();
+        for (; results.hasNext();) {
+            QuerySolution soln = results.nextSolution();
+            Resource p = soln.getResource("s");       // Get a result variable by name.
+            uris.add(p.toString());
+        }
+        return uris;        
+    }
 
     public static List<String> listConcepts(int offset, int limit) {
         List<String> uris = new ArrayList();

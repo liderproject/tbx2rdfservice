@@ -184,8 +184,8 @@ public class LinkedDataServlet extends HttpServlet {
     public static String getTable(Model model, Resource res)
     {
         String tabla="";
-        tabla += "<table class=\"table table-condensed\">"; //table-striped 
-        tabla += "<thead><tr><td width=\"30%\"><strong>Property</strong></td><td width=\"70%\"><strong>Value</strong></td></tr></thead>\n";
+        tabla += "<table class=\"table table-condensed table-bordered\">"; //table-striped 
+        tabla += "<thead><tr><td width=\"25%\"><strong>Property</strong></td><td width=\"75%\"><strong>Value</strong></td></tr></thead>\n";
 
         String tipo="success"; //primary
 
@@ -204,6 +204,10 @@ public class LinkedDataServlet extends HttpServlet {
         if (!sense.parent.isEmpty())
         {
             tabla += "<tr><td>" + "General concept" + "</td><td><a href=\""+sense.parent+"\">"+RDFPrefixes.getLastPart(sense.parent) + "</a></td></tr>\n";
+        }
+        if (!sense.reference.isEmpty())
+        {
+            tabla += "<tr><td>" + "Reference" + "</td><td><a href=\""+sense.reference+"\">"+RDFPrefixes.getLastPart(sense.reference) + "</a><span class=\"glyphicon glyphicon-share-alt\"></span></td></tr>\n";
         }
         
         for(int i=0;i<sense.definitions.size();i++)
@@ -225,7 +229,7 @@ public class LinkedDataServlet extends HttpServlet {
             LexicalEntry le = new LexicalEntry(ms, ms.createResource(les));
             tabla += "<tr><td>" + "is sense of" + "</td><td>";
             
-            tabla+="<table class=\"table table-condensed\">";
+            tabla+="<table class=\"table table-condensed table-bordered\">";
 
             tabla+="<tr><td width=\"30%\"><b>";
             tabla+=le.getBeautifulname();
@@ -271,8 +275,18 @@ public class LinkedDataServlet extends HttpServlet {
             
             tabla+="</td></tr>\n";
         }
-        
-        
+        List<String> narrows = RDFStoreFuseki.getNarrower(res.getURI());
+        if (!narrows.isEmpty())
+        {
+                tabla+="<tr><td width=\"30%\">";
+                tabla+="Specialized by";
+                tabla+="</td><td width=\"70%\">";
+                for(String narrow : narrows)
+                {
+                    tabla+="<a href=\"" + narrow + "\">"+RDFPrefixes.getLastPart(narrow)+"</a> ";
+                }
+                tabla+="</td></tr>\n";
+        }
         tabla += "</table>\n";
 
         return tabla;
