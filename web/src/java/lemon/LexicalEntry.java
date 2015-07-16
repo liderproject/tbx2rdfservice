@@ -39,6 +39,7 @@ public class LexicalEntry {
     public LexicalEntry(Model model, Resource res)
     {
         name = RDFPrefixes.getLastPart(res.getURI().toString());
+        base=res.getURI().substring(0,res.getURI().lastIndexOf("/")+1);
         String uri = res.getURI();
         lan = RDFUtil.getFirstLiteral(model, uri, "http://lemon-model.net/lemon#language");
         source = RDFUtil.getFirstLiteral(model, uri, "http://purl.org/dc/terms/source");
