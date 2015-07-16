@@ -194,6 +194,14 @@ public class LinkedDataServlet extends HttpServlet {
         Model ms = ModelFactory.createDefaultModel();
         InputStream is = new ByteArrayInputStream(rdfsense.getBytes(StandardCharsets.UTF_8));
         RDFDataMgr.read(ms, is, Lang.NT);
+            try {
+                PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/error.txt");
+                archivo.println(res.getURI());
+                archivo.println(rdfsense);
+                archivo.close();
+            } catch (Exception ex) {
+            }
+       
         
         LexicalSense sense = new LexicalSense(ms, ms.createResource(res.getURI()));
         if (!sense.jurisdiction.isEmpty())
@@ -211,7 +219,7 @@ public class LinkedDataServlet extends HttpServlet {
         }
         for(int i=0;i<sense.links.size();i++)
         {
-            tabla += "<tr><td>" + "Matches" + "</td><td><a href=\""+ sense.links.get(i)+"\""+RDFPrefixes.getLastPart(sense.links.get(i)) +"</a><span class=\"glyphicon glyphicon-share-alt\"></span></td></tr>\n";
+            tabla += "<tr><td>" + "Matches" + "</td><td><a href=\""+ sense.links.get(i)+"\""+RDFPrefixes.getLastPart(sense.links.get(i)) +"</a> <span class=\"glyphicon glyphicon-share-alt\"></span></td></tr>\n";
         }
             //
         for(int i=0;i<sense.entries.size();i++)
@@ -221,10 +229,9 @@ public class LinkedDataServlet extends HttpServlet {
             
             tabla+="<table class=\"table table-condensed\">";
 
-            tabla+="<tr><td width=\"30%\">";
-            tabla+="Term";
-            tabla+="</td><td width=\"70%\">";
+            tabla+="<tr><td width=\"30%\"></b>";
             tabla+=RDFPrefixes.getLastPart(le.getURI());
+            tabla+="</b></td><td width=\"70%\">";
             tabla+="</td></tr>\n";
             
             if (!le.comentario.isEmpty())

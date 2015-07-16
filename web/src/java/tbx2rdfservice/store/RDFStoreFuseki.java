@@ -240,7 +240,7 @@ public class RDFStoreFuseki {
         return sw.toString();
     }
 
-    public static List<String> listResources(int offset, int limit) {
+    public static List<String> listConcepts(int offset, int limit) {
         List<String> uris = new ArrayList();
         String sparql = "SELECT DISTINCT ?s\n"
                 + "WHERE {\n"
