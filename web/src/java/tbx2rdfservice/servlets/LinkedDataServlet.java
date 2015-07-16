@@ -190,7 +190,7 @@ public class LinkedDataServlet extends HttpServlet {
         String tipo="success"; //primary
 
         //we have to load the sense
-        String rdfsense = RDFStoreFuseki.getEntity(res.getURI());
+       /* String rdfsense = RDFStoreFuseki.getEntity(res.getURI());
         Model ms = ModelFactory.createDefaultModel();
         InputStream is = new ByteArrayInputStream(rdfsense.getBytes(StandardCharsets.UTF_8));
         RDFDataMgr.read(ms, is, Lang.NT);
@@ -201,9 +201,9 @@ public class LinkedDataServlet extends HttpServlet {
                 archivo.close();
             } catch (Exception ex) {
             }
-       
+       */
+        LexicalSense sense = new LexicalSense(model, res);
         
-        LexicalSense sense = new LexicalSense(ms, ms.createResource(res.getURI()));
         if (!sense.jurisdiction.isEmpty())
         {
             tabla += "<tr><td>" + "Jurisdiction" + "</td><td><a href=\""+sense.jurisdiction+"\">"+ RDFPrefixes.getLastPart(sense.jurisdiction) + "</a><span class=\"glyphicon glyphicon-share-alt\"></span></td></tr>\n";
@@ -224,7 +224,11 @@ public class LinkedDataServlet extends HttpServlet {
             //
         for(int i=0;i<sense.entries.size();i++)
         {
-            LexicalEntry le = sense.entries.get(i);
+            String les = sense.entries.get(i).getURI();
+            Model ms = ModelFactory.createDefaultModel();
+            InputStream is = new ByteArrayInputStream(les.getBytes(StandardCharsets.UTF_8));
+            RDFDataMgr.read(ms, is, Lang.NT);            
+            LexicalEntry le = new LexicalEntry(ms, ms.createResource(les));
             tabla += "<tr><td><b>" + "is sense of" + "</b></td><td>";
             
             tabla+="<table class=\"table table-condensed\">";
