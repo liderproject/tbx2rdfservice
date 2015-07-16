@@ -212,31 +212,24 @@ public class LinkedDataServlet extends HttpServlet {
         }
         for(int i=0;i<sense.links.size();i++)
         {
-            tabla += "<tr><td>" + "Matches" + "</td><td><a href=\""+ sense.links.get(i)+"\""+RDFPrefixes.getLastPart(sense.links.get(i)) +"</a> <span class=\"glyphicon glyphicon-share-alt\"></span></td></tr>\n";
+            tabla += "<tr><td>" + "Matches" + "</td><td><a href=\""+ sense.links.get(i)+"\">"+RDFPrefixes.getLastPart(sense.links.get(i)) +"</a> <span class=\"glyphicon glyphicon-share-alt\"></span></td></tr>\n";
         }
             //
         for(int i=0;i<sense.entries.size();i++)
         {
             String les = sense.entries.get(i).getURI();
-            try {
-                PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/error.txt");
-                archivo.println(les);
-                archivo.close();
-            } catch (Exception ex) {
-            }
-            
-            
             Model ms = ModelFactory.createDefaultModel();
             String rdf=RDFStoreFuseki.getEntity(les);
             InputStream is = new ByteArrayInputStream(rdf.getBytes(StandardCharsets.UTF_8));
             RDFDataMgr.read(ms, is, Lang.NT);            
             LexicalEntry le = new LexicalEntry(ms, ms.createResource(les));
-            tabla += "<tr><td><b>" + "is sense of" + "</b></td><td>";
+            tabla += "<tr><td>" + "is sense of" + "</td><td>";
             
             tabla+="<table class=\"table table-condensed\">";
 
-            tabla+="<tr><td width=\"30%\"></b>";
-            tabla+=RDFPrefixes.getLastPart(le.getURI());
+            tabla+="<tr><td width=\"30%\"><b>";
+            tabla+=le.getBeautifulname();
+            tabla+=" <kbd>"+le.lan+"</kbd>";
             tabla+="</b></td><td width=\"70%\">";
             tabla+="</td></tr>\n";
             

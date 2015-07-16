@@ -98,4 +98,10 @@ public class LexicalEntry {
         }
     }
 
+    public String getBeautifulname() {
+        String s = RDFPrefixes.getLastPart(getURI());
+        s=s.substring(0, s.lastIndexOf("_"));
+        return s;
+    }
+
 }

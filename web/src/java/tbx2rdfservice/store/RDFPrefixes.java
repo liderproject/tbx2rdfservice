@@ -115,5 +115,8 @@ public class RDFPrefixes {
         s=s.replace("%20", " ");
         return s;
     }
-    
+        public static void main(String[] args) {
+            System.out.println(getLastPart("http://tbx2rdf.lider-project.eu/data/iate/IATE-74645"));
+        }
+
 }
