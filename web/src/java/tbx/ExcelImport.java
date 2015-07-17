@@ -84,6 +84,8 @@ public class ExcelImport {
                     String fiabilidad15 = sheet.getCell(ind+5, i).getContents();
                     
                     LexicalEntry le31 = new LexicalEntry(term10, lan11);
+                   // System.out.println(term10+" "+le31.getURI());
+                    
                     le31.base = "http://tbx2rdf.lider-project.eu/converter/resource/cc/";
                     if (!def12.isEmpty()) {
                         le31.definition = def12;
@@ -104,8 +106,9 @@ public class ExcelImport {
             }
             
             for (LexicalSense sense : senses) {
-                System.out.println(sense.getURI());
-                boolean ok = RDFStoreClient.post(sense.getURI(), sense.getNT());
+                String nt = sense.getNT();
+               // System.out.println(sense.getURI());
+              //  boolean ok = RDFStoreClient.post(sense.getURI(), sense.getNT());
 
             }
         } catch (Exception ex) {

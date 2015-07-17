@@ -7,6 +7,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -225,6 +226,16 @@ public class LinkedDataServlet extends HttpServlet {
             String les = sense.entries.get(i).getURI();
             Model ms = ModelFactory.createDefaultModel();
             String rdf=RDFStoreFuseki.getEntity(les);
+            
+            try {
+                PrintWriter archivo = new PrintWriter(new FileWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/rdf.txt",true));
+                archivo.println(rdf);
+                archivo.close();
+            } catch (Exception ex) {
+            }
+
+            
+            
             InputStream is = new ByteArrayInputStream(rdf.getBytes(StandardCharsets.UTF_8));
             RDFDataMgr.read(ms, is, Lang.NT);            
             LexicalEntry le = new LexicalEntry(ms, ms.createResource(les));

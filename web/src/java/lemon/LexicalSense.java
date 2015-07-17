@@ -106,6 +106,7 @@ public class LexicalSense {
             }
             for(LexicalEntry entry : entries)
             {
+                System.out.println(entry.getURI());
                 nt += "<"+sres+"> <http://www.w3.org/ns/lemon/ontolex#isSenseOf> <"+ entry.getURI() +"> .\n"; 
                 
                 nt += entry.getNT();
