@@ -94,6 +94,8 @@ public class RDFPrefixes {
     }
 
     public static String encode(String base, String name) {
+        if (name.contains("%"))
+            return base+name;
         try {
             String codificado = URLEncoder.encode(name, "UTF-8");
             codificado=codificado.replace("+", "%20");
