@@ -220,6 +220,12 @@ public class LinkedDataServlet extends HttpServlet {
         {
             tabla += "<tr><td>" + "Matches" + "</td><td><a href=\""+ sense.links.get(i)+"\">"+RDFPrefixes.getLastPart(sense.links.get(i)) +"</a> <span class=\"glyphicon glyphicon-share-alt\"></span></td></tr>\n";
         }
+            try {
+                PrintWriter archivo = new PrintWriter(new FileWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/rdf.txt",true));
+                archivo.println("**************************** ENTRIES: " +sense.entries.size());
+                archivo.close();
+            } catch (Exception ex) {
+            }
             //
         for(int i=0;i<sense.entries.size();i++)
         {
@@ -229,6 +235,7 @@ public class LinkedDataServlet extends HttpServlet {
             
             try {
                 PrintWriter archivo = new PrintWriter(new FileWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/rdf.txt",true));
+                archivo.println(les);
                 archivo.println(rdf);
                 archivo.close();
             } catch (Exception ex) {
