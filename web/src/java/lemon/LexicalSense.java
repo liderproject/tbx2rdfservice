@@ -91,7 +91,7 @@ public class LexicalSense {
             String source=RDFUtil.getFirstLiteral(model, r.getURI(), "http://purl.org/dc/terms/source");
             definitions.add(label);
             definitionsources.add(source);
-            definitionlans.add(lan);
+            definitionlans.add(lan); 
         }
         
     }
