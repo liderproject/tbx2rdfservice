@@ -36,7 +36,11 @@ public class ExcelImport {
                 String sense0 = sheet.getCell(0, i).getContents();
                 LexicalSense ls3 = new LexicalSense(sense0);
                 ls3.base = "http://tbx2rdf.lider-project.eu/converter/resource/cc/";
-
+                
+                if (!ls3.getURI().equals("http://tbx2rdf.lider-project.eu/converter/resource/cc/author"))
+                {
+                    continue;
+                }
                 String juris1 = sheet.getCell(1, i).getContents();
                 if (!juris1.isEmpty()) {
                     ls3.jurisdiction = "http://dbpedia.org/resource/" + juris1;
@@ -109,7 +113,7 @@ public class ExcelImport {
             for (LexicalSense sense : senses) {
                 String nt = sense.getNT();
                 String uri = sense.getURI();
-                if (sense.getURI().equals("http://tbx2rdf.lider-project.eu/converter/cc/author"));
+                if (sense.getURI().equals("http://tbx2rdf.lider-project.eu/converter/resource/cc/author"))
                 {
                     System.out.println(uri);
                     System.out.println(nt);

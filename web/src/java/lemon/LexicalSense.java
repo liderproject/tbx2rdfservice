@@ -56,6 +56,7 @@ public class LexicalSense {
             RDFNode nodo = ni.next();
             definitionlans.add(nodo.asLiteral().getLanguage());
             definitions.add(nodo.asLiteral().getLexicalForm());
+            definitionsources.add("");
         }
         subjectField = RDFUtil.getFirstLiteral(model, uri, "http://tbx2rdf.lider-project.eu/tbx#subjectField");
         jurisdiction = RDFUtil.getFirstResource(model, uri, "http://creativecommons.org/ns#jurisdiction");
@@ -73,6 +74,16 @@ public class LexicalSense {
         {
             RDFNode nodo = ni.next();
             links.add(nodo.asResource().toString());
+        }
+        ni = model.listObjectsOfProperty(res, model.createProperty("http://lemon-model.net/lemon#definition"));
+        while (ni.hasNext())
+        {
+            Resource r = ni.next().asResource();
+            String label=RDFUtil.getFirstLiteral(model, r.getURI(), "http://www.w3.org/2000/01/rdf-schema#label");
+            String source=RDFUtil.getFirstLiteral(model, r.getURI(), "http://purl.org/dc/terms/source");
+            definitions.add(label);
+            definitionsources.add(source);
+            definitionlans.add("");
         }
         
     }
@@ -105,7 +116,11 @@ public class LexicalSense {
                 
                 Literal li = ResourceFactory.createLangLiteral(def, deflan);
                 nt += "<"+sres+"> <http://lemon-model.net/lemon#definition> <"+ defuri +"> .\n";
-                nt += "<"+defuri+"> <http://www.w3.org/2000/01/rdf-schema#label> \""+ def.toString() +"\" .\n";
+                if (deflan.isEmpty())
+                    nt += "<"+defuri+"> <http://www.w3.org/2000/01/rdf-schema#label> \""+ def +"\" .\n";
+                else
+                     nt += "<"+defuri+"> <http://www.w3.org/2000/01/rdf-schema#label> \""+ def +"\"@"+ deflan+ " .\n";
+                   
                 nt += "<"+defuri+"> <http://purl.org/dc/terms/source> \""+ defsource +"\" .\n";
                 
                 

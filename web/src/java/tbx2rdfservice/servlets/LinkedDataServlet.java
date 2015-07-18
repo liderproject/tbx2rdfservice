@@ -163,9 +163,19 @@ public class LinkedDataServlet extends HttpServlet {
 
             String html = "<h2>" + tipo + "</h2>";
             if (tipo.equals("Concept")) {
+                //inicio experimetanl
+                nt = RDFStoreFuseki.loadGraph(entidad.toString());
+                InputStream iy = new ByteArrayInputStream(nt.getBytes(StandardCharsets.UTF_8));
+                RDFDataMgr.read(model, iy, Lang.NT);      
+                StringWriter sw7 = new StringWriter();
+                RDFDataMgr.write(sw7, model, Lang.TTL);                
+                StringEscapeUtils.escapeHtml4(sw7.toString());
+                //fin experimental
                 html += getTable(model, entidad);
+                
             }
             body = body.replace("<!--TEMPLATE_PGN-->", html);
+            
 
             try (PrintWriter out = response.getWriter()) {
                 body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + titulo);
@@ -220,7 +230,11 @@ public class LinkedDataServlet extends HttpServlet {
         }
 
         for (int i = 0; i < sense.definitions.size(); i++) {
-            tabla += "<tr><td>" + "Definition" + "</td><td>" + sense.definitions.get(i) + " <kbd>" + sense.definitionlans.get(i) + "</kbd></td></tr>\n";
+            tabla += "<tr><td>" + "Definition" + "</td><td>" + sense.definitions.get(i) + " <kbd>" + sense.definitionlans.get(i);
+            tabla += "</kbd>";
+            if (!sense.definitionsources.isEmpty())
+                tabla+="<br/>Source: "+ sense.definitionsources +"\n";
+            tabla += "</td></tr>\n";
         }
         for (int i = 0; i < sense.links.size(); i++) {
             String link = sense.links.get(i);
@@ -244,8 +258,6 @@ public class LinkedDataServlet extends HttpServlet {
             String les = sense.entries.get(i).getURI();
             Model ms = ModelFactory.createDefaultModel();
             String rdf = RDFStoreFuseki.getEntity(les);
-
-
 
             InputStream ix = new ByteArrayInputStream(rdf.getBytes(StandardCharsets.UTF_8));
             RDFDataMgr.read(ms, ix, Lang.NT);
