@@ -78,12 +78,20 @@ public class LexicalSense {
         ni = model.listObjectsOfProperty(res, model.createProperty("http://lemon-model.net/lemon#definition"));
         while (ni.hasNext())
         {
+            String label="";
+            String lan="";
             Resource r = ni.next().asResource();
-            String label=RDFUtil.getFirstLiteral(model, r.getURI(), "http://www.w3.org/2000/01/rdf-schema#label");
+            NodeIterator ny = model.listObjectsOfProperty(r, model.createProperty("http://www.w3.org/2000/01/rdf-schema#label"));
+            if (ny.hasNext())
+            {
+                Literal lit=ni.next().asLiteral();
+                label = lit.getLexicalForm();
+                lan= lit.getLanguage();
+            }            
             String source=RDFUtil.getFirstLiteral(model, r.getURI(), "http://purl.org/dc/terms/source");
             definitions.add(label);
             definitionsources.add(source);
-            definitionlans.add("");
+            definitionlans.add(lan);
         }
         
     }

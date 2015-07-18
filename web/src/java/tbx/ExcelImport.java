@@ -39,7 +39,7 @@ public class ExcelImport {
                 
                 if (!ls3.getURI().equals("http://tbx2rdf.lider-project.eu/converter/resource/cc/author"))
                 {
-                    continue;
+                 //   continue;
                 }
                 String juris1 = sheet.getCell(1, i).getContents();
                 if (!juris1.isEmpty()) {
@@ -113,12 +113,7 @@ public class ExcelImport {
             for (LexicalSense sense : senses) {
                 String nt = sense.getNT();
                 String uri = sense.getURI();
-                if (sense.getURI().equals("http://tbx2rdf.lider-project.eu/converter/resource/cc/author"))
-                {
-                    System.out.println(uri);
-                    System.out.println(nt);
-                    boolean ok = RDFStoreClient.post(uri, nt);
-                }
+                boolean ok = RDFStoreClient.post(uri, nt);
 
             }
         } catch (Exception ex) {

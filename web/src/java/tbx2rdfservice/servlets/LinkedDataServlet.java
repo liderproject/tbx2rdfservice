@@ -169,7 +169,7 @@ public class LinkedDataServlet extends HttpServlet {
                 RDFDataMgr.read(model, iy, Lang.NT);      
                 StringWriter sw7 = new StringWriter();
                 RDFDataMgr.write(sw7, model, Lang.TTL);                
-                StringEscapeUtils.escapeHtml4(sw7.toString());
+                ttl2=StringEscapeUtils.escapeHtml4(sw7.toString());
                 //fin experimental
                 html += getTable(model, entidad);
                 
@@ -194,7 +194,7 @@ public class LinkedDataServlet extends HttpServlet {
     public static String getTable(Model model, Resource res) {
         String tabla = "";
         
-        String todo = RDFStoreFuseki.loadGraph(res.getURI());
+/*        String todo = RDFStoreFuseki.loadGraph(res.getURI());
         InputStream is = new ByteArrayInputStream(todo.getBytes(StandardCharsets.UTF_8));
         RDFDataMgr.read(model, is, Lang.NT);
             try {
@@ -202,7 +202,7 @@ public class LinkedDataServlet extends HttpServlet {
                 archivo.println(todo);
                 archivo.close();
             } catch (Exception ex) {
-            }        
+            }        */
         
         
         
