@@ -215,9 +215,13 @@ public class LinkedDataServlet extends HttpServlet {
             if (link.contains("iate/")) {
                 add+="<br/>";
                 List<Literal> lista=IATEUtils.getIATETerms(link);
+                int n=0;
                 for(Literal l : lista)
                 {
-                    add+=l.getLexicalForm()+" <kbd>"+l.getLanguage()+"</kbd>"+", ";
+                    if (n!=0)
+                        add+=",";
+                    add+=l.getLexicalForm()+" <kbd>"+l.getLanguage()+"</kbd>\n";
+                    n++;
                 }
             }
             tabla += "<tr><td>" + "Matches" + "</td><td><a href=\"" + link + "\">" + RDFPrefixes.getLastPart(link) + "</a> <span class=\"glyphicon glyphicon-share-alt\"></span>"+add+"</td></tr>\n";
