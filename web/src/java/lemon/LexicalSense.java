@@ -26,7 +26,9 @@ public class LexicalSense {
     public String reference ="";
     public String parent="";
     public List<String> definitions=new ArrayList();
+    public List<String> definitionsources=new ArrayList();
     public List<String> definitionlans=new ArrayList();
+    
     public List<String> links = new ArrayList();
     public String jurisdiction ="";
     public List<LexicalEntry> entries = new ArrayList();
@@ -149,10 +151,14 @@ public class LexicalSense {
     public String getURI() {
         return RDFPrefixes.encode(base,name);
     }
-
     public void addDefinition(String def, String es) {
+        addDefinition(def,es,"");
+    }
+
+    public void addDefinition(String def, String es, String source) {
         def=def.replace("\n","");
         definitions.add(def);
         definitionlans.add(es);
+        definitionsources.add(source);
     }
 }

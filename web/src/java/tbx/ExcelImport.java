@@ -63,12 +63,13 @@ public class ExcelImport {
                 String def5 = sheet.getCell(5, i).getContents();
                 if (!def5.isEmpty()) {
                     String lan6 = sheet.getCell(6, i).getContents();
-                    ls3.addDefinition(def5, lan6);
+                    String source7 = sheet.getCell(7, i).getContents();
+                    ls3.addDefinition(def5, lan6,source7);
                 }
-                String def7 = sheet.getCell(7, i).getContents();
-                if (!def7.isEmpty()) {
-                    String lan8 = sheet.getCell(8, i).getContents();
-                    ls3.addDefinition(def7, lan8);
+                String def8 = sheet.getCell(8, i).getContents();
+                if (!def8.isEmpty()) {
+                    String lan9 = sheet.getCell(9, i).getContents();
+                    ls3.addDefinition(def8, lan9);
                 }
 
                 int ind = 10;
