@@ -1,13 +1,16 @@
 package lemon;
 
+import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import tbx2rdfservice.TBX2RDFServiceConfig;
@@ -95,12 +98,22 @@ public class LexicalSense {
             for(int i=0;i<n;i++)
             {
                 String def = definitions.get(i);
-                def=def.replace("\"", "");
                 String deflan= definitionlans.get(i);
-                String lit="\""+def+"\"";
-                if (!deflan.isEmpty())
-                    lit+="@"+deflan;
-                nt += "<"+sres+"> <http://www.w3.org/2004/02/skos/core#definition> "+ lit +" .\n"; 
+                String defsource= definitionsources.get(i);
+                
+                String defuri = base+UUID.randomUUID().toString();
+                
+                Literal li = ResourceFactory.createLangLiteral(def, deflan);
+                nt += "<"+sres+"> <http://lemon-model.net/lemon#definition> <"+ defuri +"> .\n";
+                nt += "<"+defuri+"> <http://www.w3.org/2000/01/rdf-schema#label> \""+ def.toString() +"\" .\n";
+                nt += "<"+defuri+"> <http://purl.org/dc/terms/source> \""+ defsource +"\" .\n";
+                
+                
+//                def=def.replace("\"", "");
+//               String lit="\""+def+"\"";
+//                if (!deflan.isEmpty())
+//                    lit+="@"+deflan;
+//                nt += "<"+sres+"> <http://www.w3.org/2004/02/skos/core#definition> "+ lit +" .\n"; 
             }
             for(String link : links)
             {

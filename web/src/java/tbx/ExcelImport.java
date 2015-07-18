@@ -64,7 +64,7 @@ public class ExcelImport {
                 if (!def5.isEmpty()) {
                     String lan6 = sheet.getCell(6, i).getContents();
                     String source7 = sheet.getCell(7, i).getContents();
-                    ls3.addDefinition(def5, lan6,source7);
+                    ls3.addDefinition(def5, lan6, source7);
                 }
                 String def8 = sheet.getCell(8, i).getContents();
                 if (!def8.isEmpty()) {
@@ -108,8 +108,13 @@ public class ExcelImport {
             
             for (LexicalSense sense : senses) {
                 String nt = sense.getNT();
-               // System.out.println(sense.getURI());
-                boolean ok = RDFStoreClient.post(sense.getURI(), sense.getNT());
+                String uri = sense.getURI();
+                if (sense.getURI().equals("http://tbx2rdf.lider-project.eu/converter/cc/author"));
+                {
+                    System.out.println(uri);
+                    System.out.println(nt);
+                    boolean ok = RDFStoreClient.post(uri, nt);
+                }
 
             }
         } catch (Exception ex) {

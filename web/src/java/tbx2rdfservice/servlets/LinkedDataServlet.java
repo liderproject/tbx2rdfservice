@@ -187,6 +187,13 @@ public class LinkedDataServlet extends HttpServlet {
         String todo = RDFStoreFuseki.loadGraph(res.getURI());
         InputStream is = new ByteArrayInputStream(todo.getBytes(StandardCharsets.UTF_8));
         RDFDataMgr.read(model, is, Lang.NT);
+            try {
+                PrintWriter archivo = new PrintWriter(new FileWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/todo.txt", true));
+                archivo.println(todo);
+                archivo.close();
+            } catch (Exception ex) {
+            }        
+        
         
         
         tabla += "<table class=\"table table-condensed table-bordered\">"; //table-striped 
@@ -238,13 +245,7 @@ public class LinkedDataServlet extends HttpServlet {
             Model ms = ModelFactory.createDefaultModel();
             String rdf = RDFStoreFuseki.getEntity(les);
 
-            try {
-                PrintWriter archivo = new PrintWriter(new FileWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/rdf.txt", true));
-                archivo.println(les);
-                archivo.println(rdf);
-                archivo.close();
-            } catch (Exception ex) {
-            }
+
 
             InputStream ix = new ByteArrayInputStream(rdf.getBytes(StandardCharsets.UTF_8));
             RDFDataMgr.read(ms, ix, Lang.NT);
@@ -376,6 +377,8 @@ public class LinkedDataServlet extends HttpServlet {
             archivo.close();
         } catch (Exception e) {
             System.err.println("Mal al postear en fuseki");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         }
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
