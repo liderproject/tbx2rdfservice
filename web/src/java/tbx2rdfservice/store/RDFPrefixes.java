@@ -115,6 +115,7 @@ public class RDFPrefixes {
             return uri;
         s=uri.substring(index+1, uri.length());
         s=s.replace("%20", " ");
+        s=s.replace("+", " ");
         return s;
     }
         public static void main(String[] args) {
