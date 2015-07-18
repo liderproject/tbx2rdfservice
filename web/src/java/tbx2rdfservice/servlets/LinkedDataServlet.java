@@ -183,6 +183,12 @@ public class LinkedDataServlet extends HttpServlet {
 
     public static String getTable(Model model, Resource res) {
         String tabla = "";
+        
+        String todo = RDFStoreFuseki.loadGraph(res.getURI());
+        InputStream is = new ByteArrayInputStream(todo.getBytes(StandardCharsets.UTF_8));
+        RDFDataMgr.read(model, is, Lang.NT);
+        
+        
         tabla += "<table class=\"table table-condensed table-bordered\">"; //table-striped 
         tabla += "<thead><tr><td width=\"25%\"><strong>Property</strong></td><td width=\"75%\"><strong>Value</strong></td></tr></thead>\n";
 
@@ -240,8 +246,8 @@ public class LinkedDataServlet extends HttpServlet {
             } catch (Exception ex) {
             }
 
-            InputStream is = new ByteArrayInputStream(rdf.getBytes(StandardCharsets.UTF_8));
-            RDFDataMgr.read(ms, is, Lang.NT);
+            InputStream ix = new ByteArrayInputStream(rdf.getBytes(StandardCharsets.UTF_8));
+            RDFDataMgr.read(ms, ix, Lang.NT);
             LexicalEntry le = new LexicalEntry(ms, ms.createResource(les));
             tabla += "<tr><td>" + "is sense of" + "</td><td>";
 

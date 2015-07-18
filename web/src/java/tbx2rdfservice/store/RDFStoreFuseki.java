@@ -321,4 +321,47 @@ public class RDFStoreFuseki {
         return uris;
     }
 
+    public static String loadGraph(String uri) {
+        init();
+        String sresults = "";
+        try {
+            String sparql = "SELECT DISTINCT *\n"
+                    + "WHERE {\n"
+                    + "  GRAPH <"+uri+"> {\n"
+                    + "    ?s ?p ?o\n"
+                    + "  }\n"
+                    + "} LIMIT 1000";
+            Query query = QueryFactory.create(sparql);
+            String endpoint = "http://localhost:3031/tbx/query";
+            QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, query);
+            ResultSet results = qexec.execSelect();
+            for (; results.hasNext();) {
+                QuerySolution soln = results.nextSolution();
+                Resource s = soln.getResource("s");       // Get a result variable by name.
+                Resource p = soln.getResource("p");       // Get a result variable by name.
+                RDFNode o = soln.get("o"); // Get a result variable - must be a resource
+                String so = "";
+                if (o.isLiteral()) {
+                    so = "\"" + o.asLiteral().getLexicalForm() + "\"";
+                    String l = o.asLiteral().getLanguage();
+                    if (!l.isEmpty()) {
+                        so += "@" + l;
+                    }
+                } else {
+                    so = "<" + o.toString() + ">";
+                }
+                sresults += "<" + s.toString() + "> <" + p.toString() + "> " + so + " . \n";
+            }
+        } catch (Exception e) {
+            try {
+                PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/error.txt");
+                archivo.println(e.getMessage());
+                archivo.close();
+            } catch (Exception ex) {
+            }
+
+        }
+        return sresults;        
+    }
+
 }
