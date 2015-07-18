@@ -84,7 +84,7 @@ public class LexicalSense {
             NodeIterator ny = model.listObjectsOfProperty(r, model.createProperty("http://www.w3.org/2000/01/rdf-schema#label"));
             if (ny.hasNext())
             {
-                Literal lit=ni.next().asLiteral();
+                Literal lit=ny.next().asLiteral();
                 label = lit.getLexicalForm();
                 lan= lit.getLanguage();
             }            
