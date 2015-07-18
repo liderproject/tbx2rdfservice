@@ -33,6 +33,7 @@ public class IATEUtils {
 
     public static List<Literal> getIATETerms(String urisense) {
         List<Literal> lista = new ArrayList();
+        try{
         Model model = RDFUtil.browseRDF(urisense);
         ResIterator ri = model.listSubjectsWithProperty(model.createProperty("http://www.w3.org/ns/lemon/ontolex#reference"), model.createResource(urisense));
         while (ri.hasNext()) {
@@ -46,7 +47,7 @@ public class IATEUtils {
                 Literal l = ResourceFactory.createLangLiteral(text, lan);
                 lista.add(l);
             }
-        }
+        }}catch(Exception e){}
         return lista;
     }
 }

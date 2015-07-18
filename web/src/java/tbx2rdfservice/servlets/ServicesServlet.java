@@ -35,11 +35,13 @@ public class ServicesServlet extends HttpServlet {
         if (uri.endsWith("/service/getResources")) {
             String offset = request.getParameter("current");
             String limit = request.getParameter("rowCount");
+            String searchFrase =request.getParameter("searchFrase");
+            
             int current = Integer.parseInt(offset);
             int total = RDFStoreFuseki.countEntities("http://www.w3.org/2004/02/skos/core#Concept");
             int ilimit = Integer.parseInt(limit);
             int init = (current - 1) * ilimit;
-            List<String> ls = RDFStoreFuseki.listConcepts(init, ilimit);
+            List<String> ls = RDFStoreFuseki.listConcepts(init, ilimit, searchFrase);
             System.out.println(offset + " " + limit);
             String s = "{\n"
                     + "  \"current\": " + current + ",\n"
