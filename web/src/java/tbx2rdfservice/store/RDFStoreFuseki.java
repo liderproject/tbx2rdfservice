@@ -272,7 +272,7 @@ public class RDFStoreFuseki {
                 + "WHERE {\n"
                 + "  GRAPH ?g {\n"
                 + "    ?s a <http://www.w3.org/2004/02/skos/core#Concept> \n";
-       if (!searchConcept.isEmpty())
+       if (searchConcept!=null && !searchConcept.isEmpty())
                sparql+="FILTER regex(?s,\""+searchConcept+"\",'i') \n";
         sparql += "  }\n"
                 + "} ";
