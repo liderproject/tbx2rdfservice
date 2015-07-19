@@ -34,11 +34,15 @@ public class TBX {
         List<LexicalSense> senses = getSampleSenses();
         for(int i=0;i<senses.size();i++)
         {
+            LexicalSense sense = senses.get(i);
         String url = senses.get(i).getURI();
-        String nt = senses.get(i).getNT();
-        System.out.println(url);
-        System.out.println(nt);
-     boolean ok=RDFStoreClient.post(url, nt);
+//        String nt = senses.get(i).getNT();
+//        System.out.println(url);
+//        System.out.println(nt);
+   //  boolean ok=RDFStoreClient.post(url, nt);
+        
+        System.out.println(sense.getXML());
+        
         }
 //        RDFStoreClient.delete(url);
     }
