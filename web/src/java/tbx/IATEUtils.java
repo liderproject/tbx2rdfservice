@@ -24,7 +24,7 @@ public class IATEUtils {
 
     public static void main(String[] args) {
         StringWriter sw = new StringWriter();
-        List<Literal> lista = getIATETerms("http://tbx2rdf.lider-project.eu/data/iate/IATE-1178464");
+        List<Literal> lista = getIATETerms("http://tbx2rdf.lider-project.eu/data/iate/IATE-858430");
         for(Literal l :lista)
         {
             System.out.println(l.getLexicalForm()+" " + l.getLanguage());
@@ -34,7 +34,7 @@ public class IATEUtils {
     public static List<Literal> getIATETerms(String urisense) {
         List<Literal> lista = new ArrayList();
         try{
-        Model model = RDFUtil.browseRDF(urisense);
+        Model model = RDFUtil.browseNT(urisense);
         ResIterator ri = model.listSubjectsWithProperty(model.createProperty("http://www.w3.org/ns/lemon/ontolex#reference"), model.createResource(urisense));
         while (ri.hasNext()) {
             Resource r = ri.next();
@@ -47,7 +47,7 @@ public class IATEUtils {
                 Literal l = ResourceFactory.createLangLiteral(text, lan);
                 lista.add(l);
             }
-        }}catch(Exception e){}
+        }}catch(Exception e){e.printStackTrace();}
         return lista;
     }
 }

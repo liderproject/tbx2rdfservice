@@ -40,6 +40,16 @@ public class RDFUtil {
             System.out.println(sw);
             
         }
+    public static Model browseNT(String url)
+    {
+        try{
+            URLConnection connection = new URL(url).openConnection();
+            connection.setRequestProperty("Accept", "application/n-triples");
+            Model model = ModelFactory.createDefaultModel();
+            RDFDataMgr.read(model, connection.getInputStream(), Lang.NT);
+            return model;
+        }catch(Exception e){e.printStackTrace();return null;}
+    }
     
     public static Model browseRDF(String url)
     {
@@ -56,7 +66,6 @@ public class RDFUtil {
                 xml.append(line);
             }
             */
-            
        }catch(Exception e){}
         return null;
     }
