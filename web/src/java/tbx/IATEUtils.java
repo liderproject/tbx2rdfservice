@@ -1,11 +1,7 @@
 package tbx;
 
-import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.RDFVisitor;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -14,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import tbx2rdfservice.store.RDFPrefixes;
 import tbx2rdfservice.store.RDFUtil;
-import static tbx2rdfservice.store.RDFUtil.browseRDF;
 
 /**
  *
@@ -31,6 +26,12 @@ public class IATEUtils {
         }
     }
 
+    /**
+     * Retrieves the terms for a concept.
+     * @param urisense URI of a IATE as RDF. For example
+     * http://tbx2rdf.lider-project.eu/data/iate/IATE-858430
+     * @return List of terms 
+     */
     public static List<Literal> getIATETerms(String urisense) {
         List<Literal> lista = new ArrayList();
         try{

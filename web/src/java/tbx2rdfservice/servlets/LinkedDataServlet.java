@@ -474,11 +474,11 @@ public class LinkedDataServlet extends HttpServlet {
                 outx.append(line);
             }
             String body = outx.toString();
-            body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + "List of terms");
+            body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + "List of concepts");
             String tabla = "<table id=\"grid-data\" class=\"table table-condensed table-hover table-striped\">\n"
                     + "        <thead>\n"
                     + "                <tr>\n"
-                    + "                        <th data-column-id=\"resource\" data-formatter=\"link\" data-order=\"desc\">Terms</th>\n"
+                    + "                        <th data-column-id=\"resource\" data-formatter=\"link\" data-order=\"desc\">Concepts</th>\n"
                     + "                </tr>\n"
                     + "        </thead>\n"
                     + "</table>	\n"
@@ -504,11 +504,11 @@ public class LinkedDataServlet extends HttpServlet {
                 outx.append(line);
             }
             String body = outx.toString();
-            body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + "List of terms of " + dataset);
+            body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + "List of concepts of " + dataset);
             String tabla = "<table id=\"grid-data\" class=\"table table-condensed table-hover table-striped\">\n"
                     + "        <thead>\n"
                     + "                <tr>\n"
-                    + "                        <th data-column-id=\"resource\" data-formatter=\"link\" data-order=\"desc\">Terms</th>\n"
+                    + "                        <th data-column-id=\"resource\" data-formatter=\"link\" data-order=\"desc\">Concepts</th>\n"
                     + "                </tr>\n"
                     + "        </thead>\n"
                     + "</table>	\n"
