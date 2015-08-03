@@ -69,6 +69,7 @@
 
     -->
 
+<property name="tomcat.home" location="C:/java/apache-tomcat-8.0.23"/>
 <property name="src" location="src"/>
 <property name="build" location="build"/>
 <property name="dist" location="dist"/>
@@ -102,7 +103,31 @@
 	-->
 	<delete dir="build2"/>
 	<delete file="dist/tbx2rdfservice-nolibs.jar"/>
+
+
+	
+	<!-- esto es detener tomcat 
+	<java jar="${tomcat.home}/bin/bootstrap.jar" fork="true">
+        <jvmarg value="-Dcatalina.home=${tomcat.home}"/>
+        <arg line="stop"/>
+    </java>
+	
+	esto es arrancar tomcat 
+    <java jar="${tomcat.home}/bin/bootstrap.jar" fork="true">
+        <jvmarg value="-Dcatalina.home=${tomcat.home}"/>
+    </java>	
+	fin de hacer las cosas bien -->
+	
 </target>	
+<target name="victor">
+	<exec dir="${tomcat.home}/bin/" executable="cmd">
+	 <arg line="/c shutdown.bat"/>
+	</exec>
+	<copy file="dist/tbx2rdf.war" tofile="${tomcat.home}/webapps/tbx2rdf.war"/>
+	<exec dir="${tomcat.home}/bin/" executable="cmd">
+	 <arg line="/c startup.bat"/>
+	 </exec>
+</target>
 
 <target name="verificar">
 	<available file="tbx2rdfservice.config" property="existeconfig"/>
