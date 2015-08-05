@@ -124,7 +124,7 @@
 	 <arg line="/c shutdown.bat"/>
 	</exec>
 	<copy file="dist/tbx2rdf.war" tofile="${tomcat.home}/webapps/tbx2rdf.war"/>
-	<exec dir="${tomcat.home}/bin/" executable="cmd">
+	<exec dir="${tomcat.home}/bin/" executable="cmd" spawn="true">
 	 <arg line="/c startup.bat"/>
 	 </exec>
 </target>
