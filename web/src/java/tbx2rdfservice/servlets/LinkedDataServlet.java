@@ -6,8 +6,11 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
+import com.stormpath.sdk.account.Account;
+import com.stormpath.sdk.servlet.account.AccountResolver;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,10 +36,16 @@ import lemon.LexicalSense;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import tbx.IATEUtils;
 import tbx2rdfservice.TBX2RDFServiceConfig;
 import tbx2rdfservice.store.RDFPrefixes;
 import tbx2rdfservice.store.RDFStoreFuseki;
+
+//import com.stormpath.sdk.account.Account;
+//import com.stormpath.sdk.servlet.account.AccountResolver;
 
 /**
  *
@@ -92,7 +101,12 @@ public class LinkedDataServlet extends HttpServlet {
             return;
         }
 
-        PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/get.txt");
+        String lf = TBX2RDFServiceConfig.get("logsfolder", ".");
+        File f = new File(lf);
+        if (!(f.exists()))
+            lf =".";
+        lf =".";
+        PrintWriter archivo = new PrintWriter(lf + "/get.txt");
         archivo.println("requestURI: " + peticion);
         archivo.flush();
         String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
@@ -464,6 +478,23 @@ public class LinkedDataServlet extends HttpServlet {
     private void listResources(HttpServletRequest request, HttpServletResponse response) {
         //SERVING THE LIST OF resources
         System.out.println("Serving HTML for resources");
+        
+
+        String email="nada";
+        //ESTO ES DE STORMPATH
+        Account cuenta = AccountResolver.INSTANCE.getRequiredAccount(request);
+        email = cuenta.getEmail();
+        
+        //LO SIGUIENTE ES DE APACHE SHIRO
+        Subject currentUser = SecurityUtils.getSubject();
+        if ( !currentUser.isAuthenticated() ) {
+             System.out.println("not authenticated");
+             UsernamePasswordToken token = new UsernamePasswordToken("lonestarr", "vespa");
+             token.setRememberMe(true);
+             currentUser.login(token);
+        }
+        
+        
         try {
             response.setContentType("text/html;charset=UTF-8");
             InputStream is1 = LinkedDataServlet.class.getResourceAsStream("../../../../ld.html");
@@ -483,6 +514,9 @@ public class LinkedDataServlet extends HttpServlet {
                     + "        </thead>\n"
                     + "</table>	\n"
                     + "";
+            
+            tabla+=email;
+            
             body = body.replace("<!--TEMPLATE_PGN-->", "<br>" + tabla);
             response.getWriter().println(body);
             response.setStatus(HttpServletResponse.SC_OK);

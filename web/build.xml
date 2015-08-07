@@ -120,6 +120,12 @@
 	
 </target>	
 <target name="victor">
+	<!-- esto ha de ejecutarse al menos una vez desde una ventana del msdos como administrador. luego cerrar ventana msdos y abrir otra ventana. y ejecutar otra ve -->
+	<exec executable="setx.exe">
+	  <arg line="STORMPATH_APPLICATION_HREF https://api.stormpath.com/v1/applications/6NM7svX6iVAPD8lIIhRfro"/>
+	  <arg line="/m"/>
+	</exec>
+
 	<exec dir="${tomcat.home}/bin/" executable="cmd">
 	 <arg line="/c shutdown.bat"/>
 	</exec>
