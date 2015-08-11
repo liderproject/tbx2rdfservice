@@ -24,6 +24,9 @@
                         <li class="active"><a href="#">Download</a></li> 
                         <li ><a href="resource/">Resources</a></li> <!--doc/index.html-->
                     </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                            <li><a href="account"> <span class="glyphicon glyphicon-log-in"></span>Account</a></li>
+                    </ul>					
                 </div>
             </div>
         </nav>      
@@ -37,7 +40,7 @@
                 <div class="panel-body">
                     <p>IATE terminologies as RDF dump, original source <a href="">here</a></p>
                     <center><a class="btn btn-success" href="http://lider2.dia.fi.upm.es:8080/data/iate.ttl.gz" download><span class="glyphicon glyphicon-download-alt"></span> Download IATE</a></center>
-                    <p>European Migration Network terminologies as RDF dump, original source <a href="">here</a></p>
+                    <p>European Migration Network terminologies as RDF dump. Original source <a href="">here</a></p>
                     <center><a class="btn btn-success" href="http://lider2.dia.fi.upm.es:8080/data/emn.ttl.gz" download><span class="glyphicon glyphicon-download-alt"></span> Download EMN</a></center>
                     <a href="http://lider2.dia.fi.upm.es:8080/data/void.ttl">Metadata</a>
                 </div>
@@ -52,6 +55,26 @@
                 </center>
             </div>
         </div>
+
+        <div id="pgn"></div>
+       <script>
+            $(document).ready(function () {
+                console.log("Se va a hacer la query getUser")
+                var xmlhttp=new XMLHttpRequest();                
+                var vusuario2="anon";
+                xmlhttp.onreadystatechange=function()
+                  {
+                  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                    {
+                        vusuario2=xmlhttp.responseText;
+                        console.log(vusuario2);
+             //           document.getElementById("pgn").innerHTML=xmlhttp.responseText;
+                    }
+                  }
+                  xmlhttp.open("GET","/tbx2rdf/service/getUser",true);
+                  xmlhttp.send();                 
+            });
+        </script>                
         
     </body>
 </html>

@@ -181,6 +181,7 @@ public class RDFStoreFuseki {
         Query query = QueryFactory.create(sparql);
         String endpoint = "http://localhost:3031/tbx/query";
         QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, query);
+        try{
         ResultSet results = qexec.execSelect();
         for (; results.hasNext();) {
             QuerySolution soln = results.nextSolution();
@@ -190,6 +191,10 @@ public class RDFStoreFuseki {
                 Literal literal = soln.getLiteral(col);
                 return Integer.parseInt(literal.getLexicalForm());
             }
+        }
+        }catch(Exception e)
+        {
+            System.err.println("NO se pudo contar conceptos en fuseki");
         }
         return -1;
     }

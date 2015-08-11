@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringEscapeUtils;
+import security.TestSQLite;
 import tbx2rdfservice.store.RDFStoreFuseki;
 
 /**
@@ -36,9 +37,14 @@ public class ServicesServlet extends HttpServlet {
             String offset = request.getParameter("current");
             String limit = request.getParameter("rowCount");
             String searchFrase =request.getParameter("searchPhrase");
-            
+//            System.out.println("getResources con parametros current = " + offset);            
             int current = Integer.parseInt(offset);
             int total = RDFStoreFuseki.countEntities("http://www.w3.org/2004/02/skos/core#Concept");
+            if (total==-1)
+            {
+                //WE HAVE A PROBLEM, WE PROBABLY LACK CONNECTION TO FUSEKI OR ANY OTHER STORE
+                return;
+            }
             int ilimit = Integer.parseInt(limit);
             int init = (current - 1) * ilimit;
             List<String> ls = RDFStoreFuseki.listConcepts(init, ilimit, searchFrase);
@@ -103,6 +109,51 @@ public class ServicesServlet extends HttpServlet {
 
                 }
             }
+        if (uri.endsWith("/service/getUser")) {
+                try (PrintWriter out = response.getWriter()) {
+                    String google = (String) request.getSession().getAttribute("google");
+                    out.print(google);
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.setContentType("text/html");
+                    return;
+                }catch(Exception e)
+                {
+                    
+                }
+        }
+        if (uri.endsWith("/service/logout")) {
+            request.getSession().setAttribute("google","");
+            response.sendRedirect("account");
+            return;
+        }
+        
+        if (uri.endsWith("/service/login")) {
+                try (PrintWriter out = response.getWriter()) {
+                    String u = request.getParameter("user");
+                    String p = request.getParameter("password");
+                    
+                    boolean ok = TestSQLite.authenticate(u, p);
+                    if (!ok)
+                    {
+                        out.print("403");
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.setContentType("text/html");
+                        return;
+                    }
+                    else
+                    {
+                        out.print("200");
+                        request.getSession().setAttribute("google",u);
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.setContentType("text/html");
+                        return;
+                    }
+                }catch(Exception e)
+                {
+                    
+                }
+        }
+            
         
         if (uri.endsWith("/service/clear")) {
             RDFStoreFuseki.deleteAll();
