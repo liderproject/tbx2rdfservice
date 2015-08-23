@@ -50,7 +50,6 @@ import tbx2rdfservice.store.RDFStoreFuseki;
  * TO LAUNCH FUSEKI:
  * - go to lider2, opt/fuseki
  * - execute sudo nohup java -jar ./fuseki-server.jar --update --loc=data --port 3031 /tbx&
-
  * @author admin
  */
 public class Main {

@@ -37,42 +37,14 @@ public class ServicesServlet extends HttpServlet {
             String offset = request.getParameter("current");
             String limit = request.getParameter("rowCount");
             String searchFrase =request.getParameter("searchPhrase");
-//            System.out.println("getResources con parametros current = " + offset);            
             int current = Integer.parseInt(offset);
-            int total = RDFStoreFuseki.countEntities("http://www.w3.org/2004/02/skos/core#Concept");
-            if (total==-1)
-            {
-                //WE HAVE A PROBLEM, WE PROBABLY LACK CONNECTION TO FUSEKI OR ANY OTHER STORE
-                return;
-            }
             int ilimit = Integer.parseInt(limit);
-            int init = (current - 1) * ilimit;
-            List<String> ls = RDFStoreFuseki.listConcepts(init, ilimit, searchFrase);
-            System.out.println(offset + " " + limit);
-            String s = "{\n"
-                    + "  \"current\": " + current + ",\n"
-                    + "  \"rowCount\": " + ilimit + ",\n"
-                    + "  \"rows\": [\n";
-            int conta = 0;
-            for (String cp : ls) {
+            
+            
+            
+            String s = Services.countEntities(current, ilimit, searchFrase);
+            
 
-                int lasti = cp.lastIndexOf("/");
-                String nombre = cp.substring(lasti + 1, cp.length());
-                nombre = URLDecoder.decode(nombre, "UTF-8");
-                cp = cp.replace(" ", "+");
-                if (conta != 0) {
-                    s += ",\n";
-                }
-                s += "    {\n"
-                        + "      \"resource\": \"" + nombre + "\",\n"
-                        + "      \"resourceurl\": \"" + cp + "\"\n"
-                        + "    } ";
-                conta++;
-            }
-
-            s += "  ],\n"
-                    + "  \"total\": " + total + "\n"
-                    + "}    ";
             try (PrintWriter out = response.getWriter()) {
                 out.print(s);
                 response.setStatus(HttpServletResponse.SC_OK);
