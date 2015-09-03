@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
     <display-name>RDF TermBank 1.0</display-name>
-
     <servlet>
         <servlet-name>tbx2rdf</servlet-name>
         <servlet-class>tbx2rdfservice.servlets.Tbx2rdfServlet</servlet-class>
@@ -31,10 +30,14 @@
             30
         </session-timeout>
     </session-config>
-<filter-mapping>
-    <filter-name>StormpathFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-</filter-mapping>    
+<!--    <filter>
+        <filter-name>StormpathFilter</filter-name>
+        <filter-class>com.stormpath.sdk.servlet.filter.StormpathFilter</filter-class>
+    </filter> 
+    <filter-mapping>
+        <filter-name>StormpathFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>    -->
     
     <!--
     <filter>

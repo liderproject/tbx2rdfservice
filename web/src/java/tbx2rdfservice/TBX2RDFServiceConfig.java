@@ -1,5 +1,6 @@
 package tbx2rdfservice;
 
+import com.stormpath.sdk.servlet.filter.StormpathFilter;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
@@ -18,7 +19,6 @@ public class TBX2RDFServiceConfig {
 
     private final static String CONFIGFILE = "tbx2rdfservice.config";
     static boolean loaded = false;
-
     //Propiedades
     static Properties prop = new Properties();
 

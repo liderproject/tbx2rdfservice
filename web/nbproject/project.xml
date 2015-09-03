@@ -143,6 +143,10 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
+                    <file>${file.reference.stormpath-sdk-servlet-1.0.RC4.5.jar}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
+                <library dirs="200">
                     <file>${file.reference.jsoup-1.8.2.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
@@ -172,10 +176,6 @@
                 </library>
                 <library dirs="200">
                     <file>${file.reference.org.apache.oltu.oauth2.resourceserver-1.0.0.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library dirs="200">
-                    <file>${file.reference.shiro-all-1.2.4.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
@@ -212,10 +212,6 @@
                 </library>
                 <library dirs="200">
                     <file>${file.reference.stormpath-sdk-oauth-1.0.RC4.5.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library dirs="200">
-                    <file>${file.reference.stormpath-sdk-servlet-1.0.RC4.5.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
