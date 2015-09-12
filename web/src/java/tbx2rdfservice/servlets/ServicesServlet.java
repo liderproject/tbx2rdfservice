@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringEscapeUtils;
-import security.TestSQLite;
+import security.ManagerSQLite;
 import tbx2rdfservice.store.RDFStoreFuseki;
 
 /**
@@ -103,7 +103,7 @@ public class ServicesServlet extends HttpServlet {
                     String u = request.getParameter("user");
                     String p = request.getParameter("password");
                     
-                    boolean ok = TestSQLite.authenticate(u, p);
+                    boolean ok = ManagerSQLite.authenticate(u, p);
                     if (!ok)
                     {
                         out.print("403");

@@ -1,13 +1,9 @@
 package lemon;
 
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import tbx2rdfservice.TBX2RDFServiceConfig;
 import tbx2rdfservice.store.RDFPrefixes;
 import tbx2rdfservice.store.RDFUtil;
@@ -108,6 +104,9 @@ public class LexicalEntry {
         }
     }
 
+    /**
+     * Retains the last part of an URI.
+     */
     public String getBeautifulname() {
         String s = RDFPrefixes.getLastPart(getURI());
         try {

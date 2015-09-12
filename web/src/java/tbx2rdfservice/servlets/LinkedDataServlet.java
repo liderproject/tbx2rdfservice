@@ -10,10 +10,8 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -23,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -36,20 +32,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.subject.Subject;
 import tbx.IATEUtils;
 import tbx2rdfservice.TBX2RDFServiceConfig;
 import tbx2rdfservice.store.RDFPrefixes;
 import tbx2rdfservice.store.RDFStoreFuseki;
 
-//import com.stormpath.sdk.account.Account;
-//import com.stormpath.sdk.servlet.account.AccountResolver;
-
 /**
- *
+ * Servlet que sirve LinkedData
  * @author admin
  */
 public class LinkedDataServlet extends HttpServlet {
@@ -479,7 +468,7 @@ public class LinkedDataServlet extends HttpServlet {
         System.out.println("Serving HTML for resources");
         
 
-        String email="nada";
+        String email="";
         //ESTO ES DE STORMPATH
         
         //LO SIGUIENTE ES DE APACHE SHIRO

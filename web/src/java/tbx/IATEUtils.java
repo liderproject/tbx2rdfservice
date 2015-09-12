@@ -5,9 +5,12 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
+
+//java
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+
 import tbx2rdfservice.store.RDFPrefixes;
 import tbx2rdfservice.store.RDFUtil;
 

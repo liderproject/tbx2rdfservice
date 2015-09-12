@@ -8,7 +8,7 @@ import tbx2rdfservice.TBX2RDFServiceConfig;
  *
  * @author vroddon
  */
-public class TestSQLite {
+public class ManagerSQLite {
 
 //    static String cadena = "jdbc:sqlite:test.db";
 
