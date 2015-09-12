@@ -1,0 +1,1 @@
+java -jar jetty-runner.jar --path /tbx2rdf dist/tbx2rdf.war

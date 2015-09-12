@@ -6,8 +6,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
-import com.stormpath.sdk.account.Account;
-import com.stormpath.sdk.servlet.account.AccountResolver;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -33,11 +32,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lemon.LexicalEntry;
 import lemon.LexicalSense;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import tbx.IATEUtils;
 import tbx2rdfservice.TBX2RDFServiceConfig;
@@ -146,14 +147,12 @@ public class LinkedDataServlet extends HttpServlet {
             response.setContentType("application/rdf+xml;charset=UTF-8");
         } else {
             response.setContentType("text/html;charset=UTF-8");
-            InputStream is1 = LinkedDataServlet.class.getResourceAsStream("../../../../ld.html");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is1, "UTF-8"));
-            StringBuilder outx = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                outx.append(line);
-            }
-            String body = outx.toString();
+            InputStream input = getClass().getResourceAsStream("ld.html");
+            BufferedInputStream bis = new BufferedInputStream(input);
+            String body = IOUtils.toString(bis, "UTF-8");
+            String context = TBX2RDFServiceConfig.get("context", "/tbx2rdf");
+            body = body.replace("TEMPLATE_CONTEXTO", context);
+            
 
             Model model = ModelFactory.createDefaultModel();
             InputStream is = new ByteArrayInputStream(nt.getBytes(StandardCharsets.UTF_8));
@@ -482,29 +481,27 @@ public class LinkedDataServlet extends HttpServlet {
 
         String email="nada";
         //ESTO ES DE STORMPATH
-        Account cuenta = AccountResolver.INSTANCE.getRequiredAccount(request);
-        email = cuenta.getEmail();
         
         //LO SIGUIENTE ES DE APACHE SHIRO
-        Subject currentUser = SecurityUtils.getSubject();
+        /*Subject currentUser = SecurityUtils.getSubject();
         if ( !currentUser.isAuthenticated() ) {
+             SecurityManager securityManager = SecurityUtils.getSecurityManager();
              System.out.println("not authenticated");
              UsernamePasswordToken token = new UsernamePasswordToken("lonestarr", "vespa");
              token.setRememberMe(true);
              currentUser.login(token);
-        }
+        }*/
         
         
         try {
             response.setContentType("text/html;charset=UTF-8");
-            InputStream is1 = LinkedDataServlet.class.getResourceAsStream("../../../../ld.html");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is1));
-            StringBuilder outx = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                outx.append(line);
-            }
-            String body = outx.toString();
+            InputStream input = getClass().getResourceAsStream("ld.html");
+            BufferedInputStream bis = new BufferedInputStream(input);
+            String body = IOUtils.toString(bis, "UTF-8");
+            String context = TBX2RDFServiceConfig.get("context", "/tbx2rdf");
+            body = body.replace("TEMPLATE_CONTEXTO", context);
+            
+            
             body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + "List of concepts");
             String tabla = "<table id=\"grid-data\" class=\"table table-condensed table-hover table-striped\">\n"
                     + "        <thead>\n"
@@ -530,14 +527,12 @@ public class LinkedDataServlet extends HttpServlet {
         System.out.println("Serving HTML for resources");
         try {
             response.setContentType("text/html;charset=UTF-8");
-            InputStream is1 = LinkedDataServlet.class.getResourceAsStream("../../../../ld.html");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is1));
-            StringBuilder outx = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                outx.append(line);
-            }
-            String body = outx.toString();
+            InputStream input = getClass().getResourceAsStream("ld.html");
+            BufferedInputStream bis = new BufferedInputStream(input);
+            String body = IOUtils.toString(bis, "UTF-8");
+            String context = TBX2RDFServiceConfig.get("context", "/tbx2rdf");
+            body = body.replace("TEMPLATE_CONTEXTO", context);
+            
             body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + "List of concepts of " + dataset);
             String tabla = "<table id=\"grid-data\" class=\"table table-condensed table-hover table-striped\">\n"
                     + "        <thead>\n"

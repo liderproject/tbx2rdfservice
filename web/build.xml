@@ -81,8 +81,12 @@
 <target name="-post-dist" depends="verificar, copiar">
     <echo message="Victor edition: generating also a jar file with"/>
 	<echo>Apache Ant version is ${ant.version}</echo>
+
+	
+	<copy file="dist/TBX2RDFService.war" tofile="dist/tbx2rdf.war"/>	
+<!-- temporalmente deshabilitado
+	
 	<mkdir dir="build2"/> 
-	<copy file="dist/TBX2RDFService.war" tofile="dist/tbx2rdf.war"/>
 	<javac srcdir="${src}" destdir="build2" classpathref="classpath" includeantruntime="false"/>  
 	<jar destfile = "dist/tbx2rdfservice-nolibs.jar"
 		basedir = "build2"
@@ -98,13 +102,10 @@
 			<attribute name="Main-Class" value="tbx2rdfservice.command.Main"/>
 		</manifest>
 	</jar>
-<!--	<copy file="dist/TBX2RDFService.war" tofile="dist/tbx2rdf.war">
-	    <delete file="dist/TBX2RDFService.war"/> 
-	-->
 	<delete dir="build2"/>
 	<delete file="dist/tbx2rdfservice-nolibs.jar"/>
 
-
+fin de lo temporal  -->
 	
 	<!-- esto es detener tomcat 
 	<java jar="${tomcat.home}/bin/bootstrap.jar" fork="true">
@@ -121,10 +122,10 @@
 </target>	
 <target name="victor">
 	<!-- esto ha de ejecutarse al menos una vez desde una ventana del msdos como administrador. luego cerrar ventana msdos y abrir otra ventana. y ejecutar otra ve -->
-	<exec executable="setx.exe">
+<!--	<exec executable="setx.exe">
 	  <arg line="STORMPATH_APPLICATION_HREF https://api.stormpath.com/v1/applications/6NM7svX6iVAPD8lIIhRfro"/>
 	  <arg line="/m"/>
-	</exec>
+	</exec> -->
 
 	<exec dir="${tomcat.home}/bin/" executable="cmd">
 	 <arg line="/c shutdown.bat"/>

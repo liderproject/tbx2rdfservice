@@ -1,6 +1,5 @@
 package tbx2rdfservice;
 
-import com.stormpath.sdk.servlet.filter.StormpathFilter;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
@@ -12,7 +11,7 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 
 /**
- *
+ * De donde se lee la configuración?
  * @author admin
  */
 public class TBX2RDFServiceConfig {
@@ -22,6 +21,12 @@ public class TBX2RDFServiceConfig {
     //Propiedades
     static Properties prop = new Properties();
 
+    public static void main(String args[]) {
+        String d=TBX2RDFServiceConfig.get("datafolder", ".");
+        System.out.println(d);
+    }
+    
+    
     /**
      * Obtiene el valor de una propiedad, y si no lo tiene da un valor por
      * defecto
@@ -57,12 +62,13 @@ public class TBX2RDFServiceConfig {
         try {
             InputStream is = new FileInputStream(CONFIGFILE);
             prop.load(is);
-//            System.out.println("Successfuly read " + CONFIGFILE + " from the folder");
+ //           System.out.println("Successfuly read " + CONFIGFILE + " from the folder");
             return true;
         } catch (Exception ex) {
             try {
                 InputStream is_local = TBX2RDFServiceConfig.class.getResourceAsStream(CONFIGFILE);
                 prop.load(is_local);
+ //               System.out.println("Successfuly read the embedded " + CONFIGFILE);
                 return true;
 
             } catch (Exception ex2) {

@@ -35,6 +35,9 @@ import org.apache.jena.fuseki.server.FusekiConfig;
 import org.apache.jena.fuseki.server.ServerConfig;
 import org.apache.log4j.Logger;
 import org.apache.log4j.varia.NullAppender;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.webapp.WebAppContext;
+import tbx2rdfservice.TBX2RDFServiceConfig;
 import tbx2rdfservice.store.RDFPrefixes;
 import tbx2rdfservice.store.RDFStoreFuseki;
 
@@ -47,15 +50,17 @@ import tbx2rdfservice.store.RDFStoreFuseki;
  * TO LAUNCH FUSEKI:
  * - go to lider2, opt/fuseki
  * - execute sudo nohup java -jar ./fuseki-server.jar --update --loc=data --port 3031 /tbx&
-
  * @author admin
  */
 public class Main {
     
+    
+    
     public static void main(String[] argx) throws IOException {
 
-        String[] args = {"-count","foaf:Agent"};
+//        String[] args = {"-count","foaf:Agent"};
 //        String[] args = {"-dump"};
+        String[] args = {"-jetty"};
         
         BasicConfigurator.configure();
         Logger.getRootLogger().removeAllAppenders();
@@ -69,6 +74,7 @@ public class Main {
             options.addOption("count", true, "Counts the number of class individuals of a given class");
             options.addOption("dump", false, "Dumps all the RDF in the server");
             options.addOption("clear", false, "Deletes everything");
+            options.addOption("jetty", false, "Starts the application in a Jetty server");
             options.addOption("help", false, "shows this help (Help)");
             
             
@@ -97,10 +103,31 @@ public class Main {
                 int total =RDFStoreFuseki.countEntities("");
                 System.out.println(total);
             }
+            if (cl.hasOption("jetty")) {
+                startJetty();
+            }
 
         } catch (Exception e) {
             System.err.println("error " + e.getMessage());
         }
 
     }    
+    
+    public static void startJetty() throws Exception
+    {
+        String jetty_home = System.getProperty("jetty.home",".");
+        String war = jetty_home+"/dist/tbx2rdf.war";
+        File f = new File(war);
+        if (!f.exists())
+            System.out.println("error");
+        Server server = new Server(8080);
+        WebAppContext webapp = new WebAppContext();
+        String context = TBX2RDFServiceConfig.get("context", "/tbx2rdf");
+        webapp.setContextPath(context);
+        webapp.setWar(war);
+        server.setHandler(webapp);
+        server.start();
+        server.join();
+    }
+    
 }

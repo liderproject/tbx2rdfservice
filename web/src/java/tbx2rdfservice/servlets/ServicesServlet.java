@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringEscapeUtils;
+import security.TestSQLite;
 import tbx2rdfservice.store.RDFStoreFuseki;
 
 /**
@@ -36,37 +37,13 @@ public class ServicesServlet extends HttpServlet {
             String offset = request.getParameter("current");
             String limit = request.getParameter("rowCount");
             String searchFrase =request.getParameter("searchPhrase");
-            
             int current = Integer.parseInt(offset);
-            int total = RDFStoreFuseki.countEntities("http://www.w3.org/2004/02/skos/core#Concept");
             int ilimit = Integer.parseInt(limit);
-            int init = (current - 1) * ilimit;
-            List<String> ls = RDFStoreFuseki.listConcepts(init, ilimit, searchFrase);
-            System.out.println(offset + " " + limit);
-            String s = "{\n"
-                    + "  \"current\": " + current + ",\n"
-                    + "  \"rowCount\": " + ilimit + ",\n"
-                    + "  \"rows\": [\n";
-            int conta = 0;
-            for (String cp : ls) {
+            
+            
+            
+           String s = Services.countEntities(current, ilimit, searchFrase);
 
-                int lasti = cp.lastIndexOf("/");
-                String nombre = cp.substring(lasti + 1, cp.length());
-                nombre = URLDecoder.decode(nombre, "UTF-8");
-                cp = cp.replace(" ", "+");
-                if (conta != 0) {
-                    s += ",\n";
-                }
-                s += "    {\n"
-                        + "      \"resource\": \"" + nombre + "\",\n"
-                        + "      \"resourceurl\": \"" + cp + "\"\n"
-                        + "    } ";
-                conta++;
-            }
-
-            s += "  ],\n"
-                    + "  \"total\": " + total + "\n"
-                    + "}    ";
             try (PrintWriter out = response.getWriter()) {
                 out.print(s);
                 response.setStatus(HttpServletResponse.SC_OK);
@@ -103,6 +80,51 @@ public class ServicesServlet extends HttpServlet {
 
                 }
             }
+        if (uri.endsWith("/service/getUser")) {
+                try (PrintWriter out = response.getWriter()) {
+                    String google = (String) request.getSession().getAttribute("google");
+                    out.print(google);
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.setContentType("text/html");
+                    return;
+                }catch(Exception e)
+                {
+                    
+                }
+        }
+        if (uri.endsWith("/service/logout")) {
+            request.getSession().setAttribute("google","");
+            response.sendRedirect("account");
+            return;
+        }
+        
+        if (uri.endsWith("/service/login")) {
+                try (PrintWriter out = response.getWriter()) {
+                    String u = request.getParameter("user");
+                    String p = request.getParameter("password");
+                    
+                    boolean ok = TestSQLite.authenticate(u, p);
+                    if (!ok)
+                    {
+                        out.print("403");
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.setContentType("text/html");
+                        return;
+                    }
+                    else
+                    {
+                        out.print("200");
+                        request.getSession().setAttribute("google",u);
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.setContentType("text/html");
+                        return;
+                    }
+                }catch(Exception e)
+                {
+                    
+                }
+        }
+            
         
         if (uri.endsWith("/service/clear")) {
             RDFStoreFuseki.deleteAll();

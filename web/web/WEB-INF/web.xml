@@ -13,6 +13,10 @@
         <servlet-name>ServicesServlet</servlet-name>
         <servlet-class>tbx2rdfservice.servlets.ServicesServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AccountServlet</servlet-name>
+        <servlet-class>tbx2rdfservice.servlets.AccountServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>tbx2rdf</servlet-name>
         <url-pattern>/tbx2rdf</url-pattern>
@@ -25,20 +29,15 @@
         <servlet-name>ServicesServlet</servlet-name>
         <url-pattern>/service/*</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AccountServlet</servlet-name>
+        <url-pattern>/account</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
-<!--    <filter>
-        <filter-name>StormpathFilter</filter-name>
-        <filter-class>com.stormpath.sdk.servlet.filter.StormpathFilter</filter-class>
-    </filter> 
-    <filter-mapping>
-        <filter-name>StormpathFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>    -->
-    
     <!--
     <filter>
         <filter-name>SetCharacterEncoding</filter-name>
