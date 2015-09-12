@@ -9,8 +9,9 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 /**
- *
+ * Class to populate the copyright-terms
  * @author admin
  */
 public class LicenseScrapper {
