@@ -71,6 +71,15 @@ public class LinkedDataServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String peticion = request.getRequestURI();
+        
+        try {
+            PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/12.txt");
+            archivo.println("doGet " + peticion);
+            archivo.close();
+        } catch (Exception ex) {
+        }
+        
+        
         StringTokenizer tokens = new StringTokenizer(peticion, "/");
         List<String> partes = new ArrayList();
         while (tokens.hasMoreTokens()) {
@@ -99,6 +108,7 @@ public class LinkedDataServlet extends HttpServlet {
         PrintWriter archivo = new PrintWriter(lf + "/get.txt");
         archivo.println("requestURI: " + peticion);
         archivo.flush();
+        
         String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
         String lastid = peticion.substring(peticion.lastIndexOf("/") + 1, peticion.length());
         String dataset = peticion.substring(peticion.lastIndexOf("resource/") + 9, peticion.lastIndexOf("/"));
