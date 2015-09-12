@@ -76,9 +76,9 @@ public class LinkedDataServlet extends HttpServlet {
             PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/12.txt");
             archivo.println("doGet " + peticion);
             archivo.close();
-            if (peticion.equals("/tbx2rdf/resource/"))
+            if (peticion.equals("/tbx2rdf/resource/")) //Por si viene de la lectura del paper
             {
-                response.sendRedirect("http://tbx2rdf.lider-project.eu/converter/resource/");
+                response.sendRedirect("http://tbx2rdf.lider-project.eu/converter/");
                 return;
             }
             
