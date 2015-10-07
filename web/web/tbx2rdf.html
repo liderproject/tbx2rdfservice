@@ -103,18 +103,21 @@ function submitform2()
     l.start();    
     var http = new XMLHttpRequest();
     var pgn = document.getElementById("pgn").value;
-    var pgnencoded = encodeURI(pgn);
+//    var pgnencoded = encodeURI(pgn);
+    var pgnencoded = encodeURIComponent(pgn);
     console.info(pgn);
+    console.info("encoded:");
+    console.info(pgnencoded);
     var params = "tbx=" + pgnencoded+"&action=translate";
     
-    var defnamesp = "http://example.com/";
-    defnamesp = encodeURI(defnamesp);
+    var defnamesp = "http://example.com/"; 
+    defnamesp = encodeURIComponent(defnamesp);
     params += "&namespace="+defnamesp;
     
     http.open("POST", "/converter/tbx2rdf", true); //true
     http.setRequestHeader("Content-type","application/x-www-form-urlencoded;charset=UTF-8");
-    http.setRequestHeader("Content-length", params.length);    
-    http.setRequestHeader("Connection", "close");
+//    http.setRequestHeader("Content-length", params.length);    
+//    http.setRequestHeader("Connection", "close");
     http.send(params);
     http.onload = function() {
         document.getElementById("rdf").value = http.responseText;

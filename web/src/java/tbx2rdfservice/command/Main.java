@@ -2,6 +2,7 @@ package tbx2rdfservice.command;
 
 import java.io.File;
 import java.io.IOException;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -12,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.varia.NullAppender;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
+
 import tbx2rdfservice.TBX2RDFServiceConfig;
 import tbx2rdfservice.store.RDFPrefixes;
 import tbx2rdfservice.store.RDFStoreFuseki;
@@ -22,9 +24,22 @@ import tbx2rdfservice.store.RDFStoreFuseki;
  * The war file is expected to be deployed as tbx2rdf.war AND NOT AS TBX2RDFService. After compile please rename
  * The service is expected to be given under http://tbx2rdf.lider-project.eu/converter/tbx2rdf in lider2
  * 
+ * TO DEPLOY THE WEB SERVICE IN LIDER2
+ * - Compile this project in local
+ * - Go to http://lider2.dia.fi.upm.es:8080/manager (admin, I-DONT-REMEMBER-PASSWORD)
+ * - Redeploy the old version and deploy the war file generated before
+ * 
  * TO LAUNCH FUSEKI:
  * - go to lider2, opt/fuseki
  * - execute sudo nohup java -jar ./fuseki-server.jar --update --loc=data --port 3031 /tbx&
+ * 
+ * 
+ * Para buscar el proceso que ocupa el fuseki:
+ * lsof -i :3031
+ * kill -9 LOQUESALGANANTES
+ * cd /opt/fuseki/apache-jena-fuseki-2.0.0
+ * 
+ * 
  * @author admin
  */
 public class Main {
