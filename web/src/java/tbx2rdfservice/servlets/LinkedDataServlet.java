@@ -39,6 +39,7 @@ import tbx2rdfservice.store.RDFStoreFuseki;
 
 /**
  * Servlet que sirve LinkedData
+ *
  * @author admin
  */
 public class LinkedDataServlet extends HttpServlet {
@@ -70,25 +71,23 @@ public class LinkedDataServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        ServletLogger log = new ServletLogger();
         String peticion = request.getRequestURI();
-        
         try {
             PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/12.txt");
             String url = request.getRequestURL().toString();
             archivo.println("doGet " + url);
             archivo.close();
-            
+
             if (url.equals("http://lider2.dia.fi.upm.es:8080/tbx2rdf/resource/")) //Por si viene de la lectura del paper
             {
                 response.sendRedirect("http://tbx2rdf.lider-project.eu/converter/resource/");
                 return;
             }
-            
-            
+
         } catch (Exception ex) {
         }
-        
-        
+
         StringTokenizer tokens = new StringTokenizer(peticion, "/");
         List<String> partes = new ArrayList();
         while (tokens.hasMoreTokens()) {
@@ -109,15 +108,8 @@ public class LinkedDataServlet extends HttpServlet {
             return;
         }
 
-        String lf = TBX2RDFServiceConfig.get("logsfolder", ".");
-        File f = new File(lf);
-        if (!(f.exists()))
-            lf =".";
-        lf =".";
-        PrintWriter archivo = new PrintWriter(lf + "/get.txt");
-        archivo.println("requestURI: " + peticion);
-        archivo.flush();
-        
+        log.log("requestURI: " + peticion);
+
         String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
         String lastid = peticion.substring(peticion.lastIndexOf("/") + 1, peticion.length());
         String dataset = peticion.substring(peticion.lastIndexOf("resource/") + 9, peticion.lastIndexOf("/"));
@@ -126,15 +118,13 @@ public class LinkedDataServlet extends HttpServlet {
         recurso = recurso.replace("(", "%28");
         recurso = recurso.replace(")", "%29");
 
-        archivo.println("\nrecurso: " + recurso);
-        archivo.flush();
+        log.log("\nrecurso: " + recurso);
         String nt = RDFStoreFuseki.getEntity(recurso);
         if (nt.isEmpty()) {
             Tbx2rdfServlet.serveError(request, response);
             return;
         }
-        archivo.println("\ntriples: " + nt);
-        archivo.close();
+        log.log("\ntriples: " + nt);
         if (isRDFTTL(request)) {
             System.out.println("Serving TTL for " + recurso);
             Model model = ModelFactory.createDefaultModel();
@@ -160,7 +150,6 @@ public class LinkedDataServlet extends HttpServlet {
             String body = IOUtils.toString(bis, "UTF-8");
             String context = TBX2RDFServiceConfig.get("context", "/tbx2rdf");
             body = body.replace("TEMPLATE_CONTEXTO", context);
-            
 
             Model model = ModelFactory.createDefaultModel();
             InputStream is = new ByteArrayInputStream(nt.getBytes(StandardCharsets.UTF_8));
@@ -187,16 +176,15 @@ public class LinkedDataServlet extends HttpServlet {
                 //inicio experimetanl
                 nt = RDFStoreFuseki.loadGraph(entidad.toString());
                 InputStream iy = new ByteArrayInputStream(nt.getBytes(StandardCharsets.UTF_8));
-                RDFDataMgr.read(model, iy, Lang.NT);      
+                RDFDataMgr.read(model, iy, Lang.NT);
                 StringWriter sw7 = new StringWriter();
-                RDFDataMgr.write(sw7, model, Lang.TTL);                
-                ttl2=StringEscapeUtils.escapeHtml4(sw7.toString());
+                RDFDataMgr.write(sw7, model, Lang.TTL);
+                ttl2 = StringEscapeUtils.escapeHtml4(sw7.toString());
                 //fin experimental
                 html += getTable(model, entidad);
-                
+
             }
             body = body.replace("<!--TEMPLATE_PGN-->", html);
-            
 
             try (PrintWriter out = response.getWriter()) {
                 body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + titulo);
@@ -214,19 +202,16 @@ public class LinkedDataServlet extends HttpServlet {
 
     public static String getTable(Model model, Resource res) {
         String tabla = "";
-        
-/*        String todo = RDFStoreFuseki.loadGraph(res.getURI());
-        InputStream is = new ByteArrayInputStream(todo.getBytes(StandardCharsets.UTF_8));
-        RDFDataMgr.read(model, is, Lang.NT);
-            try {
-                PrintWriter archivo = new PrintWriter(new FileWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/todo.txt", true));
-                archivo.println(todo);
-                archivo.close();
-            } catch (Exception ex) {
-            }        */
-        
-        
-        
+
+        /*        String todo = RDFStoreFuseki.loadGraph(res.getURI());
+         InputStream is = new ByteArrayInputStream(todo.getBytes(StandardCharsets.UTF_8));
+         RDFDataMgr.read(model, is, Lang.NT);
+         try {
+         PrintWriter archivo = new PrintWriter(new FileWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/todo.txt", true));
+         archivo.println(todo);
+         archivo.close();
+         } catch (Exception ex) {
+         }        */
         tabla += "<table class=\"table table-condensed table-bordered\">"; //table-striped 
         tabla += "<thead><tr><td width=\"25%\"><strong>Property</strong></td><td width=\"75%\"><strong>Value</strong></td></tr></thead>\n";
 
@@ -253,26 +238,27 @@ public class LinkedDataServlet extends HttpServlet {
         for (int i = 0; i < sense.definitions.size(); i++) {
             tabla += "<tr><td>" + "Definition" + "</td><td>" + sense.definitions.get(i) + " <kbd>" + sense.definitionlans.get(i);
             tabla += "</kbd>";
-            if (!sense.definitionsources.isEmpty())
-                tabla+="<br/>Source: "+ sense.definitionsources +"\n";
+            if (!sense.definitionsources.isEmpty()) {
+                tabla += "<br/>Source: " + sense.definitionsources + "\n";
+            }
             tabla += "</td></tr>\n";
         }
         for (int i = 0; i < sense.links.size(); i++) {
             String link = sense.links.get(i);
             String add = "";
             if (link.contains("iate/")) {
-                add+="<br/>";
-                List<Literal> lista=IATEUtils.getIATETerms(link);
-                int n=0;
-                for(Literal l : lista)
-                {
-                    if (n!=0)
-                        add+=",";
-                    add+=l.getLexicalForm()+" <kbd>"+l.getLanguage()+"</kbd>\n";
+                add += "<br/>";
+                List<Literal> lista = IATEUtils.getIATETerms(link);
+                int n = 0;
+                for (Literal l : lista) {
+                    if (n != 0) {
+                        add += ",";
+                    }
+                    add += l.getLexicalForm() + " <kbd>" + l.getLanguage() + "</kbd>\n";
                     n++;
                 }
             }
-            tabla += "<tr><td>" + "Matches" + "</td><td><a href=\"" + link + "\">" + RDFPrefixes.getLastPart(link) + "</a> <span class=\"glyphicon glyphicon-share-alt\"></span>"+add+"</td></tr>\n";
+            tabla += "<tr><td>" + "Matches" + "</td><td><a href=\"" + link + "\">" + RDFPrefixes.getLastPart(link) + "</a> <span class=\"glyphicon glyphicon-share-alt\"></span>" + add + "</td></tr>\n";
         }
         //
         for (int i = 0; i < sense.entries.size(); i++) {
@@ -485,22 +471,19 @@ public class LinkedDataServlet extends HttpServlet {
     private void listResources(HttpServletRequest request, HttpServletResponse response) {
         //SERVING THE LIST OF resources
         System.out.println("Serving HTML for resources");
-        
 
-        String email="";
+        String email = "";
         //ESTO ES DE STORMPATH
-        
+
         //LO SIGUIENTE ES DE APACHE SHIRO
         /*Subject currentUser = SecurityUtils.getSubject();
-        if ( !currentUser.isAuthenticated() ) {
-             SecurityManager securityManager = SecurityUtils.getSecurityManager();
-             System.out.println("not authenticated");
-             UsernamePasswordToken token = new UsernamePasswordToken("lonestarr", "vespa");
-             token.setRememberMe(true);
-             currentUser.login(token);
-        }*/
-        
-        
+         if ( !currentUser.isAuthenticated() ) {
+         SecurityManager securityManager = SecurityUtils.getSecurityManager();
+         System.out.println("not authenticated");
+         UsernamePasswordToken token = new UsernamePasswordToken("lonestarr", "vespa");
+         token.setRememberMe(true);
+         currentUser.login(token);
+         }*/
         try {
             response.setContentType("text/html;charset=UTF-8");
             InputStream input = getClass().getResourceAsStream("ld.html");
@@ -508,8 +491,7 @@ public class LinkedDataServlet extends HttpServlet {
             String body = IOUtils.toString(bis, "UTF-8");
             String context = TBX2RDFServiceConfig.get("context", "/tbx2rdf");
             body = body.replace("TEMPLATE_CONTEXTO", context);
-            
-            
+
             body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + "List of concepts");
             String tabla = "<table id=\"grid-data\" class=\"table table-condensed table-hover table-striped\">\n"
                     + "        <thead>\n"
@@ -519,9 +501,9 @@ public class LinkedDataServlet extends HttpServlet {
                     + "        </thead>\n"
                     + "</table>	\n"
                     + "";
-            
-            tabla+=email;
-            
+
+            tabla += email;
+
             body = body.replace("<!--TEMPLATE_PGN-->", "<br>" + tabla);
             response.getWriter().println(body);
             response.setStatus(HttpServletResponse.SC_OK);
@@ -540,7 +522,7 @@ public class LinkedDataServlet extends HttpServlet {
             String body = IOUtils.toString(bis, "UTF-8");
             String context = TBX2RDFServiceConfig.get("context", "/tbx2rdf");
             body = body.replace("TEMPLATE_CONTEXTO", context);
-            
+
             body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + "List of concepts of " + dataset);
             String tabla = "<table id=\"grid-data\" class=\"table table-condensed table-hover table-striped\">\n"
                     + "        <thead>\n"
