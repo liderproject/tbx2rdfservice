@@ -37,12 +37,29 @@ import tbx2rdf.TBX2RDF_Converter;
   */
 public class Tbx2rdfServlet extends HttpServlet {
 
+    /**
+     * Serves the tbx 2 rdf soperation
+     */
     
     protected void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action"); 
         String tbx = req.getParameter("tbx");
         String namespace = req.getParameter("namespace");
         String lenient = req.getParameter("lenient");
+        String urix = req.getRequestURI();
+        
+        lenient = lenient==null? "" : lenient;
+        namespace = namespace==null? "" : namespace;
+        tbx = tbx==null? "" : tbx;
+        action = action==null? "" : action;
+        
+        ServletLogger.global.log("Requested: " + urix);
+        ServletLogger.global.log("IP: " + req.getRemoteAddr());
+        ServletLogger.global.log("action: " + action );
+        ServletLogger.global.log("lenient: " + lenient );
+        ServletLogger.global.log("namespace: " + namespace );
+        ServletLogger.global.log("tbx: " + tbx );
+        
         if (tbx==null || tbx.isEmpty())
         {
             serveError(req, resp);

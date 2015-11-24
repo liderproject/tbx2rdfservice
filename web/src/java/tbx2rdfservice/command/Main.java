@@ -2,9 +2,9 @@ package tbx2rdfservice.command;
 
 import java.io.File;
 import java.io.IOException;
+import org.apache.commons.cli.BasicParser;
 
 import org.apache.log4j.BasicConfigurator;
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;

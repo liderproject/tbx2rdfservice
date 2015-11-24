@@ -24,7 +24,9 @@ public class LicenseScrapper {
         test1();
     }
 
-    //
+    //Obtains the legal text of a creative commons license.
+    //Looks for the section with definitions
+    //finds the defined term and the definition
     public static void test1()
     {
       String file="D:\\Usuarios\\admin\\Desktop\\ca.html";

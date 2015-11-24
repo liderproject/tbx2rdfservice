@@ -71,20 +71,15 @@ public class LinkedDataServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ServletLogger log = new ServletLogger();
         String peticion = request.getRequestURI();
+        String url = request.getRequestURL().toString();
+        ServletLogger.global.log("Request: "+ url);
         try {
-            PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/12.txt");
-            String url = request.getRequestURL().toString();
-            archivo.println("doGet " + url);
-            archivo.close();
-
             if (url.equals("http://lider2.dia.fi.upm.es:8080/tbx2rdf/resource/")) //Por si viene de la lectura del paper
             {
                 response.sendRedirect("http://tbx2rdf.lider-project.eu/converter/resource/");
                 return;
             }
-
         } catch (Exception ex) {
         }
 
@@ -108,8 +103,6 @@ public class LinkedDataServlet extends HttpServlet {
             return;
         }
 
-        log.log("requestURI: " + peticion);
-
         String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
         String lastid = peticion.substring(peticion.lastIndexOf("/") + 1, peticion.length());
         String dataset = peticion.substring(peticion.lastIndexOf("resource/") + 9, peticion.lastIndexOf("/"));
@@ -117,22 +110,25 @@ public class LinkedDataServlet extends HttpServlet {
         String recurso = domain + "resource/" + dataset + "/" + lastid;
         recurso = recurso.replace("(", "%28");
         recurso = recurso.replace(")", "%29");
-
-        log.log("\nrecurso: " + recurso);
+        ServletLogger.global.log("Resource requested: " + recurso);
         String nt = RDFStoreFuseki.getEntity(recurso);
+        
+        String l = "Obtained RDF: <pre>" + nt + "</pre>";
+        l = l.replace("\n", "<br>");
+        ServletLogger.global.log(l);
+        
         if (nt.isEmpty()) {
             Tbx2rdfServlet.serveError(request, response);
             return;
         }
-        log.log("\ntriples: " + nt);
         if (isRDFTTL(request)) {
-            System.out.println("Serving TTL for " + recurso);
             Model model = ModelFactory.createDefaultModel();
             InputStream is = new ByteArrayInputStream(nt.getBytes(StandardCharsets.UTF_8));
             RDFDataMgr.read(model, is, Lang.NT);
             StringWriter sw = new StringWriter();
             RDFDataMgr.write(sw, model, Lang.TTL);
             response.getWriter().println(sw);
+            ServletLogger.global.log("Served TTL: " + sw.toString().length() + " bytes");
             response.setContentType("text/turtle;charset=UTF-8");
         } else if (isRDFXML(request)) {
             System.out.println("Serving RDF/XML for " + recurso);
@@ -141,6 +137,7 @@ public class LinkedDataServlet extends HttpServlet {
             RDFDataMgr.read(model, is, Lang.NT);
             StringWriter sw = new StringWriter();
             RDFDataMgr.write(sw, model, Lang.RDFXML);
+            ServletLogger.global.log("Served RDF/XML: " + sw.toString().length() + " bytes");
             response.getWriter().println(sw);
             response.setContentType("application/rdf+xml;charset=UTF-8");
         } else {
@@ -164,6 +161,7 @@ public class LinkedDataServlet extends HttpServlet {
             response.setCharacterEncoding("UTF-8");
             System.out.println("Serving HTML for " + recurso);
             String ttl2 = StringEscapeUtils.escapeHtml4(sw.toString());
+            ServletLogger.global.log("Served HTML: " + sw.toString().length() + " bytes");
 
             String tipo = "";
             NodeIterator tipos = model.listObjectsOfProperty(entidad, RDF.type);

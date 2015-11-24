@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringEscapeUtils;
 import security.ManagerSQLite;
+import tbx2rdfservice.TBX2RDFServiceConfig;
 import tbx2rdfservice.store.RDFStoreFuseki;
 
 /**
@@ -31,7 +32,47 @@ public class ServicesServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String uri = request.getRequestURI();
+        ServletLogger.global.log("Requested: " + uri);
+        ServletLogger.global.log("IP: " + request.getRemoteAddr());
+
         String txt = "";
+        
+        //Internal management service
+        if (uri.endsWith("/service/vroddon")) {
+            try (PrintWriter out = response.getWriter()) {
+                out.println("<html><body>");
+                out.println("<h2>Configuration data</h2>");
+                out.println("datauri:"+TBX2RDFServiceConfig.get("datauri","")+"<br>");
+                out.println("context:"+TBX2RDFServiceConfig.get("context","")+"<br>");
+                out.println("logsfolder:"+TBX2RDFServiceConfig.get("logsfolder","")+"<br>");
+                out.println("datafolder:"+TBX2RDFServiceConfig.get("datafolder","")+"<br>");
+                
+                out.println("<h2>Stats</h2>");
+//                String s = Services.countEntities(0, 1000000, "");
+//                out.println("entitites:"+s+"<br>");
+                
+                List<String> ls = RDFStoreFuseki.listGraphs();
+                out.println("<a href=\""+ "./service/joker" +"\">graphs</a>:"+ls.size()+"<br>");
+                
+                String google = (String) request.getSession().getAttribute("google");
+                out.println("user:"+google+"<br>");
+                
+                out.println("<a href=\""+ "./service/dump" +"\">total entities</a>:"+RDFStoreFuseki.countEntities("")+"<br>");
+
+                out.println("<h2>Logs</h2>");
+                String s= ServletLogger.global.tail(100);
+                s=s.replace("\n", "<br>");
+                out.println("</body></html>");
+                out.println(s);
+                
+            }
+            catch(Exception e){}
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType("text/html;charset=utf-8");
+            return;
+        }
+        
+        //Shows the table of resources
         //http://tbx2rdf.lider-project.eu/converter/service/getResources?current=1&rowCount=10&sort[resource]=desc&searchPhrase=
         if (uri.endsWith("/service/getResources")) {
             String offset = request.getParameter("current");
@@ -39,11 +80,7 @@ public class ServicesServlet extends HttpServlet {
             String searchFrase =request.getParameter("searchPhrase");
             int current = Integer.parseInt(offset);
             int ilimit = Integer.parseInt(limit);
-            
-            
-            
            String s = Services.countEntities(current, ilimit, searchFrase);
-
             try (PrintWriter out = response.getWriter()) {
                 out.print(s);
                 response.setStatus(HttpServletResponse.SC_OK);
@@ -52,6 +89,8 @@ public class ServicesServlet extends HttpServlet {
 
             }
         }
+        
+        //Joder que lista los graphs
         if (uri.endsWith("/service/joker")) {
             List<String> ls = RDFStoreFuseki.listGraphs();
             try (PrintWriter out = response.getWriter()) {

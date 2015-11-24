@@ -11,7 +11,7 @@ import org.apache.log4j.varia.NullAppender;
 import tbx2rdfservice.store.RDFStoreClient;
 
 /**
- *
+ * Imports data from an excel
  * @author admin
  */
 public class ExcelImport {
@@ -26,7 +26,7 @@ public class ExcelImport {
     public static void importar() {
         List<LexicalSense> senses = new ArrayList();
         try {
-            String fname = "D:\\Dropbox\\_COMPARTIDAS\\CRISTIANAVICTOR\\output\\2015 Terminology of legal terms in common licenses RANLP 2015\\import.xls";
+            String fname = "F:\\svn\\tbx2rdfservice\\import.xls";
             WorkbookSettings ws = new WorkbookSettings();
             ws.setEncoding("cp1252");
             Workbook workbook = Workbook.getWorkbook(new File(fname), ws);
