@@ -79,7 +79,8 @@ public class Main {
                 System.out.println("ok");
             }
             if (cl.hasOption("dump")) {
-                String ttl = RDFStoreFuseki.dump();
+                String ttl="";
+                ttl = RDFStoreFuseki.dump("ttl");
                 System.out.println(ttl);
                 System.out.println("ok");
             }

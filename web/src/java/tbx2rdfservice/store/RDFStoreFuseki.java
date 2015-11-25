@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 import org.apache.jena.atlas.lib.FileOps;
 import org.apache.jena.fuseki.EmbeddedFusekiServer;
 import org.apache.jena.fuseki.server.FusekiConfig;
@@ -33,6 +34,7 @@ import org.apache.jena.fuseki.server.ServerConfig;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import tbx2rdfservice.TBX2RDFServiceConfig;
+import tbx2rdfservice.servlets.ServletLogger;
 
 /**
  * Interface for different RDFStores
@@ -41,7 +43,7 @@ import tbx2rdfservice.TBX2RDFServiceConfig;
  */
 public class RDFStoreFuseki {
 
-    private static EmbeddedFusekiServer fuseki = null;
+//    private static EmbeddedFusekiServer fuseki = null;
 
     public static void init() {
         /*
@@ -121,27 +123,26 @@ public class RDFStoreFuseki {
     }
 
     /**
-     * @param rdf String with valid RDF as turtle
+     * @param id Nombre del namedgraph donde se ponen los datos.
+     * @param rdf String with valid RDF as segun lo que aparece en lan (Lang.TTL)
+     * @param lan Lang.TTL, Lang.NTRIPLES
      */
     public static boolean postEntity(String id, String rdf, org.apache.jena.riot.Lang lan) {
         try {
             init();
-            System.out.println("We have been posted id: " + id);
+            ServletLogger.global.log("RDFStoreFuseki: We have been posted id: " + id + " the folling rdf: " + escapeHtml(rdf));
             String endpoint = "http://localhost:3031/tbx/data";
             DatasetAccessor dataAccessor = DatasetAccessorFactory.createHTTP(endpoint);
             Model model = ModelFactory.createDefaultModel();
             InputStream stream = new ByteArrayInputStream(rdf.getBytes("UTF-8"));
             RDFDataMgr.read(model, stream, lan);
-            dataAccessor.putModel(id, model); //gameid
+            if (id!=null)
+                dataAccessor.putModel(id, model); //gameid
+            else
+                dataAccessor.putModel(model);
             return true;
         } catch (Exception e) {
-            try {
-                PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/error.txt");
-                archivo.println(e.getMessage());
-                archivo.close();
-            } catch (Exception ex) {
-            }
-            e.printStackTrace();
+                ServletLogger.global.log("RDFStoreFuseki: error " + e.getMessage());
             return false;
         }
     }
@@ -209,7 +210,47 @@ public class RDFStoreFuseki {
         return new EmbeddedFusekiServer(conf);
     }
 
-    public static String dump() {
+    
+    public static String dumpdefaultgraph(String format) {
+        init();
+
+        String sparql = "SELECT * \n" +
+        "WHERE {\n" +
+        "  ?s ?p ?o .\n" +
+        "}";
+        Query query = QueryFactory.create(sparql);
+        String endpoint = "http://localhost:3031/tbx/query";
+        QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, query);
+        ResultSet results = qexec.execSelect();
+        String sresults = "";
+        for (; results.hasNext();) {
+            QuerySolution soln = results.nextSolution();
+            Resource s = soln.getResource("s");       // Get a result variable by name.
+            Resource p = soln.getResource("p");       // Get a result variable by name.
+            RDFNode o = soln.get("o"); // Get a result variable - must be a resource
+            String so = "";
+            if (o.isLiteral()) {
+                so = "\"" + o.toString() + "\"";
+            } else {
+                so = "<" + o.toString() + ">";
+            }
+            sresults += "<" + s + "> <" + p.toString() + "> " + so + " . \n";
+        }
+        InputStream is = new ByteArrayInputStream(sresults.getBytes(StandardCharsets.UTF_8));
+        Model model = ModelFactory.createDefaultModel();
+        RDFDataMgr.read(model, is, Lang.NT);
+        RDFPrefixes.addPrefixesIfNeeded(model);
+        StringWriter sw = new StringWriter();
+        if (format.equals("nt"))
+            RDFDataMgr.write(sw, model, Lang.NT);
+        else
+            RDFDataMgr.write(sw, model, Lang.TTL);
+        return sw.toString();
+    }    
+    /**
+     * hace un dump para todos los grafos.
+     */
+    public static String dump(String format) {
         init();
 
         String sparql = "SELECT DISTINCT *\n"
@@ -241,9 +282,14 @@ public class RDFStoreFuseki {
         RDFDataMgr.read(model, is, Lang.NT);
         RDFPrefixes.addPrefixesIfNeeded(model);
         StringWriter sw = new StringWriter();
-        RDFDataMgr.write(sw, model, Lang.TTL);
+        
+        if (format.equals("ttl") || format.isEmpty()) 
+            RDFDataMgr.write(sw, model, Lang.TTL);
+        if (format.equals("nt")) 
+            RDFDataMgr.write(sw, model, Lang.NT);
         return sw.toString();
     }
+    
     public static List<String> getNarrower(String res) {
         List<String> uris = new ArrayList();
         String sparql = "SELECT DISTINCT ?s\n"
@@ -373,5 +419,42 @@ public class RDFStoreFuseki {
         }
         return sresults;        
     }
+    
+    
+    public static String updateSPARQL(String sparql)
+    {
+        init();
+        String res="";
+        String endpoint = "http://localhost:3031/tbx/update";
+        UpdateRequest request = UpdateFactory.create();
+        request.add(sparql);
+        UpdateProcessor qexec = UpdateExecutionFactory.createRemoteForm(request, endpoint);
+        qexec.execute();
+        return res;
+    }
+    
+    public static String selectSPARQL(String sparql)
+    {
+        init();
+        String res="";
+        Query query = QueryFactory.create(sparql);
+        String endpoint = "http://localhost:3031/tbx/query";
+        QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, query);
+        ResultSet results = qexec.execSelect();
+        for (; results.hasNext();) {
+            QuerySolution soln = results.nextSolution();
+            res+=soln.toString()+"<br>\n";
+        }
+        return res;
+    }
+
+    
+    public static void main(String[] args) {
+        String sparql = "SELECT * WHERE {?s ?p ?o} LIMIT 100.";
+        String res = getEntity("http://tbx2rdf.lider-project.eu/converter/resource/cc/collective%20work");
+//        String res = selectSPARQL(sparql);
+        System.out.println(res);
+    }
+    
 
 }

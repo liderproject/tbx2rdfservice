@@ -113,7 +113,10 @@ public class ExcelImport {
             for (LexicalSense sense : senses) {
                 String nt = sense.getNT();
                 String uri = sense.getURI();
-                boolean ok = RDFStoreClient.post(uri, nt);
+//                boolean ok = RDFStoreClient.post(uri, nt);
+                System.out.println(uri);
+                System.out.println(nt);
+                System.out.println("\n\n");
 
             }
         } catch (Exception ex) {

@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import lemon.LexicalEntry;
 import lemon.LexicalSense;
 import org.apache.commons.io.IOUtils;
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -111,9 +112,11 @@ public class LinkedDataServlet extends HttpServlet {
         recurso = recurso.replace("(", "%28");
         recurso = recurso.replace(")", "%29");
         ServletLogger.global.log("Resource requested: " + recurso);
+        ServletLogger.global.log("IP: " + request.getHeader("X-Forwarded-For") );
+        
         String nt = RDFStoreFuseki.getEntity(recurso);
         
-        String l = "Obtained RDF: <pre>" + nt + "</pre>";
+        String l = "Obtained RDF: <pre><code>" + escapeHtml(nt) + "</code></pre>";
         l = l.replace("\n", "<br>");
         ServletLogger.global.log(l);
         

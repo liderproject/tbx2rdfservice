@@ -8,7 +8,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.jena.riot.Lang;
 import security.ManagerSQLite;
 import tbx2rdfservice.TBX2RDFServiceConfig;
 import tbx2rdfservice.store.RDFStoreFuseki;
@@ -28,12 +30,11 @@ public class ServicesServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String uri = request.getRequestURI();
         ServletLogger.global.log("Requested: " + uri);
-        ServletLogger.global.log("IP: " + request.getRemoteAddr());
+        ServletLogger.global.log("IP: " +request.getHeader("X-Forwarded-For") );
 
         String txt = "";
         
@@ -62,9 +63,13 @@ public class ServicesServlet extends HttpServlet {
                 out.println("<h2>Logs</h2>");
                 String s= ServletLogger.global.tail(100);
                 s=s.replace("\n", "<br>");
-                out.println("</body></html>");
                 out.println(s);
+
+                out.println("<h2>Upload data</h2>");
+                String html = ServiceCommons.getHTMLPostForm("http://tbx2rdf.lider-project.eu/converter/service/service/upload");
+                out.println(html);
                 
+                out.println("</body></html>");
             }
             catch(Exception e){}
             response.setStatus(HttpServletResponse.SC_OK);
@@ -104,7 +109,12 @@ public class ServicesServlet extends HttpServlet {
             }
         }
             if (uri.endsWith("/service/dump")) {
-                String ttl = RDFStoreFuseki.dump();
+                String format = request.getParameter("format");
+                if (format==null || format.isEmpty())
+                    format = "ttl";
+                String ttl = RDFStoreFuseki.dump(format);
+                String ttl2 = RDFStoreFuseki.dumpdefaultgraph(format);
+                ttl+=ttl2;
                 try (PrintWriter out = response.getWriter()) {
                     String html="<html><head><script src=\"https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js\"></script></head>";
                     html+="<body><pre class=\"prettyprint\">";
@@ -163,8 +173,54 @@ public class ServicesServlet extends HttpServlet {
                     
                 }
         }
-            
-        
+
+        if (uri.endsWith("/service/delete")) {
+            String res = request.getParameter("uri");
+            String body = ServiceCommons.getBody(request);
+//            RDFStoreFuseki.deleteTriples(body);
+        }
+
+        //el parámetro que se espera es una lista de ntriples
+        if (uri.endsWith("/service/upload")) {
+ //            String res = request.getParameter("uri");
+            String body = ServiceCommons.getBody(request);
+            ServletLogger.global.log(body);
+            try{
+                RDFStoreFuseki.postEntity(null, body, Lang.NTRIPLES);
+                ServletLogger.global.log("Data has been uploaded");
+            }catch(Exception e){
+                ServletLogger.global.log("Data has not been uploaded " + e.getMessage());
+            };
+            response.setContentType("text/html");
+            response.addHeader("Access-Control-Allow-Origin", "*");
+            try (PrintWriter out = response.getWriter()) {            
+                out.write(body);
+            }catch(Exception e){}
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+        if (uri.endsWith("/service/updateSPARQL")) {
+            String body = ServiceCommons.getBody(request);
+            ServletLogger.global.log(body);
+            try{
+                String s = RDFStoreFuseki.updateSPARQL(body);
+                ServletLogger.global.log("Query has been made. Query:<br> "+ escapeHtml(body));
+                ServletLogger.global.log("Query has been made. Results:<br> "+ escapeHtml(s));
+            }catch(Exception e){
+                ServletLogger.global.log("Query has not been made" + e.getMessage());
+            };
+        }
+        if (uri.endsWith("/service/selectSPARQL")) {
+            String body = ServiceCommons.getBody(request);
+            ServletLogger.global.log(body);
+            try{
+                String s = RDFStoreFuseki.selectSPARQL(body);
+                ServletLogger.global.log("Query has been made. Query:<br> "+ escapeHtml(body));
+                ServletLogger.global.log("Query has been made. Results:<br> "+ escapeHtml(s));
+            }catch(Exception e){
+                ServletLogger.global.log("Query has not been made" + e.getMessage());
+            };
+        }
         if (uri.endsWith("/service/clear")) {
             RDFStoreFuseki.deleteAll();
             response.setStatus(HttpServletResponse.SC_OK);
@@ -172,6 +228,8 @@ public class ServicesServlet extends HttpServlet {
             Tbx2rdfServlet.serveError(request, response);
         }
 
+            
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

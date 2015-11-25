@@ -41,12 +41,12 @@ public class Tbx2rdfServlet extends HttpServlet {
      * Serves the tbx 2 rdf soperation
      */
     
-    protected void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String action = req.getParameter("action"); 
-        String tbx = req.getParameter("tbx");
-        String namespace = req.getParameter("namespace");
-        String lenient = req.getParameter("lenient");
-        String urix = req.getRequestURI();
+    protected void processRequest(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {
+        String action = request.getParameter("action"); 
+        String tbx = request.getParameter("tbx");
+        String namespace = request.getParameter("namespace");
+        String lenient = request.getParameter("lenient");
+        String urix = request.getRequestURI();
         
         lenient = lenient==null? "" : lenient;
         namespace = namespace==null? "" : namespace;
@@ -54,7 +54,7 @@ public class Tbx2rdfServlet extends HttpServlet {
         action = action==null? "" : action;
         
         ServletLogger.global.log("Requested: " + urix);
-        ServletLogger.global.log("IP: " + req.getRemoteAddr());
+        ServletLogger.global.log("IP: " + request.getHeader("X-Forwarded-For") );
         ServletLogger.global.log("action: " + action );
         ServletLogger.global.log("lenient: " + lenient );
         ServletLogger.global.log("namespace: " + namespace );
@@ -62,20 +62,20 @@ public class Tbx2rdfServlet extends HttpServlet {
         
         if (tbx==null || tbx.isEmpty())
         {
-            serveError(req, resp);
+            serveError(request, resp);
             return;
         }
         
         
         tbx = java.net.URLDecoder.decode(tbx, "UTF-8");
-        String uri = req.getRequestURI();
+        String uri = request.getRequestURI();
         
         PrintWriter archivo = new PrintWriter("/tmp/tbx.txt");
         archivo.println(uri);
-        archivo.println("current: "+req.getParameter("current")+"\n");
-        archivo.println("action: "+req.getParameter("action")+"\n");
-        archivo.println("tbx: "+req.getParameter("tbx")+"\n");
-        archivo.println("lenient: "+req.getParameter("lenient")+"\n");
+        archivo.println("current: "+request.getParameter("current")+"\n");
+        archivo.println("action: "+request.getParameter("action")+"\n");
+        archivo.println("tbx: "+request.getParameter("tbx")+"\n");
+        archivo.println("lenient: "+request.getParameter("lenient")+"\n");
         archivo.close();
         
         
