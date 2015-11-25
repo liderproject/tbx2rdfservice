@@ -32,49 +32,58 @@ public class ExcelImport {
             Workbook workbook = Workbook.getWorkbook(new File(fname), ws);
             Sheet sheet = workbook.getSheet(0);
             int nrows = sheet.getRows();
+            
+            /**
+             *  CADA FILA ES UN LEXICAL SENSE
+             */
             for (int i = 2; i < nrows; i++) {
-                String sense0 = sheet.getCell(0, i).getContents();
-                LexicalSense ls3 = new LexicalSense(sense0);
-                ls3.base = "http://tbx2rdf.lider-project.eu/converter/resource/cc/";
+                String lexicalsensename = sheet.getCell(0, i).getContents();
                 
-                if (!ls3.getURI().equals("http://tbx2rdf.lider-project.eu/converter/resource/cc/author"))
+                LexicalSense lexicalsense = new LexicalSense(lexicalsensename);
+                lexicalsense.base = "http://tbx2rdf.lider-project.eu/converter/resource/cc/";
+                
+                if (!lexicalsense.getURI().equals("http://tbx2rdf.lider-project.eu/converter/resource/cc/author"))
                 {
+                 // hacer algo específico
                  //   continue;
                 }
-                String juris1 = sheet.getCell(1, i).getContents();
-                if (!juris1.isEmpty()) {
-                    ls3.jurisdiction = "http://dbpedia.org/resource/" + juris1;
+                String jurisdiction = sheet.getCell(1, i).getContents();
+                if (!jurisdiction.isEmpty()) {
+                    lexicalsense.jurisdiction = "http://dbpedia.org/resource/" + jurisdiction;
                 }
 
-                String iate2 = sheet.getCell(2, i).getContents();
-                if (!iate2.isEmpty()) {
-                    ls3.links.add("http://tbx2rdf.lider-project.eu/data/iate/IATE-" + iate2);
+                String iateid = sheet.getCell(2, i).getContents();
+                if (!iateid.isEmpty()) {
+                    lexicalsense.links.add("http://tbx2rdf.lider-project.eu/data/iate/IATE-" + iateid);
                 }
 
-                String reference3 = sheet.getCell(3, i).getContents();
-                if (!reference3.isEmpty()) {
-                    ls3.reference = reference3;
+                String lemon_reference = sheet.getCell(3, i).getContents();
+                if (!lemon_reference.isEmpty()) {
+                    lexicalsense.reference = lemon_reference;
                 }
 
-                String parent4 = sheet.getCell(4, i).getContents();
-                if (!parent4.isEmpty()) {
-                    parent4 = parent4.replace(" ", "%20");
-                    parent4 = parent4.replace("(", "%28");
-                    parent4 = parent4.replace(")", "%29");
-                    ls3.parent = "http://tbx2rdf.lider-project.eu/converter/resource/cc/" + parent4;
+                String parentconcept = sheet.getCell(4, i).getContents();
+                if (!parentconcept.isEmpty()) {
+                    parentconcept = parentconcept.trim();
+                    parentconcept = parentconcept.replace(" ", "%20");
+                    parentconcept = parentconcept.replace("(", "%28");
+                    parentconcept = parentconcept.replace(")", "%29");
+                    lexicalsense.parent = "http://tbx2rdf.lider-project.eu/converter/resource/cc/" + parentconcept;
                 }
 
-                String def5 = sheet.getCell(5, i).getContents();
-                if (!def5.isEmpty()) {
-                    String lan6 = sheet.getCell(6, i).getContents();
-                    String source7 = sheet.getCell(7, i).getContents();
-                    ls3.addDefinition(def5, lan6, source7);
+                //Definition, language and source.
+                String definition1 = sheet.getCell(5, i).getContents();
+                if (!definition1.isEmpty()) {
+                    String definition1lan = sheet.getCell(6, i).getContents();
+                    String definition1source = sheet.getCell(7, i).getContents();
+                    lexicalsense.addDefinition(definition1, definition1lan, definition1source);
                 }
-                String def8 = sheet.getCell(8, i).getContents();
+                
+                /*String def8 = sheet.getCell(8, i).getContents();
                 if (!def8.isEmpty()) {
                     String lan9 = sheet.getCell(9, i).getContents();
-                    ls3.addDefinition(def8, lan9);
-                }
+                    lexicalsense.addDefinition(def8, lan9);
+                }*/
 
                 int ind = 10;
                 while (true) {
@@ -82,38 +91,38 @@ public class ExcelImport {
                     if (term10.isEmpty()) {
                         break;
                     }
-                    String lan11 = sheet.getCell(ind+1, i).getContents();
-                    String def12 = sheet.getCell(ind+2, i).getContents();
-                    String source13 = sheet.getCell(ind+3, i).getContents();
-                    String comentario14 = sheet.getCell(ind+4, i).getContents();
-                    String fiabilidad15 = sheet.getCell(ind+5, i).getContents();
+                    String lexicalentrylani = sheet.getCell(ind+1, i).getContents();
+                    String lexicalentrydefinitioni = sheet.getCell(ind+2, i).getContents();
+                    String lexicalentrysourcei = sheet.getCell(ind+3, i).getContents();
+                    String lexicalentrycomentarioi = sheet.getCell(ind+4, i).getContents();
+                    String lexicalentryfiabilidadi = sheet.getCell(ind+5, i).getContents();
                     
-                    LexicalEntry le31 = new LexicalEntry(term10, lan11);
+                    LexicalEntry lexicalentry = new LexicalEntry(term10, lexicalentrylani);
                    // System.out.println(term10+" "+le31.getURI());
                     
-                    le31.base = "http://tbx2rdf.lider-project.eu/converter/resource/cc/";
-                    if (!def12.isEmpty()) {
-                        le31.definition = def12;
+                    lexicalentry.base = "http://tbx2rdf.lider-project.eu/converter/resource/cc/";
+                    if (!lexicalentrydefinitioni.isEmpty()) {
+                        lexicalentry.definition = lexicalentrydefinitioni;
                     }
-                    if (!comentario14.isEmpty()) {
-                        le31.comentario = comentario14;
+                    if (!lexicalentrycomentarioi.isEmpty()) {
+                        lexicalentry.comentario = lexicalentrycomentarioi;
                     }
-                    if (!source13.isEmpty()) {
-                        le31.source = source13;
+                    if (!lexicalentrysourcei.isEmpty()) {
+                        lexicalentry.source = lexicalentrysourcei;
                     }
-                    if (!fiabilidad15.isEmpty()) {
-                        le31.reliabilitycode = fiabilidad15;
+                    if (!lexicalentryfiabilidadi.isEmpty()) {
+                        lexicalentry.reliabilitycode = lexicalentryfiabilidadi;
                     }
-                    ls3.addEntry(le31);
+                    lexicalsense.addEntry(lexicalentry);
                     ind+=6;
                 }
-                senses.add(ls3);
+                senses.add(lexicalsense);
             }
             
             for (LexicalSense sense : senses) {
                 String nt = sense.getNT();
                 String uri = sense.getURI();
-//                boolean ok = RDFStoreClient.post(uri, nt);
+                boolean ok = RDFStoreClient.post(uri, nt);
                 System.out.println(uri);
                 System.out.println(nt);
                 System.out.println("\n\n");

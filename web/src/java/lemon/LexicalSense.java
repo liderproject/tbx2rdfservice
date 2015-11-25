@@ -18,7 +18,7 @@ import tbx2rdfservice.store.RDFPrefixes;
 import tbx2rdfservice.store.RDFUtil;
 
 /**
- *
+ * Clase que representa un concepto
  * @author admin
  */
 public class LexicalSense {
@@ -46,6 +46,9 @@ public class LexicalSense {
         name=_name;
     }
 
+    /**
+     * 
+     */
     public LexicalSense(Model model, Resource res)
     { 
         String uri = res.getURI();
@@ -96,7 +99,9 @@ public class LexicalSense {
         
     }
             
-    
+    /**
+     * Obtiene la versión NT de la lexical sense
+     */
     public String getNT()
     {
         try {
@@ -110,10 +115,12 @@ public class LexicalSense {
             if (!jurisdiction.isEmpty())
                 nt += "<"+sres+"> <http://creativecommons.org/ns#jurisdiction> <"+ jurisdiction +"> .\n"; 
             if (!reference.isEmpty())
-                nt += "<"+sres+"> <http://lemon-model.net/lemon#reference> <"+ reference +"> .\n"; 
+//                nt += "<"+sres+"> <http://lemon-model.net/lemon#reference> <"+ reference +"> .\n"; 
+                nt += "<"+sres+"> <http://www.w3.org/2004/02/skos/core#related> <"+ reference +"> .\n"; 
             if (!parent.isEmpty())
                 nt += "<"+sres+"> <http://www.w3.org/2004/02/skos/core#narrower> <"+ parent +"> .\n"; 
             int n = definitions.size();
+            
             for(int i=0;i<n;i++)
             {
                 String def = definitions.get(i);
