@@ -41,13 +41,7 @@ public class RDFStoreClient {
         if (url.equals("http://tbx2rdf.lider-project.eu/converter/resource/cc/"))
             return false;
         try {
-            
-/*            nt=URLEncoder.encode(nt,"UTF-8");   
-            nt=nt.replace("+", "%20");//aqui no estoy seguro de esto
-            nt=nt.replace("(", "%28");
-            nt=nt.replace(")", "%29");
-*/
-            //String url = "http://tbx2rdf.lider-project.eu/converter/resource/iate/IATE-84";
+
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.setRequestMethod("POST");
@@ -57,15 +51,11 @@ public class RDFStoreClient {
             wr.writeBytes(nt);
             wr.flush();
             wr.close();
-//            System.out.println("About to launch to " + url);
             int responseCode = con.getResponseCode();
-//            System.out.println("\nSending 'POST' request to URL : " + url);
             System.out.println(responseCode + " " + url);
-            
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;
             StringBuffer response = new StringBuffer();
-
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }

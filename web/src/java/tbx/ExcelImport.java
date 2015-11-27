@@ -24,13 +24,14 @@ public class ExcelImport {
         BasicConfigurator.configure();
         org.apache.log4j.Logger.getRootLogger().removeAllAppenders();
         org.apache.log4j.Logger.getRootLogger().addAppender(new NullAppender());
-        importar();
+        String base ="http://copyrighttermbank.linkeddata.es/resource/";
+        String filename = "F:\\svn\\tbx2rdfservice\\import.xls";
+        importar(filename, base);
     }
 
-    public static void importar() {
+    public static void importar(String fname, String base) {
         List<LexicalSense> senses = new ArrayList();
         try {
-            String fname = "F:\\svn\\tbx2rdfservice\\import.xls";
             WorkbookSettings ws = new WorkbookSettings();
             ws.setEncoding("cp1252");
             Workbook workbook = Workbook.getWorkbook(new File(fname), ws);
@@ -46,7 +47,7 @@ public class ExcelImport {
                 String lexicalsensename = sheet.getCell(0, i).getContents();
                 
                 LexicalSense lexicalsense = new LexicalSense(lexicalsensename);
-                lexicalsense.base = "http://tbx2rdf.lider-project.eu/converter/resource/cc/";
+                lexicalsense.base = base;
                 
                 if (!lexicalsense.getURI().equals("http://tbx2rdf.lider-project.eu/converter/resource/cc/author"))
                 {

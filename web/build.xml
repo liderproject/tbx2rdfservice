@@ -83,7 +83,7 @@
 	<echo>Apache Ant version is ${ant.version}</echo>
 
 	
-	<copy file="dist/TBX2RDFService.war" tofile="dist/tbx2rdf.war"/>	
+	<copy file="dist/TBX2RDFService.war" tofile="dist/copyrighttermbank.war"/>	
 <!-- temporalmente deshabilitado
 	
 	<mkdir dir="build2"/> 

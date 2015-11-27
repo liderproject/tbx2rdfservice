@@ -80,12 +80,13 @@ public class LinkedDataServlet extends HttpServlet {
         try {
             if (url.equals("http://lider2.dia.fi.upm.es:8080/tbx2rdf/resource/")) //Por si viene de la lectura del paper
             {
-                response.sendRedirect("http://tbx2rdf.lider-project.eu/converter/resource/");
+                response.sendRedirect("http://copyrighttermbank.linkeddata.es/");
+//                response.sendRedirect("http://tbx2rdf.lider-project.eu/converter/resource/");
                 return;
             }
         } catch (Exception ex) {
         }
-
+/*
         StringTokenizer tokens = new StringTokenizer(peticion, "/");
         List<String> partes = new ArrayList();
         while (tokens.hasMoreTokens()) {
@@ -95,32 +96,34 @@ public class LinkedDataServlet extends HttpServlet {
             Tbx2rdfServlet.serveError(request, response);
             return;
         }
-        String last = partes.get(partes.size() - 1);
-        String prelast = partes.get(partes.size() - 2);
-        if (prelast.equals("resource")) {
-            listResources(request, response, last);
-            return;
-        }
-        if (peticion.endsWith("/resource/")) {
-            listResources(request, response);
-            return;
-        }
-
-        String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
-        String lastid = peticion.substring(peticion.lastIndexOf("/") + 1, peticion.length());
-        String dataset = peticion.substring(peticion.lastIndexOf("resource/") + 9, peticion.lastIndexOf("/"));
-        String domain = base.substring(0, base.indexOf("resource/"));
-        String recurso = domain + "resource/" + dataset + "/" + lastid;
+        */
+//        String last = partes.get(partes.size() - 1);
+//        String prelast = partes.get(partes.size() - 2);
         
+        String recurso = url;
+        recurso = recurso.replace("http://localhost:8080/copyrighttermbank/resource", "http://copyrighttermbank.linkeddata.es/resource");
+        ServletLogger.global.log("RECURSO: " + recurso);
         try {
             recurso = URIUtil.encodeQuery(recurso);
         } catch (Exception e) {
             e.getMessage();
-        } 
+        }          
+        
+        if (recurso.equals("http://copyrighttermbank.linkeddata.es/resource/") || recurso.equals("http://copyrighttermbank.linkeddata.es/resource")) {
+            listResources(request, response);
+            return;
+        }
+
+/*        String base = TBX2RDFServiceConfig.get("datauri", "http://coyprighttermbank.linkeddata.es/");
+        String lastid = peticion.substring(peticion.lastIndexOf("/") + 1, peticion.length());
+        String dataset = peticion.substring(peticion.lastIndexOf("resource/") + 19, peticion.lastIndexOf("/"));
+        String domain = base.substring(0, base.indexOf("resource/"));
+        String recurso = domain + "resource/" + dataset + "/" + lastid;
+        */
+
         
         
-//        recurso = recurso.replace("(", "%28");
-//        recurso = recurso.replace(")", "%29");
+        
         ServletLogger.global.log("Resource requested: " + recurso);
         ServletLogger.global.log("IP: " + request.getHeader("X-Forwarded-For") );
         
@@ -159,6 +162,7 @@ public class LinkedDataServlet extends HttpServlet {
             BufferedInputStream bis = new BufferedInputStream(input);
             String body = IOUtils.toString(bis, "UTF-8");
             String context = TBX2RDFServiceConfig.get("context", "/tbx2rdf");
+            context = "http://copyrighttermbank.linkeddata.es";
             body = body.replace("TEMPLATE_CONTEXTO", context);
 
             Model model = ModelFactory.createDefaultModel();
@@ -387,6 +391,7 @@ public class LinkedDataServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String peticion = request.getRequestURI();
+        String url = request.getRequestURL().toString();
         BufferedReader br = request.getReader();
         String s = "";
         String tot = "";
@@ -397,11 +402,19 @@ public class LinkedDataServlet extends HttpServlet {
         try {
 
             //TODO HAY QUE CAMBIAR ESTO PARA QUE NO SEA IATE SOLO!!!!!!!!
-            String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
+            ServletLogger.global.log("Peticion: " + peticion);
+            String recurso = url;
+            recurso = recurso.replace("http://localhost:8080/copyrighttermbank/", "http://copyrighttermbank.linkeddata.es/");
+            
+/*            String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
             String lastid = peticion.substring(peticion.lastIndexOf("/") + 1, peticion.length());
             String dataset = peticion.substring(peticion.lastIndexOf("resource/") + 9, peticion.lastIndexOf("/"));
             String domain = base.substring(0, base.indexOf("resource/"));
-            String recurso = domain + "resource/" + dataset + "/" + lastid;
+            String recurso = domain + "resource/" + dataset + "/" + lastid; */
+            
+            ServletLogger.global.log("SE QUIERE POSTEAR EL RECURSO: " + recurso);
+
+            
             boolean ok = RDFStoreFuseki.postEntity(recurso, tot, Lang.NT);
             ServletLogger.global.log("We have just posted into Fuseki. Exito: " + ok + " <pre><code>" + escapeHtml(tot)+"</code></pre>");
             
