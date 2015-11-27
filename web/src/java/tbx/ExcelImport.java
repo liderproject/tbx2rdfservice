@@ -1,6 +1,8 @@
 package tbx;
 
 import java.io.File;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import jxl.*;
@@ -9,6 +11,8 @@ import lemon.LexicalSense;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.varia.NullAppender;
 import tbx2rdfservice.store.RDFStoreClient;
+import tbx2rdfservice.store.RDFStoreFuseki;
+import tbx2rdfservice.store.RDFUtil;
 
 /**
  * Imports data from an excel
@@ -37,6 +41,8 @@ public class ExcelImport {
              *  CADA FILA ES UN LEXICAL SENSE
              */
             for (int i = 2; i < nrows; i++) {
+                System.out.println("File: " + i);
+                try{
                 String lexicalsensename = sheet.getCell(0, i).getContents();
                 
                 LexicalSense lexicalsense = new LexicalSense(lexicalsensename);
@@ -73,17 +79,22 @@ public class ExcelImport {
 
                 //Definition, language and source.
                 String definition1 = sheet.getCell(5, i).getContents();
+                definition1 = RDFUtil.escapeNTriples(definition1);
                 if (!definition1.isEmpty()) {
                     String definition1lan = sheet.getCell(6, i).getContents();
                     String definition1source = sheet.getCell(7, i).getContents();
                     lexicalsense.addDefinition(definition1, definition1lan, definition1source);
                 }
                 
-                /*String def8 = sheet.getCell(8, i).getContents();
-                if (!def8.isEmpty()) {
-                    String lan9 = sheet.getCell(9, i).getContents();
-                    lexicalsense.addDefinition(def8, lan9);
-                }*/
+                String comment = sheet.getCell(8, i).getContents();
+                if (comment.length()>0)
+                {
+                    comment = RDFUtil.escapeNTriples(comment);
+                    //ByteBuffer encode = Charset.forName("UTF-8").encode(comment);
+                    //comment = new String( encode.array(), Charset.forName("UTF-8") );
+                    lexicalsense.comment = comment;
+                }
+
 
                 int ind = 10;
                 while (true) {
@@ -97,18 +108,40 @@ public class ExcelImport {
                     String lexicalentrycomentarioi = sheet.getCell(ind+4, i).getContents();
                     String lexicalentryfiabilidadi = sheet.getCell(ind+5, i).getContents();
                     
+                    
+                    lexicalentrydefinitioni = RDFUtil.escapeNTriples(lexicalentrydefinitioni);
+                    lexicalentrysourcei = RDFUtil.escapeNTriples(lexicalentrysourcei);
+                    lexicalentrycomentarioi = RDFUtil.escapeNTriples(lexicalentrycomentarioi);
+
+                    
                     LexicalEntry lexicalentry = new LexicalEntry(term10, lexicalentrylani);
                    // System.out.println(term10+" "+le31.getURI());
                     
                     lexicalentry.base = "http://tbx2rdf.lider-project.eu/converter/resource/cc/";
+                    
+                    //THE DEFINITIONS NOW GO TO THE SENSE
                     if (!lexicalentrydefinitioni.isEmpty()) {
-                        lexicalentry.definition = lexicalentrydefinitioni;
+//                        lexicalentry.definition = lexicalentrydefinitioni;
+                        
+
+                        lexicalsense.addDefinition(lexicalentrydefinitioni, lexicalentrylani, lexicalentrysourcei);
+                        /*
+                        lexicalsense.definitions.add(lexicalentrydefinitioni);
+                        String source ="";
+                        if (!lexicalentrysourcei.isEmpty()) {
+                            source = lexicalentrysourcei;
+                        }
+                        String lan ="";
+                        if (!lexicalentrylani.isEmpty()) {
+                            lan =  lexicalentrylani ;
+                        }
+                        lexicalsense.definitionsources.add(source);
+                        lexicalsense.definitionlans.add(lan);
+                        */
                     }
+                    
                     if (!lexicalentrycomentarioi.isEmpty()) {
                         lexicalentry.comentario = lexicalentrycomentarioi;
-                    }
-                    if (!lexicalentrysourcei.isEmpty()) {
-                        lexicalentry.source = lexicalentrysourcei;
                     }
                     if (!lexicalentryfiabilidadi.isEmpty()) {
                         lexicalentry.reliabilitycode = lexicalentryfiabilidadi;
@@ -117,17 +150,28 @@ public class ExcelImport {
                     ind+=6;
                 }
                 senses.add(lexicalsense);
+                }catch(Exception e)
+                {
+                    System.err.println("Mal la linea: " + i);
+                }
             }
-            
+            int oks=0;
+            int noks=0;
             for (LexicalSense sense : senses) {
                 String nt = sense.getNT();
                 String uri = sense.getURI();
                 boolean ok = RDFStoreClient.post(uri, nt);
-                System.out.println(uri);
-                System.out.println(nt);
-                System.out.println("\n\n");
-
+               if (ok)
+                   oks++;
+                
+               else{
+                    System.out.println("URI: " +uri);
+                    System.out.println("TRIPLES: " + nt);
+                   noks++;
+               }
             }
+            System.out.println("Procesados un total de " + senses.size()+". Bien: " + oks);
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }

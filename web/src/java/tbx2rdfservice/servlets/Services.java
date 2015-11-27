@@ -23,9 +23,13 @@ import tbx2rdfservice.store.RDFStoreFuseki;
 public class Services {
     
     
+    /**
+     * Gets the number of entities that are concepts
+     */
     public static String countEntities(int current, int ilimit, String searchFrase)
     {
             int total = RDFStoreFuseki.countEntities("http://www.w3.org/2004/02/skos/core#Concept");
+            ServletLogger.global.log("Hay un total de " +  total + " conceptos") ;
             if (total==-1)
             {
                 //WE HAVE A PROBLEM, WE PROBABLY LACK CONNECTION TO FUSEKI OR ANY OTHER STORE

@@ -51,7 +51,7 @@ public class ServicesServlet extends HttpServlet {
                 out.println("<h2>Stats</h2>");
 //                String s = Services.countEntities(0, 1000000, "");
 //                out.println("entitites:"+s+"<br>");
-                
+                out.println("Triples in graphs of the store: "+ RDFStoreFuseki.countTriples() +"<br>");
                 List<String> ls = RDFStoreFuseki.listGraphs();
                 out.println("<a href=\""+ "./service/joker" +"\">graphs</a>:"+ls.size()+"<br>");
                 
@@ -85,7 +85,7 @@ public class ServicesServlet extends HttpServlet {
             String searchFrase =request.getParameter("searchPhrase");
             int current = Integer.parseInt(offset);
             int ilimit = Integer.parseInt(limit);
-           String s = Services.countEntities(current, ilimit, searchFrase);
+            String s = Services.countEntities(current, ilimit, searchFrase);
             try (PrintWriter out = response.getWriter()) {
                 out.print(s);
                 response.setStatus(HttpServletResponse.SC_OK);

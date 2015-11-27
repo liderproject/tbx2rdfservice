@@ -28,9 +28,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lemon.LexicalEntry;
 import lemon.LexicalSense;
+import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.io.IOUtils;
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import tbx.IATEUtils;
@@ -109,8 +111,16 @@ public class LinkedDataServlet extends HttpServlet {
         String dataset = peticion.substring(peticion.lastIndexOf("resource/") + 9, peticion.lastIndexOf("/"));
         String domain = base.substring(0, base.indexOf("resource/"));
         String recurso = domain + "resource/" + dataset + "/" + lastid;
-        recurso = recurso.replace("(", "%28");
-        recurso = recurso.replace(")", "%29");
+        
+        try {
+            recurso = URIUtil.encodeQuery(recurso);
+        } catch (Exception e) {
+            e.getMessage();
+        } 
+        
+        
+//        recurso = recurso.replace("(", "%28");
+//        recurso = recurso.replace(")", "%29");
         ServletLogger.global.log("Resource requested: " + recurso);
         ServletLogger.global.log("IP: " + request.getHeader("X-Forwarded-For") );
         
@@ -162,27 +172,34 @@ public class LinkedDataServlet extends HttpServlet {
             StringWriter sw = new StringWriter();
             RDFDataMgr.write(sw, model, Lang.TTL);
             response.setCharacterEncoding("UTF-8");
-            System.out.println("Serving HTML for " + recurso);
+            ServletLogger.global.log("Serving HTML for " + recurso);
             String ttl2 = StringEscapeUtils.escapeHtml4(sw.toString());
-            ServletLogger.global.log("Served HTML: " + sw.toString().length() + " bytes");
+
+            String xax = sw.toString();
+            int nlines = StringUtils.countMatches(xax, "\n");
+            ServletLogger.global.log("Served HTML: " + xax.length() + " bytes. lines: "+ nlines );
 
             String tipo = "";
             NodeIterator tipos = model.listObjectsOfProperty(entidad, RDF.type);
             if (tipos.hasNext()) {
                 tipo = tipos.next().asResource().getLocalName();
             }
-
+ 
             String html = "<h2>" + tipo + "</h2>";
             if (tipo.equals("Concept")) {
                 //inicio experimetanl
-                nt = RDFStoreFuseki.loadGraph(entidad.toString());
+                nt = RDFStoreFuseki.loadGraph(entidad.toString()); 
+                ServletLogger.global.log("Informacion NT de la entidad  "+ entidad.toString() + ": <pre><code>"+ escapeHtml(nt) +"</pre></code>");
                 InputStream iy = new ByteArrayInputStream(nt.getBytes(StandardCharsets.UTF_8));
-                RDFDataMgr.read(model, iy, Lang.NT);
+                Model model3 = ModelFactory.createDefaultModel();
+                RDFDataMgr.read(model3, iy, Lang.NT);
+                model3=RDFPrefixes.addPrefixesIfNeeded(model3);
                 StringWriter sw7 = new StringWriter();
-                RDFDataMgr.write(sw7, model, Lang.TTL);
+                RDFDataMgr.write(sw7, model3, Lang.TTL);
+                ServletLogger.global.log("Informacion de la entidad en doget TTL: <pre><code>"+ escapeHtml(sw7.toString()) +"</pre></code>");
                 ttl2 = StringEscapeUtils.escapeHtml4(sw7.toString());
                 //fin experimental
-                html += getTable(model, entidad);
+                html += getTable(model3, entidad);
 
             }
             body = body.replace("<!--TEMPLATE_PGN-->", html);
@@ -201,49 +218,33 @@ public class LinkedDataServlet extends HttpServlet {
 
     }
 
+    /**
+     * Obtains the table
+     */
     public static String getTable(Model model, Resource res) {
         String tabla = "";
 
-        /*        String todo = RDFStoreFuseki.loadGraph(res.getURI());
-         InputStream is = new ByteArrayInputStream(todo.getBytes(StandardCharsets.UTF_8));
-         RDFDataMgr.read(model, is, Lang.NT);
-         try {
-         PrintWriter archivo = new PrintWriter(new FileWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/todo.txt", true));
-         archivo.println(todo);
-         archivo.close();
-         } catch (Exception ex) {
-         }        */
+//        String todo = RDFStoreFuseki.loadGraph(res.getURI());
+//        InputStream is = new ByteArrayInputStream(todo.getBytes(StandardCharsets.UTF_8));
+//        RDFDataMgr.read(model, is, Lang.NT);
+        model = RDFPrefixes.addPrefixesIfNeeded(model);
+//        ServletLogger.global.log("GETTABLE: <pre><code>"+ escapeHtml(todo) +"</pre></code>");
         tabla += "<table class=\"table table-condensed table-bordered\">"; //table-striped 
         tabla += "<thead><tr><td width=\"25%\"><strong>Property</strong></td><td width=\"75%\"><strong>Value</strong></td></tr></thead>\n";
 
-        String tipo = "success"; //primary
-
-        //we have to load the sense
-       /* String rdfsense = RDFStoreFuseki.getEntity(res.getURI());
-         Model ms = ModelFactory.createDefaultModel();
-         InputStream is = new ByteArrayInputStream(rdfsense.getBytes(StandardCharsets.UTF_8));
-         RDFDataMgr.read(ms, is, Lang.NT);
-         */
         LexicalSense sense = new LexicalSense(model, res);
-
-        if (!sense.jurisdiction.isEmpty()) {
-            tabla += "<tr><td>" + "Jurisdiction" + "</td><td><a href=\"" + sense.jurisdiction + "\">" + RDFPrefixes.getLastPart(sense.jurisdiction) + "</a><span class=\"glyphicon glyphicon-share-alt\"></span></td></tr>\n";
-        }
-        if (!sense.parent.isEmpty()) {
-            tabla += "<tr><td>" + "General concept" + "</td><td><a href=\"" + sense.parent + "\">" + RDFPrefixes.getLastPart(sense.parent) + "</a></td></tr>\n";
-        }
-        if (!sense.reference.isEmpty()) {
-            tabla += "<tr><td>" + "Reference" + "</td><td><a href=\"" + sense.reference + "\">" + RDFPrefixes.getLastPart(sense.reference) + "</a><span class=\"glyphicon glyphicon-share-alt\"></span></td></tr>\n";
-        }
-
+        
+        
         for (int i = 0; i < sense.definitions.size(); i++) {
-            tabla += "<tr><td>" + "Definition" + "</td><td>" + sense.definitions.get(i) + " <kbd>" + sense.definitionlans.get(i);
-            tabla += "</kbd>";
-            if (!sense.definitionsources.isEmpty()) {
-                tabla += "<br/>Source: " + sense.definitionsources + "\n";
-            }
+            
+            tabla += "<tr><td>" + "Definition" + "</td><td>" + sense.definitions.get(i);
+            tabla += " <kbd>" + sense.definitionlans.get(i) +  "</kbd>";
+            tabla += "<br/>Source: " + sense.definitionsources.get(i) + "\n";
             tabla += "</td></tr>\n";
-        }
+        }        
+        
+        
+        // Multiple links to iate are ok
         for (int i = 0; i < sense.links.size(); i++) {
             String link = sense.links.get(i);
             String add = "";
@@ -260,7 +261,31 @@ public class LinkedDataServlet extends HttpServlet {
                 }
             }
             tabla += "<tr><td>" + "Matches" + "</td><td><a href=\"" + link + "\">" + RDFPrefixes.getLastPart(link) + "</a> <span class=\"glyphicon glyphicon-share-alt\"></span>" + add + "</td></tr>\n";
+        }        
+        
+        if (!sense.jurisdiction.isEmpty()) {
+            tabla += "<tr><td>" + "Jurisdiction" + "</td><td><a href=\"" + sense.jurisdiction + "\">" + RDFPrefixes.getLastPart(sense.jurisdiction) + "</a><span class=\"glyphicon glyphicon-share-alt\"></span></td></tr>\n";
         }
+        if (!sense.parent.isEmpty()) {
+            tabla += "<tr><td>" + "General concept" + "</td><td><a href=\"" + sense.parent + "\">" + RDFPrefixes.getLastPart(sense.parent) + "</a></td></tr>\n";
+        }
+        if (!sense.reference.isEmpty()) {
+            tabla += "<tr><td>" + "Reference" + "</td><td><a href=\"" + sense.reference + "\">" + RDFPrefixes.getLastPart(sense.reference) + "</a><span class=\"glyphicon glyphicon-share-alt\"></span></td></tr>\n";
+        }
+        if (!sense.related.isEmpty()) {
+            tabla += "<tr><td>" + "Related" + "</td><td><a href=\"" + sense.related + "\">" + RDFPrefixes.getLastPart(sense.related) + "</a><span class=\"glyphicon glyphicon-share-alt\"></span></td></tr>\n";
+        }
+        if (!sense.comment.isEmpty()) {
+            tabla += "<tr><td>" + "Comment" + "</td><td>" + sense.comment + "</td></tr>\n";
+        }
+
+
+        
+
+  //      if (!sense.reference.isEmpty())
+  //          tabla += "<tr><td>" + "Related" + "</td><td><a href=\"" + sense.reference + "\">" + RDFPrefixes.getLastPart(sense.reference) + "</a> <span class=\"glyphicon glyphicon-share-alt\"></span>" + " " + "</td></tr>\n";
+        
+        
         //
         for (int i = 0; i < sense.entries.size(); i++) {
             String les = sense.entries.get(i).getURI();
@@ -366,37 +391,27 @@ public class LinkedDataServlet extends HttpServlet {
         String s = "";
         String tot = "";
         while ((s = br.readLine()) != null) {
-            tot = tot + s + "";
+            tot = tot + s + "\n";
         }
-        tot = java.net.URLDecoder.decode(tot, "UTF-8");
+        //tot = java.net.URLDecoder.decode(tot, "UTF-8");
         try {
-            PrintWriter archivo = new PrintWriter(TBX2RDFServiceConfig.get("logsfolder", ".") + "/post.txt");
-            archivo.println("requestURI: " + peticion);
-            archivo.flush();
-            archivo.println("content: " + tot);
-            archivo.flush();
 
             //TODO HAY QUE CAMBIAR ESTO PARA QUE NO SEA IATE SOLO!!!!!!!!
             String base = TBX2RDFServiceConfig.get("datauri", "http://tbx2rdf.lider-project.eu/converter/resource/iate/");
             String lastid = peticion.substring(peticion.lastIndexOf("/") + 1, peticion.length());
             String dataset = peticion.substring(peticion.lastIndexOf("resource/") + 9, peticion.lastIndexOf("/"));
             String domain = base.substring(0, base.indexOf("resource/"));
-            archivo.println("domain: " + domain);
-            archivo.flush();
-            archivo.println("dataset: " + dataset);
-            archivo.flush();
-            archivo.println("lastid: " + lastid);
-            archivo.flush();
             String recurso = domain + "resource/" + dataset + "/" + lastid;
-//        String xid = peticion.replace("/tbx2rdf/resource/iate/", "");
-//        String recurso = base + xid;
-
             boolean ok = RDFStoreFuseki.postEntity(recurso, tot, Lang.NT);
-            archivo.println("postedentity (name,ok): " + recurso + " " + ok);
-            archivo.flush();
-            archivo.close();
+            ServletLogger.global.log("We have just posted into Fuseki. Exito: " + ok + " <pre><code>" + escapeHtml(tot)+"</code></pre>");
+            
+            if (!ok)
+            {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
         } catch (Exception e) {
-            System.err.println("Mal al postear en fuseki");
+            ServletLogger.global.log("ERROR posting to Fuseki. Message: " +e.getMessage());
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
@@ -404,7 +419,7 @@ public class LinkedDataServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             out.println(tot);
         } catch (Exception e) {
-            System.err.println("Mal al dar respuesta.");
+            ServletLogger.global.log("ERROR posting to Fuseki");
         }
         response.setStatus(HttpServletResponse.SC_OK);
 
@@ -523,7 +538,6 @@ public class LinkedDataServlet extends HttpServlet {
             String body = IOUtils.toString(bis, "UTF-8");
             String context = TBX2RDFServiceConfig.get("context", "/tbx2rdf");
             body = body.replace("TEMPLATE_CONTEXTO", context);
-
             body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + "List of concepts of " + dataset);
             String tabla = "<table id=\"grid-data\" class=\"table table-condensed table-hover table-striped\">\n"
                     + "        <thead>\n"

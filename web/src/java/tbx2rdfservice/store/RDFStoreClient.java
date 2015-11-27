@@ -7,7 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import static org.apache.http.HttpHeaders.USER_AGENT;
-
+import org.apache.commons.httpclient.util.URIUtil;
 /**
  *
  * @author admin
@@ -34,13 +34,19 @@ public class RDFStoreClient {
         return false;
     }
                 
+    /**
+     * Posts a fragment of NTRIPLES to a given URL
+     */
     public static boolean post(String url, String nt) {
+        if (url.equals("http://tbx2rdf.lider-project.eu/converter/resource/cc/"))
+            return false;
         try {
-            nt=URLEncoder.encode(nt,"UTF-8");   
+            
+/*            nt=URLEncoder.encode(nt,"UTF-8");   
             nt=nt.replace("+", "%20");//aqui no estoy seguro de esto
             nt=nt.replace("(", "%28");
             nt=nt.replace(")", "%29");
-
+*/
             //String url = "http://tbx2rdf.lider-project.eu/converter/resource/iate/IATE-84";
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -51,10 +57,10 @@ public class RDFStoreClient {
             wr.writeBytes(nt);
             wr.flush();
             wr.close();
-            System.out.println("About to launch to " + url);
+//            System.out.println("About to launch to " + url);
             int responseCode = con.getResponseCode();
-            System.out.println("\nSending 'POST' request to URL : " + url);
-            System.out.println("Response Code : " + responseCode);
+//            System.out.println("\nSending 'POST' request to URL : " + url);
+            System.out.println(responseCode + " " + url);
             
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;
@@ -66,10 +72,11 @@ public class RDFStoreClient {
             in.close();
 
             //print result
-            System.out.println(response.toString());
+//            System.out.println(response.toString());
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("mal");
+//            e.printStackTrace();
             return false;
         }   
     }

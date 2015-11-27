@@ -20,7 +20,7 @@ public class LexicalEntry {
     String uritype = "";
     public String urisense = "";
     public String uricanonicalform = "";
-    public String reliabilitycode = "3";
+    public String reliabilitycode = "";
     public String lan = "en";
     public String sense="";
     public String comentario="";
