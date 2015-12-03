@@ -188,7 +188,7 @@ public class LexicalSense {
         try {
             String nt = "";
             String sres = RDFPrefixes.encode(base, name);
-
+            
             nt += "<" + sres + "> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .\n";
             nt += "<" + sres + "> <http://www.w3.org/2000/01/rdf-schema#label> \"" + name + "\" .\n";
             if (!subjectField.isEmpty()) {
@@ -218,14 +218,9 @@ public class LexicalSense {
                 String deflan = definitionlans.get(i);
                 String defsource = definitionsources.get(i);
 
-//                String defuri = base + UUID.randomUUID().toString();
-
                 Resource blank = ModelFactory.createDefaultModel().createResource(RDFUtil.getBlankNodeName());
                 String defuri = blank.getURI();
                 ServletLogger.global.log("AL HACER GETNT TENEMOS " + definitions.size() + " " + definitionlans.size());
-//                Literal li = ResourceFactory.createLangLiteral(def, deflan);
-
-                
                 
                 nt += "<" + sres + "> <http://www.w3.org/2004/02/skos/core#definition> " + defuri + " .\n";
                 if (deflan.isEmpty()) {
@@ -241,7 +236,6 @@ public class LexicalSense {
             }
             for (LexicalEntry entry : entries) {
                 nt += "<" + sres + "> <http://www.w3.org/ns/lemon/ontolex#isSenseOf> <" + entry.getURI() + "> .\n";
-
                 nt += entry.getNT();
 
             }
