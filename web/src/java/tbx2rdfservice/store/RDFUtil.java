@@ -29,7 +29,9 @@ public class RDFUtil {
     public static String getFirstLiteral(Model model, String s, String p) {
         NodeIterator ni = model.listObjectsOfProperty(model.createResource(s), model.createProperty(p));
         if (ni.hasNext()) {
-            return ni.next().asLiteral().getLexicalForm();
+            RDFNode nodo = ni.next();
+            if (nodo.isLiteral())
+                return nodo.asLiteral().getLexicalForm();
         }
         return "";
     }

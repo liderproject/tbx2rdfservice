@@ -212,6 +212,7 @@ public class LexicalSense {
                 ServletLogger.global.log("asdf " + comment);
             }
 
+            //DEFINICIONES AL CONCEPTO
             int n = definitions.size();
             for (int i = 0; i < n; i++) {
                 String def = definitions.get(i);
@@ -234,6 +235,9 @@ public class LexicalSense {
             for (String link : links) {
                 nt += "<" + sres + "> <http://www.w3.org/2004/02/skos/core#closeMatch> <" + link + "> .\n";
             }
+            
+            
+            //LEXICAL ENTRIES.
             for (LexicalEntry entry : entries) {
                 nt += "<" + sres + "> <http://www.w3.org/ns/lemon/ontolex#isSenseOf> <" + entry.getURI() + "> .\n";
                 nt += entry.getNT();

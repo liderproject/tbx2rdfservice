@@ -42,7 +42,15 @@ public class LexicalEntry {
         name = RDFPrefixes.getLastPart(res.getURI().toString());
         base=res.getURI().substring(0,res.getURI().lastIndexOf("/")+1);
         String uri = res.getURI();
-        lan = RDFUtil.getFirstLiteral(model, uri, "http://lemon-model.net/lemon#language");
+        
+        try{
+            lan = RDFUtil.getFirstLiteral(model, uri, "http://lemon-model.net/lemon#language");
+        }catch(Exception e)
+        {
+            lan = RDFUtil.getFirstResource(model, uri, "http://lemon-model.net/lemon#language");
+        }
+        
+        
         source = RDFUtil.getFirstLiteral(model, uri, "http://purl.org/dc/terms/source");
         comentario = RDFUtil.getFirstLiteral(model, uri, "http://www.w3.org/2000/01/rdf-schema#comment");
         reliabilitycode = RDFUtil.getFirstLiteral(model, uri, "http://tbx2rdf.lider-project.eu/tbx#reliabilityCode");
@@ -64,17 +72,29 @@ public class LexicalEntry {
         return xml;
     }
 
+    /**
+     * Crea una LexicalEntry y un LexicalConcept asociado
+     */
     public String getNT() {
         try {
             String nt = "";
             String sres=RDFPrefixes.encode(base,name);
+            
+            //Creamos el LexicalSense
+            String sreslc = sres+"-lexicalsense";
+            nt += "<" + sreslc + "> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/lemon/ontolex#LexicalSense> .\n";
+            nt += "<" + sres + "> <http://www.w3.org/ns/lemon/ontolex#sense> <"+ sreslc +"> .\n";
+            
+             
+            
             nt += "<" + sres + "> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/lemon/ontolex#LexicalEntry> .\n";
             nt += "<"+sres+"> <http://www.w3.org/2000/01/rdf-schema#label> \""+name+ "\" .\n"; 
             if (!uritype.isEmpty()) {
                 nt += "<" + sres + "> <http://tbx2rdf.lider-project.eu/tbx#termType> <" + uritype + "> .\n";
             }
             if (!urisense.isEmpty()) {
-                nt += "<" + sres + "> <http://www.w3.org/ns/lemon/ontolex#sense> <" + urisense + "> .\n";
+                nt += "<" + sreslc + "> <http://www.w3.org/ns/lemon/ontolex#reference> <" + urisense + "> .\n";
+                nt += "<" + sres + "> <http://www.w3.org/ns/lemon/ontolex#denotes> <" + urisense + "> .\n";
             }
             if (!uricanonicalform.isEmpty()) {
                 nt += "<" + sres + "> <http://www.w3.org/ns/lemon/ontolex#canonicalForm> <" + uricanonicalform + "> .\n";
@@ -84,7 +104,13 @@ public class LexicalEntry {
             }
             if (!lan.isEmpty()) {
                 lan=lan.replace("\"", "");
+
+                String fullstring = "http://id.loc.gov/vocabulary/iso639-1/";
+                fullstring+=lan;
+ //               nt += "<" + sres + "> <http://lemon-model.net/lemon#language> <" + fullstring + "> .\n";
+                        
                 nt += "<" + sres + "> <http://lemon-model.net/lemon#language> \"" + lan + "\" .\n";
+                
             }
             if (!source.isEmpty()) {
                 source=source.replace("\"", "");
