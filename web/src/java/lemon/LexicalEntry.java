@@ -143,4 +143,17 @@ public class LexicalEntry {
         return s;
     }
 
+    public String getLanguageFromName() {
+        if (name.length()<4)
+            return "";
+        int ind = name.lastIndexOf("_");
+        if (ind==-1)
+            return "";
+        String st = name.substring(name.length()-2, name.length());
+        if (st.charAt(0)<'a' || st.charAt(1)>'z')
+            return "";
+        return st;
+            
+    }
+
 }

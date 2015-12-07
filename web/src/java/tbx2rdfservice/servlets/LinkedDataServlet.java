@@ -39,6 +39,7 @@ import tbx.IATEUtils;
 import tbx2rdfservice.TBX2RDFServiceConfig;
 import tbx2rdfservice.store.RDFPrefixes;
 import tbx2rdfservice.store.RDFStoreFuseki;
+import vroddon.iso.CountryCode;
 
 /**
  * Servlet que sirve LinkedData
@@ -209,6 +210,21 @@ public class LinkedDataServlet extends HttpServlet {
             body = body.replace("<!--TEMPLATE_PGN-->", html);
 
             try (PrintWriter out = response.getWriter()) {
+                
+                if (isRegional(titulo))
+                {
+                    String alpha = titulo.substring(titulo.length()-2, titulo.length());
+                    CountryCode cc = CountryCode.getByAlpha2Code(alpha);
+                    titulo = titulo.substring(0, titulo.length()-3) + " (in " + cc.getName();
+                    
+                    String ruta = "http://mindprod.com/image/icon32/flag/" + alpha.toLowerCase() + ".png";
+                    titulo += " <img src=\"" + ruta + "\"/>";
+                    
+                    
+                    titulo+=" )";
+                }
+                
+                
                 body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + titulo);
                 body = body.replace("<!--TEMPLATE_TTL-->", "<br>" + ttl2);
 //                response.getWriter().println(body);                
@@ -234,17 +250,17 @@ public class LinkedDataServlet extends HttpServlet {
         tabla += "<thead><tr><td width=\"25%\"><strong>Property</strong></td><td width=\"75%\"><strong>Value</strong></td></tr></thead>\n";
 
         LexicalSense sense = new LexicalSense(model, res);
-        
+         
         
         for (int i = 0; i < sense.definitions.size(); i++) {
-           
+            
             String sdefinition = sense.definitions.get(i);
             sdefinition = sdefinition.replace("\n", "<br>");
             tabla += "<tr><td>" + "Definition" + "</td><td>" + sdefinition;
             tabla += " <kbd>" + sense.definitionlans.get(i) +  "</kbd>";
             
             String source = sense.definitionsources.get(i);
-            if (source.startsWith("http"))
+            if (source.startsWith("http") || (source.startsWith("ftp")))
                 source = "<a href=\"" + source + "\">" + source + "</a>"; 
             
             tabla += "<br/>Source: " + source + "\n";
@@ -286,15 +302,7 @@ public class LinkedDataServlet extends HttpServlet {
         if (!sense.comment.isEmpty()) {
             tabla += "<tr><td>" + "Comment" + "</td><td>" + sense.comment + "</td></tr>\n";
         }
-
-
         
-
-  //      if (!sense.reference.isEmpty())
-  //          tabla += "<tr><td>" + "Related" + "</td><td><a href=\"" + sense.reference + "\">" + RDFPrefixes.getLastPart(sense.reference) + "</a> <span class=\"glyphicon glyphicon-share-alt\"></span>" + " " + "</td></tr>\n";
-        
-        
-        //
         for (int i = 0; i < sense.entries.size(); i++) {
             String les = sense.entries.get(i).getURI();
             Model ms = ModelFactory.createDefaultModel();
@@ -309,7 +317,13 @@ public class LinkedDataServlet extends HttpServlet {
 
             tabla += "<tr><td width=\"30%\"><b>";
             tabla += le.getBeautifulname();
-            tabla += " <kbd>" + le.lan + "</kbd>";
+            String lan = le.lan;
+            if (lan==null || lan.isEmpty())
+            {
+                lan = le.getLanguageFromName();
+            }
+            
+            tabla += " <kbd>" + lan + "</kbd>";
             tabla += "</b></td><td width=\"70%\">";
             tabla += "</td></tr>\n";
             if (!le.definition.isEmpty()) {
@@ -577,5 +591,20 @@ public class LinkedDataServlet extends HttpServlet {
         } catch (Exception e) {
             Tbx2rdfServlet.serveError(request, response);
         }
+    }
+
+    private boolean isRegional(String titulo) {
+        
+        if (titulo.length()<5)
+            return false;
+        
+        int index=titulo.lastIndexOf("_");
+        if (index==-1)
+            return false;
+        
+        if ((index == titulo.length()-3) && (titulo.charAt(titulo.length()-2) >= 'A') && (titulo.charAt(titulo.length()-2) <= 'Z'))
+            return true;
+        
+        return false;
     }
 }

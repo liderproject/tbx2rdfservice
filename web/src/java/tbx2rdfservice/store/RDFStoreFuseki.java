@@ -63,7 +63,7 @@ public class RDFStoreFuseki {
     }
 
     /**
-     * Returns an entity given the ID
+     * Returns an entity given the ID. All the triples whosse subject is the one given.
      */
     public static String getEntity(String resource) {
         init();
