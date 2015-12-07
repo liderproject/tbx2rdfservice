@@ -223,16 +223,13 @@ public class LinkedDataServlet extends HttpServlet {
     }
 
     /**
-     * Obtains the table
+     * Obtains the table of properties to be shown  for a certain resource
      */
     public static String getTable(Model model, Resource res) {
         String tabla = "";
-
-//        String todo = RDFStoreFuseki.loadGraph(res.getURI());
-//        InputStream is = new ByteArrayInputStream(todo.getBytes(StandardCharsets.UTF_8));
-//        RDFDataMgr.read(model, is, Lang.NT);
+        
         model = RDFPrefixes.addPrefixesIfNeeded(model);
-//        ServletLogger.global.log("GETTABLE: <pre><code>"+ escapeHtml(todo) +"</pre></code>");
+        
         tabla += "<table class=\"table table-condensed table-bordered\">"; //table-striped 
         tabla += "<thead><tr><td width=\"25%\"><strong>Property</strong></td><td width=\"75%\"><strong>Value</strong></td></tr></thead>\n";
 
@@ -240,10 +237,17 @@ public class LinkedDataServlet extends HttpServlet {
         
         
         for (int i = 0; i < sense.definitions.size(); i++) {
-            
-            tabla += "<tr><td>" + "Definition" + "</td><td>" + sense.definitions.get(i);
+           
+            String sdefinition = sense.definitions.get(i);
+            sdefinition = sdefinition.replace("\n", "<br>");
+            tabla += "<tr><td>" + "Definition" + "</td><td>" + sdefinition;
             tabla += " <kbd>" + sense.definitionlans.get(i) +  "</kbd>";
-            tabla += "<br/>Source: " + sense.definitionsources.get(i) + "\n";
+            
+            String source = sense.definitionsources.get(i);
+            if (source.startsWith("http"))
+                source = "<a href=\"" + source + "\">" + source + "</a>"; 
+            
+            tabla += "<br/>Source: " + source + "\n";
             tabla += "</td></tr>\n";
         }        
         
@@ -312,7 +316,11 @@ public class LinkedDataServlet extends HttpServlet {
                 tabla += "<tr><td width=\"30%\">";
                 tabla += "Definition";
                 tabla += "</td><td width=\"70%\">";
-                tabla += le.definition + "<kbd>" + le.lan + "</kbd>";
+                
+                String sdefinition = le.definition;
+                sdefinition = sdefinition.replace("\n", "<br>");
+                 
+                tabla += sdefinition + "<kbd>" + le.lan + "</kbd>";
                 tabla += "</td></tr>\n";
             }
 
@@ -327,7 +335,10 @@ public class LinkedDataServlet extends HttpServlet {
                 tabla += "<tr><td width=\"30%\">";
                 tabla += "Source";
                 tabla += "</td><td width=\"70%\">";
-                tabla += le.source;
+                if (le.source.startsWith("http:"))
+                    tabla += "<a href=\""+le.source + "\">" +le.source + "</a>";
+                else
+                    tabla += le.source;
                 tabla += "</td></tr>\n";
             }
             if (!le.uricanonicalform.isEmpty()) {
