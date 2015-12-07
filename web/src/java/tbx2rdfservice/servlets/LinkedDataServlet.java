@@ -80,7 +80,7 @@ public class LinkedDataServlet extends HttpServlet {
         try {
             if (url.equals("http://lider2.dia.fi.upm.es:8080/tbx2rdf/resource/")) //Por si viene de la lectura del paper
             {
-                response.sendRedirect("http://tbx2rdf.lider-project.eu/converter/resource/");
+                response.sendRedirect("http://copyrighttermbank.linkeddata.es/resource/");
                 return;
             }
         } catch (Exception ex) {
