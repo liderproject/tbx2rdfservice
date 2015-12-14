@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -47,6 +49,7 @@ import vroddon.iso.CountryCode;
  * @author admin
  */
 public class LinkedDataServlet extends HttpServlet {
+
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -216,13 +219,11 @@ public class LinkedDataServlet extends HttpServlet {
                     String alpha = titulo.substring(titulo.length()-2, titulo.length());
                     CountryCode cc = CountryCode.getByAlpha2Code(alpha);
                     titulo = titulo.substring(0, titulo.length()-3) + " (in " + cc.getName();
-                    
                     String ruta = "http://mindprod.com/image/icon32/flag/" + alpha.toLowerCase() + ".png";
                     titulo += " <img src=\"" + ruta + "\"/>";
-                    
-                    
                     titulo+=" )";
                 }
+                titulo = titulo.replace("_", " ");
                 
                 
                 body = body.replace("<!--TEMPLATE_TITLE-->", "\n" + titulo);
@@ -260,6 +261,10 @@ public class LinkedDataServlet extends HttpServlet {
             tabla += " <kbd>" + sense.definitionlans.get(i) +  "</kbd>";
             
             String source = sense.definitionsources.get(i);
+            
+            source = ponerlinks(source);
+            
+            
             if (source.startsWith("http") || (source.startsWith("ftp")))
                 source = "<a href=\"" + source + "\">" + source + "</a>"; 
             
@@ -607,4 +612,24 @@ public class LinkedDataServlet extends HttpServlet {
         
         return false;
     }
+    
+    private static String ponerlinks(String source) {
+        String s = source;
+        String o ="";
+        // separate input by spaces ( URLs don't have spaces )
+        String [] parts = s.split("\\s+");
+
+        // Attempt to convert each item into an URL.   
+        for( String item : parts ) try {
+            URL url = new URL(item);
+            // If possible then replace with anchor...
+            o+="<a href=\"" + url + "\">"+ url + "</a> ";
+        } catch (MalformedURLException e) {
+            // If there was an URL that was not it!...
+            System.out.print( item + " " );
+            o+=item+" ";
+        }
+        return o;      
+    } 
+    
 }

@@ -222,7 +222,8 @@ public class ServicesServlet extends HttpServlet {
             };
         }
         if (uri.endsWith("/service/clear")) {
-            RDFStoreFuseki.deleteAll();
+//            RDFStoreFuseki.deleteAll();
+            ServletLogger.global.log("Borrado termporalmente deshabilitado");
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
             Tbx2rdfServlet.serveError(request, response);
