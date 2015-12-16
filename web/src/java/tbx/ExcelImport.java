@@ -26,7 +26,8 @@ public class ExcelImport {
         org.apache.log4j.Logger.getRootLogger().removeAllAppenders();
         org.apache.log4j.Logger.getRootLogger().addAppender(new NullAppender());
         String base = "http://copyrighttermbank.linkeddata.es/resource/";
-        String filename = "F:\\svn\\tbx2rdfservice\\import.xls";
+//        String filename = "F:\\svn\\tbx2rdfservice\\import.xls";
+        String filename="D:\\svn\\tbx2rdfservice\\import.xls";
         importar(filename, base);
     }
 
