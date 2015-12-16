@@ -44,9 +44,18 @@ import tbx2rdfservice.store.RDFStoreFuseki;
  */
 public class Main {
     
+
+    public static void clear()
+    {
+            RDFStoreFuseki.deleteAll();
+    } 
     
     
     public static void main(String[] argx) throws IOException {
+        clear();
+    }
+    
+    public static void main2(String[] argx) throws IOException {
 
 //        String[] args = {"-count","foaf:Agent"};
 //        String[] args = {"-dump"};
