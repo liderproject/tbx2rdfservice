@@ -307,7 +307,7 @@ public class RDFStoreFuseki {
                 + "  GRAPH ?g {\n"
                 + "    ?s ?p ?o\n"
                 + "  }\n"
-                + "} LIMIT 10000";
+                + "} LIMIT 100000";
         Query query = QueryFactory.create(sparql);
         String endpoint = "http://localhost:3031/tbx/query";
         QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint, query);

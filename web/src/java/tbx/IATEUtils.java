@@ -2,6 +2,8 @@ package tbx;
 
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
@@ -10,6 +12,9 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import tbx2rdfservice.servlets.ServletLogger;
 
 import tbx2rdfservice.store.RDFPrefixes;
 import tbx2rdfservice.store.RDFUtil;
@@ -54,4 +59,84 @@ public class IATEUtils {
         }}catch(Exception e){e.printStackTrace();}
         return lista;
     }
+    
+    public static List<Literal> getEurovocTerms(String uri) {
+        List<Literal> lista = new ArrayList();
+        try{
+            
+            String uri1= uri+"&language=en";
+            ServletLogger.global.log("Browsing... " + uri1 );
+            Model model = RDFUtil.browseTTL(uri1);
+            
+            StringWriter sw = new StringWriter();
+            RDFDataMgr.write(sw, model, Lang.TTL);
+            ServletLogger.global.log("Browsed " + sw.toString() );
+            ServletLogger.global.log("Scanning now " + uri );
+            
+            NodeIterator ni = model.listObjectsOfProperty(model.createResource(uri), model.createProperty("http://www.w3.org/2008/05/skos-xl#literalForm"));
+            while (ni.hasNext()) {
+                RDFNode n = ni.next();
+                if (n.isLiteral())
+                    lista.add(n.asLiteral());
+                }
+        
+            uri1= uri+"?language=es";
+            model = RDFUtil.browseTTL(uri1);
+            ni = model.listObjectsOfProperty(model.createResource(uri), model.createProperty("http://www.w3.org/2008/05/skos-xl#literalForm"));
+            while (ni.hasNext()) {
+                RDFNode n = ni.next();
+                if (n.isLiteral())
+                    lista.add(n.asLiteral());
+                }
+            
+            uri1= uri+"?language=fr";
+            model = RDFUtil.browseTTL(uri1);
+            ni = model.listObjectsOfProperty(model.createResource(uri), model.createProperty("http://www.w3.org/2008/05/skos-xl#literalForm"));
+            while (ni.hasNext()) {
+                RDFNode n = ni.next();
+                if (n.isLiteral())
+                    lista.add(n.asLiteral());
+                }
+            
+            uri1= uri+"?language=pt";
+            model = RDFUtil.browseTTL(uri1);
+            ni = model.listObjectsOfProperty(model.createResource(uri), model.createProperty("http://www.w3.org/2008/05/skos-xl#literalForm"));
+            while (ni.hasNext()) {
+                RDFNode n = ni.next();
+                if (n.isLiteral())
+                    lista.add(n.asLiteral());
+                }
+            
+            uri1= uri+"?language=de";
+            model = RDFUtil.browseTTL(uri1);
+            ni = model.listObjectsOfProperty(model.createResource(uri), model.createProperty("http://www.w3.org/2008/05/skos-xl#literalForm"));
+            while (ni.hasNext()) {
+                RDFNode n = ni.next();
+                if (n.isLiteral())
+                    lista.add(n.asLiteral());
+                }
+            
+            uri1= uri+"?language=el";
+            model = RDFUtil.browseTTL(uri1);
+            ni = model.listObjectsOfProperty(model.createResource(uri), model.createProperty("http://www.w3.org/2008/05/skos-xl#literalForm"));
+            while (ni.hasNext()) {
+                RDFNode n = ni.next();
+                if (n.isLiteral())
+                    lista.add(n.asLiteral());
+                }            
+            
+            }catch(Exception e){
+                ServletLogger.global.log("Error Browsing Eurovoc... " + e.getMessage()  );
+                e.printStackTrace();
+            }
+
+        
+        ServletLogger.global.log("Found " + lista.size() );
+
+        return lista;
+        
+    }
+    
+    
+    
 }

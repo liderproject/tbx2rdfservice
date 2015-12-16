@@ -76,6 +76,19 @@ public class RDFUtil {
             return null;
         }
     }
+    
+    public static Model browseTTL(String url) {
+        try {
+            URLConnection connection = new URL(url).openConnection();
+            connection.setRequestProperty("Accept", "text/turtle");
+            Model model = ModelFactory.createDefaultModel();
+            RDFDataMgr.read(model, connection.getInputStream(), Lang.TTL);
+            return model;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }    
 
     public static Model browseRDF(String url) {
         try {

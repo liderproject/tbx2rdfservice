@@ -144,6 +144,14 @@ public class ExcelImport {
                         ind += 6;
                     }
                     senses.add(lexicalsense);
+                    
+                    
+                    String eurovocid = sheet.getCell(41, i).getContents();
+                    if (!eurovocid.isEmpty()) {
+                        lexicalsense.links.add(eurovocid);
+                    }
+                    
+                    
                 } catch (Exception e) {
                     System.err.println("Mal la linea: " + i + " " + e.getMessage());
                 }

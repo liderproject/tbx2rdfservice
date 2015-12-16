@@ -282,14 +282,32 @@ public class LinkedDataServlet extends HttpServlet {
                 List<Literal> lista = IATEUtils.getIATETerms(link);
                 int n = 0;
                 for (Literal l : lista) {
-                    if (n != 0) {
+                    if (n != 0) 
                         add += ",";
-                    }
                     add += l.getLexicalForm() + " <kbd>" + l.getLanguage() + "</kbd>\n";
                     n++;
                 }
             }
-            tabla += "<tr><td>" + "Matches" + "</td><td><a href=\"" + link + "\">" + RDFPrefixes.getLastPart(link) + "</a> <span class=\"glyphicon glyphicon-share-alt\"></span>" + add + "</td></tr>\n";
+            if (link.contains("eurovoc"))
+            {                
+                add += "<br/>";
+                List<Literal> lista = IATEUtils.getEurovocTerms(link);
+                int n=0;
+                for(Literal l : lista)
+                {
+                    if (n != 0) 
+                        add += ",";
+                    add += l.getLexicalForm() + " <kbd>" + l.getLanguage() + "</kbd>\n";
+                    n++;
+                }
+            }
+            tabla += "<tr><td>" + "Matches " ;
+            if (link.contains("iate"))
+                tabla+="(IATE)";
+            if (link.contains("eurovoc"))
+                tabla+="(EUROVOC)";
+            
+            tabla += "</td><td><a href=\"" + link + "\">" + RDFPrefixes.getLastPart(link) + "</a> <span class=\"glyphicon glyphicon-share-alt\"></span>" + add + "</td></tr>\n";
         }        
         
         if (!sense.jurisdiction.isEmpty()) {
@@ -388,6 +406,16 @@ public class LinkedDataServlet extends HttpServlet {
                 String bonito = RDFPrefixes.getLastPart(narrow);
                 try {
                     bonito = URLDecoder.decode(bonito, "UTF-8");
+                    if (isRegional(bonito))
+                    {
+                        String alpha = bonito.substring(bonito.length()-2, bonito.length());
+                        CountryCode cc = CountryCode.getByAlpha2Code(alpha);
+                        bonito = bonito.substring(0, bonito.length()-3) + " (in " + cc.getName();
+                        String ruta = "http://mindprod.com/image/icon16/flag/" + alpha.toLowerCase() + ".png";
+                        bonito += " <img src=\"" + ruta + "\"/>";
+                        bonito+=" )";
+                    }         
+                    bonito = bonito.replace("_", " ");
                 } catch (UnsupportedEncodingException ex) {
                 }
                 tabla += "<a href=\"" + narrow + "\">" + bonito + "</a> ";
@@ -598,7 +626,7 @@ public class LinkedDataServlet extends HttpServlet {
         }
     }
 
-    private boolean isRegional(String titulo) {
+    private static boolean isRegional(String titulo) {
         
         if (titulo.length()<5)
             return false;

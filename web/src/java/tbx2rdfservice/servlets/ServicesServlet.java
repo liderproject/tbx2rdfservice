@@ -61,7 +61,7 @@ public class ServicesServlet extends HttpServlet {
                 out.println("<a href=\""+ "./service/dump" +"\">total entities</a>:"+RDFStoreFuseki.countEntities("")+"<br>");
 
                 out.println("<h2>Logs</h2>");
-                String s= ServletLogger.global.tail(100);
+                String s= ServletLogger.global.tail(300);
                 s=s.replace("\n", "<br>");
                 out.println(s);
 
