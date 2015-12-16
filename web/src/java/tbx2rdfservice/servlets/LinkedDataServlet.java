@@ -382,7 +382,7 @@ public class LinkedDataServlet extends HttpServlet {
         List<String> narrows = RDFStoreFuseki.getNarrower(res.getURI());
         if (!narrows.isEmpty()) {
             tabla += "<tr><td width=\"30%\">";
-            tabla += "Specialized by";
+            tabla += "Concept in specific juristictions:";
             tabla += "</td><td width=\"70%\">";
             for (String narrow : narrows) {
                 String bonito = RDFPrefixes.getLastPart(narrow);
