@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
-    <display-name>RDF TermBank 1.0</display-name>
+    <display-name>TBX2RDF Converter Web Service</display-name>
     <servlet>
         <servlet-name>tbx2rdf</servlet-name>
         <servlet-class>tbx2rdfservice.servlets.Tbx2rdfServlet</servlet-class>
@@ -17,6 +17,10 @@
         <servlet-name>AccountServlet</servlet-name>
         <servlet-class>tbx2rdfservice.servlets.AccountServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>TestServlet</servlet-name>
+        <servlet-class>tbx2rdfservice.servlets.TestServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>tbx2rdf</servlet-name>
         <url-pattern>/tbx2rdf</url-pattern>
@@ -32,6 +36,10 @@
     <servlet-mapping>
         <servlet-name>AccountServlet</servlet-name>
         <url-pattern>/account</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestServlet</servlet-name>
+        <url-pattern>/test</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
