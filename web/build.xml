@@ -82,8 +82,8 @@
     <echo message="Victor edition: generating also a jar file with"/>
 	<echo>Apache Ant version is ${ant.version}</echo>
 
-	
-	<copy file="dist/TBX2RDFService.war" tofile="dist/converter.war"/>	
+	<!-- ojo que no funcionará en lider2.dia.fi.upm.es sino solamente en http://tbx2rdf.lider-project.eu/converter/ porque hay una redireccion -->
+	<copy file="dist/TBX2RDFService.war" tofile="dist/tbx2rdf.war"/>	
 <!-- temporalmente deshabilitado
 	
 	<mkdir dir="build2"/> 
